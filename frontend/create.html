@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создать лот | Аукцион</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <h1>➕ Новый лот</h1>
+    
+    <nav id="main-nav" style="display: none; gap: 10px;">
+        <button onclick="toggleTheme()" id="theme-btn" style="background: none; border: none; box-shadow: none; font-size: 24px; padding: 0; cursor: pointer; transform: none;">🌙</button>
+        <button onclick="window.location.href='index.html'">🏠 Главная</button>
+        <button onclick="window.location.href='create.html'">➕ Создать лот</button>
+        <button onclick="window.location.href='profile.html'">👤 Профиль</button>
+    </nav>
+</header>
+
+<main class="protected-content" style="display: none; max-width: 1000px; margin: 0 auto;">
+    <h2 style="margin-bottom: 25px; color: var(--text-heading);">➕ Создать новый лот</h2>
+    
+    <div style="display: flex; gap: 40px; flex-wrap: wrap; align-items: flex-start;">
+        
+        <section class="add-lot-section" style="flex: 1; min-width: 320px; margin: 0;">
+            <form id="add-lot-form" style="display: flex; flex-direction: column; gap: 15px;">
+                
+                <div>
+                    <label style="font-weight: 500; font-size: 14px; color: var(--text-muted); display: block; margin-bottom: 5px;">Название лота <span style="color:#e53238">*</span></label>
+                    <input type="text" id="title" placeholder="Например: Sony PlayStation 5" maxlength="60" required style="margin: 0;">
+                </div>
+                
+                <div>
+                    <label style="font-weight: 500; font-size: 14px; color: var(--text-muted); display: block; margin-bottom: 5px;">Описание</label>
+                    <textarea id="description" placeholder="Опишите состояние, комплектацию и особенности..." rows="4" style="margin: 0; resize: vertical;"></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 15px;">
+                    <div style="flex: 1;">
+                        <label style="font-weight: 500; font-size: 14px; color: var(--text-muted); display: block; margin-bottom: 5px;">Категория <span style="color:#e53238">*</span></label>
+                        <select id="category" required style="margin: 0;">
+                            <option value="electronics">Электроника</option>
+                            <option value="auto">Авто и мото</option>
+                            <option value="home">Для дома</option>
+                            <option value="clothing">Одежда и обувь</option>
+                            <option value="other">Разное</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="font-weight: 500; font-size: 14px; color: var(--text-muted); display: block; margin-bottom: 5px;">Цена ($) <span style="color:#e53238">*</span></label>
+                        <input type="number" id="starting_price" placeholder="10" min="1" required style="margin: 0;">
+                    </div>
+                </div>
+
+                <div>
+                    <label style="font-weight: 500; font-size: 14px; color: var(--text-muted); display: block; margin-bottom: 5px;">Время окончания <span style="color:#e53238">*</span></label>
+                    <input type="datetime-local" id="end_time" required style="margin: 0;">
+                </div>
+                
+                <div>
+                    <label style="font-weight: 500; font-size: 14px; color: var(--text-muted); display: block; margin-bottom: 5px;">Фотографии</label>
+                    <input type="file" id="images" accept="image/*" multiple style="margin: 0; padding: 10px; background: transparent; border: 1px dashed var(--border-color); cursor: pointer;">
+                </div>
+                
+                <button type="submit" class="ebay-search-btn" style="width: 100%; margin-top: 10px; border-radius: 8px;">🚀 Опубликовать лот</button>
+            </form>
+        </section>
+
+        <section style="flex: 1; min-width: 300px; max-width: 400px;">
+            <p style="margin-top: 0; margin-bottom: 10px; color: var(--text-muted); font-size: 14px; font-weight: 500;">👁️ Предпросмотр карточки:</p>
+            
+            <div class="lot-card" id="preview-card" style="pointer-events: none; border: 2px dashed var(--border-color); box-shadow: none;"> 
+                
+                <img id="preview-img" src="https://placehold.co/400x300/eeeeee/999999?text=Загрузите+фото" style="width:100%; height: 220px; object-fit: contain; background: var(--input-bg); border-radius: 8px;">
+                
+                <span id="preview-category" style="display:inline-block; background:var(--input-bg); color:var(--text-muted); padding:3px 8px; border-radius:12px; font-size:12px; font-weight:500; border:1px solid var(--border-color); margin-top:10px; width: fit-content;">
+                    Электроника
+                </span>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                    <h3 id="preview-title" style="margin: 0; font-size: 16px;">Название лота</h3>
+                    <button style="background:none; border:none; font-size:24px; padding:0; box-shadow:none;">🤍</button>
+                </div>
+                
+                <div class="price" id="preview-price">$10</div>
+                
+                <div class="timer" style="color: #e53238; font-weight: bold; margin: 5px 0 15px 0; font-size: 14px;">
+                    Осталось: 24ч 00м 00с
+                </div>
+                
+                <div class="bid-controls" style="display: flex; gap: 10px; margin-top: auto;">
+                    <input type="number" placeholder="Ставка" disabled style="height:40px; border-radius:20px; padding:0 15px; flex:1; margin:0; border: 1px solid var(--border-color);">
+                    <button disabled style="height:40px; border-radius:20px; padding:0 25px; background:var(--ebay-blue); color:white; border:none;">Ставка</button>
+                </div>
+                
+            </div>
+        </section>
+
+    </div>
+</main>
+
+<div id="toast-container"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="app.js"></script>
+</body>
+</html>

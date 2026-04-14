@@ -1,0 +1,594 @@
+/* --- МАГИЯ ТЕМНОЙ ТЕМЫ (EBAY STYLE) --- */
+:root {
+    --bg-color: #f7f7f9; /* Светлый фон как у eBay */
+    --text-color: #191414;
+    --text-muted: #707070;
+    --text-heading: #111820;
+    --card-bg: #ffffff;
+    --border-color: #e5e5e5;
+    --input-bg: #ffffff;
+    --modal-bg: #ffffff;
+    --ebay-blue: #3665f3;
+    --ebay-blue-hover: #2b50c5;
+    --price-color: #111820;
+}
+
+body.dark-mode {
+    --bg-color: #121212; /* Глубокий черный */
+    --text-color: #e0e0e0;
+    --text-muted: #999999;
+    --text-heading: #ffffff;
+    --card-bg: #1e1e1e; /* Темные карточки */
+    --border-color: #333333;
+    --input-bg: #2c2c2c; 
+    --modal-bg: #1e1e1e;
+    --ebay-blue: #4a75ff;
+    --ebay-blue-hover: #3665f3;
+    --price-color: #ffffff;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; 
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    padding: 0 20px 40px 20px; /* Убрал отступ сверху, добавил снизу */
+    max-width: 1400px; /* Сделал сайт шире, как маркетплейс */
+    margin: 0 auto;
+}
+
+/* --- ЧИСТАЯ ШАПКА --- */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--border-color); /* Полоска вместо тени */
+    background: transparent;
+    margin-bottom: 30px;
+}
+
+header h1 {
+    color: var(--text-heading);
+    margin: 0;
+    font-size: 24px;
+}
+
+/* Кнопки в шапке превращаем в аккуратные ссылки */
+#main-nav button, #guest-info button {
+    background: transparent;
+    color: var(--text-color);
+    box-shadow: none;
+    font-weight: 500;
+    padding: 10px 15px;
+    border: none; /* <-- САМОЕ ГЛАВНОЕ: Убиваем жесткую рамку! */
+    border-radius: 8px; /* Добавляем современное мягкое скругление */
+    cursor: pointer;
+    font-size: 15px;
+    transition: all 0.2s ease;
+}
+
+#main-nav button:hover, #guest-info button:hover {
+    color: var(--ebay-blue);
+    background: rgba(0,0,0,0.05); /* Легкий серый фон при наведении в светлой теме */
+    transform: none;
+}
+
+/* Эффект наведения для темной темы */
+body.dark-mode #main-nav button:hover, body.dark-mode #guest-info button:hover {
+    background: rgba(255,255,255,0.1); /* Легкое светлое свечение в темной теме */
+}
+
+/* --- СТРОКА ПОИСКА EBAY --- */
+.ebay-search-container {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 40px;
+    width: 100%;
+}
+
+.search-box-wrapper {
+    display: flex;
+    flex: 1; 
+    align-items: center;
+    border: 2px solid var(--text-heading); /* Черная/белая рамка */
+    border-radius: 40px; 
+    background-color: var(--input-bg);
+    padding: 0 5px 0 15px;
+    height: 48px;
+}
+
+.search-box-wrapper:focus-within {
+    border-color: var(--ebay-blue); 
+}
+
+.search-icon {
+    font-size: 18px;
+    color: var(--text-muted);
+    margin-right: 5px;
+}
+
+.search-box-wrapper input {
+    border: none;
+    background: transparent;
+    margin-bottom: 0;
+    box-shadow: none;
+    flex: 1;
+    padding: 12px 5px;
+    font-size: 16px;
+    color: var(--text-color);
+}
+
+.search-box-wrapper input:focus { box-shadow: none; }
+
+.search-box-wrapper .divider {
+    width: 1px;
+    height: 24px;
+    background-color: var(--border-color);
+    margin: 0 10px;
+}
+
+.search-box-wrapper select {
+    border: none;
+    background: transparent;
+    margin-bottom: 0;
+    box-shadow: none;
+    width: auto;
+    min-width: 140px;
+    padding: 12px 10px;
+    font-size: 15px;
+    cursor: pointer;
+    color: var(--text-color);
+}
+
+.search-box-wrapper select:focus { box-shadow: none; }
+
+.ebay-search-btn {
+    background-color: var(--ebay-blue); 
+    color: white;
+    border-radius: 40px;
+    padding: 0 40px;
+    height: 48px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    box-shadow: none;
+    transition: background 0.2s;
+}
+
+.ebay-search-btn:hover {
+    background-color: var(--ebay-blue-hover);
+    transform: none; 
+}
+
+/* --- ДИЗАЙН КАРТОЧЕК ЛОТОВ --- */
+.lots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 30px;
+}
+
+.lot-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color); /* Тонкая граница вместо теней */
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.lot-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+body.dark-mode .lot-card:hover { box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+
+/* Изображения: делаем пропорции красивее */
+.lot-card img {
+    height: 220px !important;
+    object-fit: contain !important; /* Картинка не обрезается */
+    background-color: #11111a; /* Или var(--bg-color) */    
+    background-color: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 10px;
+}
+
+/* Категория: скромный тег */
+.lot-card span[style*="background:#e1f5fe"] {
+    background: var(--input-bg) !important;
+    color: var(--text-muted) !important;
+    border: 1px solid var(--border-color);
+    font-weight: 500 !important;
+    margin-top: 10px;
+}
+
+/* Название */
+.lot-card h3 {
+    font-size: 16px;
+    color: var(--text-heading);
+    margin-top: 10px !important;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+/* Цена: большая и жирная */
+.lot-card .price {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--price-color) !important;
+    margin: 10px 0 5px 0 !important;
+}
+
+/* Ссылка на историю */
+.lot-card button[onclick^="showBidsHistory"] {
+    color: var(--text-muted) !important;
+    font-size: 13px !important;
+    text-decoration: underline !important;
+    text-align: left;
+    margin: 0 !important;
+}
+.lot-card button[onclick^="showBidsHistory"]:hover { color: var(--ebay-blue) !important; }
+
+/* Таймер (Красный цвет, как на eBay) */
+.lot-card .timer {
+    background: transparent !important;
+    border: none !important;
+    color: #e53238 !important; /* Цвет срочности */
+    padding: 0 !important;
+    text-align: left !important;
+    font-size: 14px !important;
+    margin: 5px 0 15px 0 !important;
+}
+body.dark-mode .lot-card .timer { color: #ff6b6b !important; }
+
+/* Контролы ставок в один ряд */
+.bid-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: auto; /* Прижимаем к низу карточки */
+}
+
+.bid-controls input {
+    margin-bottom: 0;
+    height: 40px;
+    border-radius: 20px;
+    padding: 0 15px;
+}
+
+.bid-controls button {
+    height: 40px;
+    background: var(--ebay-blue);
+    border-radius: 20px;
+    padding: 0 25px;
+    box-shadow: none;
+}
+.bid-controls button:hover { background: var(--ebay-blue-hover); transform: none; }
+
+/* Кнопка "Удалить" (Делаем ее вторичной) */
+.lot-card button[onclick^="deleteLot"] {
+    background: transparent !important;
+    color: #e74c3c !important;
+    border: 1px solid #e74c3c !important;
+    border-radius: 20px !important;
+    margin-top: 15px !important;
+    height: 40px;
+}
+.lot-card button[onclick^="deleteLot"]:hover {
+    background: #e74c3c !important;
+    color: white !important;
+    transform: none;
+}
+
+/* Описание */
+.lot-card p { color: var(--text-muted); font-size: 14px; margin-bottom: 10px; }
+
+/* --- ФОРМЫ --- */
+.add-lot-section, .auth-section {
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+.auth-section { max-width: 400px; margin: 40px auto; }
+button { transition: all 0.2s ease; }
+
+/* --- МОДАЛЬНЫЕ ОКНА --- */
+#bids-modal > div { animation: slideDown 0.3s ease-out; background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-color); }
+@keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+
+/* --- TOAST --- */
+#toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+.toast { min-width: 250px; padding: 15px 20px; color: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-size: 15px; font-weight: 500; opacity: 0; transform: translateX(100%); transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+.toast.show { opacity: 1; transform: translateX(0); }
+.toast.success { background-color: #008a00; }
+.toast.error { background-color: #e53238; }
+.toast.info { background-color: #3665f3; }
+/* --- СТИЛИ ДЛЯ ФОРМЫ СОЗДАНИЯ ЛОТА --- */
+
+/* Делаем поля ввода стильными и адаптируемыми под темную тему */
+.add-lot-section form input[type="text"],
+.add-lot-section form input[type="number"],
+.add-lot-section form input[type="datetime-local"],
+.add-lot-section form textarea,
+.add-lot-section form select {
+    background-color: var(--input-bg) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 8px !important;
+    padding: 12px 15px !important;
+    font-size: 15px;
+    width: 100%;
+    transition: all 0.2s ease;
+    box-shadow: none !important;
+    appearance: none; /* Убирает стандартные стили браузера */
+}
+
+/* Красивое синее свечение при клике на поле (как у eBay) */
+.add-lot-section form input:focus,
+.add-lot-section form textarea:focus,
+.add-lot-section form select:focus {
+    border-color: var(--ebay-blue) !important;
+    box-shadow: 0 0 0 3px rgba(54, 101, 243, 0.15) !important;
+    outline: none;
+}
+
+/* Изменяем цвет иконки календарика в темной теме */
+body.dark-mode .add-lot-section form input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+}
+
+/* Делаем зону загрузки фото похожей на Drop-zone (зону перетаскивания) */
+.add-lot-section form input[type="file"] {
+    background-color: transparent !important;
+    color: var(--text-muted) !important;
+    border: 2px dashed var(--border-color) !important;
+    padding: 20px 15px !important;
+    border-radius: 8px !important;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.add-lot-section form input[type="file"]:hover {
+    border-color: var(--ebay-blue) !important;
+    background-color: rgba(54, 101, 243, 0.05) !important;
+}
+
+/* Если у файлов есть кнопка "Выберите файл", стилизуем и её */
+.add-lot-section form input[type="file"]::-webkit-file-upload-button {
+    background-color: var(--border-color);
+    color: var(--text-color);
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin-right: 15px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+.add-lot-section form input[type="file"]::-webkit-file-upload-button:hover {
+    background-color: var(--text-muted);
+    color: white;
+}
+/* =======================================================
+   ИСПРАВЛЕНИЯ ДЛЯ КАРТОЧЕК ЛОТОВ (ФИКС ВЫЛЕЗАНИЯ И ЦВЕТОВ)
+   ======================================================= */
+
+/* 1. Делаем тег категории компактным "пузырьком", а не длинной полосой */
+.lot-card span[style*="background"] {
+    display: inline-block !important;
+    width: fit-content !important; /* Строго по размеру текста! Не дает растягиваться */
+    background-color: var(--input-bg) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color) !important;
+    padding: 4px 12px !important;
+    border-radius: 20px !important; /* Круглые края */
+    font-weight: 500 !important;
+    font-size: 12px !important;
+    margin: 10px 0 !important;
+}
+
+/* 2. Контейнер для ставки: строго ограничиваем ширину */
+.bid-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: auto;
+    width: 100% !important; /* Не выходим за пределы карточки */
+    box-sizing: border-box; 
+}
+
+/* 3. Поле ввода ставки (делаем его темным и "гибким") */
+.bid-controls input {
+    flex: 1; /* Занимает доступное место... */
+    min-width: 0; /* ...НО сжимается, если карточка узкая (ЭТО РЕШАЕТ ВЫЛЕЗАНИЕ КНОПКИ!) */
+    margin-bottom: 0 !important;
+    height: 40px !important;
+    border-radius: 20px !important;
+    padding: 0 15px !important;
+    background-color: var(--input-bg) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+/* 4. Синяя кнопка "Ставка" */
+.bid-controls button[onclick^="placeBid"] {
+    flex-shrink: 0; /* Запрещаем кнопке сжиматься */
+    height: 40px !important;
+    background-color: var(--ebay-blue) !important;
+    color: white !important;
+    border-radius: 20px !important;
+    padding: 0 20px !important;
+    border: none !important;
+    box-shadow: none !important;
+    width: auto !important; /* Кнопка занимает ровно столько места, сколько нужно тексту */
+}
+
+.bid-controls button[onclick^="placeBid"]:hover {
+    background-color: var(--ebay-blue-hover) !important;
+}
+/* =======================================================
+   📱 АДАПТИВНОСТЬ (МОБИЛЬНЫЕ УСТРОЙСТВА И ПЛАНШЕТЫ)
+   ======================================================= */
+
+/* Для планшетов и телефонов (экраны меньше 768px) */
+@media (max-width: 768px) {
+    body {
+        padding: 0 15px 30px 15px; /* Уменьшаем отступы по краям */
+    }
+
+    /* Шапка: центрируем и складываем элементы */
+    header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+        padding: 15px 0;
+    }
+
+    header > div {
+        flex-direction: column;
+        width: 100%;
+        gap: 15px !important;
+    }
+
+    #main-nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+    }
+
+    /* Поиск eBay: кнопка перепрыгивает вниз */
+    .ebay-search-container {
+        flex-direction: column;
+    }
+
+    .search-box-wrapper {
+        width: 100%;
+    }
+
+    .ebay-search-btn {
+        width: 100%; /* Кнопка на всю ширину для удобного нажатия пальцем */
+    }
+
+    /* Сетка карточек: 1 колонка на смартфонах */
+    .lots-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    /* Страница создания лота: форма и превью выстраиваются друг под другом */
+    main > div[style*="display: flex; gap: 40px;"] {
+        flex-direction: column;
+        gap: 30px !important;
+    }
+
+    .add-lot-section {
+        min-width: 100% !important;
+        padding: 20px;
+    }
+
+    /* Секция превью на мобилке занимает 100% */
+    main > div section:nth-child(2) {
+        min-width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    /* Модальные окна: делаем их на весь экран, но с отступами */
+    .auth-section, #auth-modal > div, #bids-modal > div {
+        width: 95%;
+        padding: 25px 20px;
+        margin: 15% auto;
+    }
+
+    /* Шапка профиля: центрируем аватарку и кнопку выхода */
+    main > div[style*="justify-content: space-between"] {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+    }
+    main > div[style*="justify-content: space-between"] > div {
+        flex-direction: column;
+    }
+}
+
+/* Для совсем маленьких экранов (смартфоны вертикально, меньше 480px) */
+@media (max-width: 480px) {
+    /* Ломаем "капсулу" поиска на два этажа: поле ввода сверху, категории снизу */
+    .search-box-wrapper {
+        flex-direction: column;
+        border-radius: 16px;
+        padding: 10px;
+        height: auto;
+    }
+    
+    .search-box-wrapper .divider {
+        display: none; /* Убираем палочку-разделитель */
+    }
+    
+    .search-box-wrapper input {
+        width: 100%;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 5px !important;
+    }
+    
+    .search-box-wrapper select {
+        width: 100%;
+    }
+
+    /* Два инпута в один ряд (Категория и Цена) при создании лота - ломаем в колонку */
+    .add-lot-section form > div[style*="display: flex; gap: 15px;"] {
+        flex-direction: column;
+        gap: 15px !important;
+    }
+}
+/* =======================================================
+   ИСПРАВЛЕНИЕ МОДАЛЬНОГО ОКНА АВТОРИЗАЦИИ
+   ======================================================= */
+
+#auth-modal input {
+    width: 100% !important; /* Растягиваем поля на всю ширину */
+    box-sizing: border-box !important; 
+    margin-bottom: 15px !important; /* Добавляем воздух между полями */
+    background-color: var(--input-bg) !important; /* Правильный цвет для темной/светлой темы */
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 8px !important;
+    padding: 15px !important;
+    font-size: 15px !important;
+    outline: none !important;
+    transition: all 0.2s ease !important;
+}
+
+/* Красивое синее свечение при клике, как и везде на сайте */
+#auth-modal input:focus {
+    border-color: var(--ebay-blue) !important;
+    box-shadow: 0 0 0 3px rgba(54, 101, 243, 0.15) !important;
+}
+
+/* Немного скруглим кнопки для красоты */
+#auth-modal button {
+    border: none !important;
+    font-weight: 600 !important;
+    transition: transform 0.1s, opacity 0.2s !important;
+}
+
+#auth-modal button:hover {
+    opacity: 0.9 !important;
+}

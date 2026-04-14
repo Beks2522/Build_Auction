@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель Администратора</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header style="background: #11111a; border-bottom: 2px solid #e53238;">
+    <h1 style="color: white;">🛡️ Admin Dashboard</h1>
+    <nav id="main-nav" style="display: flex; gap: 10px;">
+        <button onclick="window.location.href='index.html'" style="color: white;">🏠 На сайт</button>
+    </nav>
+</header>
+
+<main class="protected-content" style="display: none; max-width: 1200px; margin: 0 auto;">
+    <div style="background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+            <thead style="background: rgba(0,0,0,0.05);">
+                <tr>
+                    <th style="padding: 15px; border-bottom: 2px solid var(--border-color);">ID Лота</th>
+                    <th style="padding: 15px; border-bottom: 2px solid var(--border-color);">Название</th>
+                    <th style="padding: 15px; border-bottom: 2px solid var(--border-color);">Продавец</th>
+                    <th style="padding: 15px; border-bottom: 2px solid var(--border-color);">Цена</th>
+                    <th style="padding: 15px; border-bottom: 2px solid var(--border-color);">Статус</th>
+                    <th style="padding: 15px; border-bottom: 2px solid var(--border-color);">Действие</th>
+                </tr>
+            </thead>
+            <tbody id="admin-lots-tbody">
+                </tbody>
+        </table>
+    </div>
+</main>
+
+<div id="toast-container"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой профиль | Аукцион</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <h1>👤 Личный кабинет</h1>
+    <nav id="main-nav" style="display: none; gap: 10px;">
+        <button onclick="toggleTheme()" id="theme-btn" style="background: none; border: none; box-shadow: none; font-size: 24px; padding: 0; cursor: pointer; transform: none;">🌙</button>
+        <button onclick="window.location.href='index.html'">🏠 Главная</button>
+        <button onclick="window.location.href='create.html'">➕ Создать лот</button>
+        <button onclick="window.location.href='profile.html'">👤 Профиль</button>
+    </nav>
+</header>
+
+<main class="protected-content" style="display: none; max-width: 1200px; margin: 0 auto;">
+    
+    <div style="background: var(--card-bg); padding: 30px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <div style="width: 70px; height: 70px; border-radius: 50%; background: var(--ebay-blue); color: white; display: flex; align-items: center; justify-content: center; font-size: 30px;">
+                👤
+            </div>
+            <div>
+                <h2 style="margin: 0; color: var(--text-heading); font-size: 24px;">Личный кабинет</h2>
+                <p style="margin: 0; color: var(--text-muted); margin-top: 5px;">Управляйте своими лотами и ставками</p>
+            </div>
+        </div>
+        
+        <button onclick="logout()" style="background: transparent; border: 1px solid #e53238; color: #e53238; border-radius: 20px; padding: 10px 24px; font-weight: 600; cursor: pointer; transition: 0.2s;">
+            Выйти из аккаунта
+        </button>
+    </div>
+
+    <h2 style="font-size: 20px; color: var(--text-heading); border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px;">📦 Мои выставленные лоты</h2>
+    <section class="lots-section" style="margin-bottom: 50px;">
+        <div id="my-lots-container" class="lots-grid"></div>
+    </section>
+
+    <h2 style="font-size: 20px; color: var(--text-heading); border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px;">⚖️ Мои ставки (Аукционы)</h2>
+    <section class="lots-section" style="margin-bottom: 50px;">
+        <div id="my-bids-container" class="lots-grid"></div>
+    </section>
+
+    <h2 style="font-size: 20px; color: var(--text-heading); border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px;">❤️ Мое избранное</h2>
+    <section class="lots-section" style="margin-bottom: 50px;">
+        <div id="my-favorites-container" class="lots-grid"></div>
+    </section>
+
+</main>
+
+<div id="toast-container"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="app.js"></script>
+</body>
+</html>
