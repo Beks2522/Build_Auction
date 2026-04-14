@@ -6,6 +6,7 @@
     "no-inline-styles": "off",
     "axe/forms": "off",
     "button-type": "off",
-    "axe/parsing": "off"
+    "axe/parsing": "off",
+    "axe/text-alternatives": "off"
   }
 }

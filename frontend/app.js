@@ -40,12 +40,19 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
         
         protectedSections.forEach(el => el.style.display = 'block');
 
-        supabaseClient.from('profiles').select('username').eq('id', session.user.id).single()
-            .then(({data}) => {
-                if (data && document.getElementById('current-username')) {
-                    document.getElementById('current-username').innerText = data.username;
-                }
-            });
+// Найди место, где получаешь username и замени запрос на этот:
+supabaseClient.from('profiles').select('username, avatar_url').eq('id', session.user.id).single()
+    .then(({data}) => {
+        if (data) {
+            if (document.getElementById('current-username')) {
+                document.getElementById('current-username').innerText = data.username;
+            }
+            // Если ссылка на аватар есть — ставим её в кружочек
+            if (data.avatar_url && document.getElementById('user-avatar')) {
+                document.getElementById('user-avatar').src = data.avatar_url;
+            }
+        }
+    });
 
             supabaseClient.from('bids').select('lot_id').eq('bidder_id', session.user.id)
             .then(({data}) => {
@@ -575,10 +582,28 @@ async function loadSellerProfile() {
     if (!sellerId || !container) return;
 
     try {
+        // 1. СНАЧАЛА ЗАПРАШИВАЕМ ИМЯ И АВАТАРКУ ИЗ БАЗЫ СОВЕРШЕННО ТОЧНО
+        const { data: profileData } = await supabaseClient
+            .from('profiles')
+            .select('username, avatar_url')
+            .eq('id', sellerId)
+            .single();
+
+        if (profileData) {
+            nameHeader.innerText = profileData.username; // Ставим имя
+            // Если есть фото - ставим фото
+            if (profileData.avatar_url && document.getElementById('seller-avatar')) {
+                document.getElementById('seller-avatar').src = profileData.avatar_url;
+            }
+        }
+
+        // 2. ЗАТЕМ ПОЛУЧАЕМ ЛОТЫ ПРОДАВЦА ЧЕРЕЗ ТВОЙ СЕРВЕР
         const response = await fetch(`${API_URL}/users/${sellerId}/public`);
         const data = await response.json();
 
-        nameHeader.innerText = data.username;
+        // (Если профиль не загрузился на 1 шаге, подстраховочно ставим имя с сервера)
+        if (!profileData && data.username) nameHeader.innerText = data.username;
+
         container.innerHTML = data.lots.length ? '' : '<p>У этого продавца пока нет активных лотов.</p>';
 
         data.lots.forEach(lot => {
@@ -591,7 +616,9 @@ async function loadSellerProfile() {
                     <button onclick="window.location.href='index.html'" style="background:var(--ebay-blue); margin-top:auto;">Посмотреть лот</button>
                 </div>`;
         });
-    } catch (e) { console.error(e); }
+    } catch (e) { 
+        console.error('Ошибка загрузки профиля продавца:', e); 
+    }
 }
 
 // Добавь инициализацию в DOMContentLoaded
@@ -638,5 +665,47 @@ async function loadAdminPanel() {
         });
     } catch (error) {
         console.error('Ошибка загрузки админки:', error);
+    }
+}
+// --- ЗАГРУЗКА АВАТАРКИ ---
+async function uploadAvatar(input) {
+    const file = input.files[0];
+    if (!file || !currentSession) return;
+
+    try {
+        showToast('Загружаем фото...', 'success');
+
+        // 1. Создаем уникальное имя файла (id_пользователя + время)
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${currentSession.user.id}_${Math.random()}.${fileExt}`;
+        const filePath = `${fileName}`;
+
+        // 2. Загружаем файл в бакет 'avatars'
+        let { error: uploadError } = await supabaseClient.storage
+            .from('avatars')
+            .upload(filePath, file);
+
+        if (uploadError) throw uploadError;
+
+        // 3. Получаем публичную ссылку на файл
+        const { data: { publicUrl } } = supabaseClient.storage
+            .from('avatars')
+            .getPublicUrl(filePath);
+
+        // 4. Обновляем колонку avatar_url в таблице profiles
+        const { error: updateError } = await supabaseClient
+            .from('profiles')
+            .update({ avatar_url: publicUrl })
+            .eq('id', currentSession.user.id);
+
+        if (updateError) throw updateError;
+
+        // 5. Обновляем картинку на странице
+        document.getElementById('user-avatar').src = publicUrl;
+        showToast('Аватар обновлен! ✨', 'success');
+
+    } catch (error) {
+        console.error('Ошибка загрузки аватара:', error);
+        showToast('Не удалось загрузить фото', 'error');
     }
 }
