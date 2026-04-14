@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'https://build-auction.onrender.com/api';
 const supabaseUrl = 'https://vphyopvpxoruhyqwrlos.supabase.co'; 
 const supabaseKey = 'sb_publishable_NMVwPdeJU_NFDHPCmES5WQ_NgqzNe0S'; 
 
