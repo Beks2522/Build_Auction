@@ -11,6 +11,8 @@
     --ebay-blue: #3665f3;
     --ebay-blue-hover: #2b50c5;
     --price-color: #111820;
+    --auth-btn-bg: #3665f3;   
+    --auth-btn-text: #ffffff; 
 }
 
 body.dark-mode {
@@ -591,4 +593,13 @@ body.dark-mode .add-lot-section form input[type="datetime-local"]::-webkit-calen
 
 #auth-modal button:hover {
     opacity: 0.9 !important;
+}
+/* В конец style.css (Светлая тема) */
+body.light-theme {
+    /* ... твои старые светлые переменные ... */
+    --bg-color: #f5f7fa; 
+
+    /* ДОБАВЬ ЭТИ ДВЕ ПЕРЕМЕННЫЕ ДЛЯ СВЕТЛОЙ ТЕМЫ */
+    --auth-btn-bg: #0654ba;   /* В светлой теме синий чуть темнее для контраста */
+    --auth-btn-text: #ffffff; /* Текст пусть остается белым */
 }
