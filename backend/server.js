@@ -21,6 +21,24 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 app.use(cors());
 app.use(express.json());
 
+// --- ФУНКЦИЯ ПРОВЕРКИ АВТОРИЗАЦИИ (ОХРАННИК) ---
+const authenticateToken = async (req, res, next) => {
+    // Ищем токен (билет) в заголовках запроса
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    
+    if (!token) return res.status(401).json({ error: 'Доступ запрещен. Вы не авторизованы.' });
+
+    // Проверяем билет через Supabase
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    
+    if (error || !user) return res.status(403).json({ error: 'Неверный или просроченный токен.' });
+
+    // Если всё ок, пропускаем пользователя дальше
+    req.user = user;
+    next();
+};
+
 // ---------------- ROUTES ---------------- //
 
 // Проверка сервера
