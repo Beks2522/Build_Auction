@@ -29,25 +29,32 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
     const mainNav = document.getElementById('main-nav');
     const authModal = document.getElementById('auth-modal');
     
+    // 👉 1. Находим новую кнопку сообщений
+    const messagesBtn = document.getElementById('nav-messages-btn'); 
+    
     const protectedSections = document.querySelectorAll('.protected-content');
 
     if (session) {
         // Проверяем возврат со Stripe
-const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.get('payment_success') === 'true') {
-    const paidLotId = urlParams.get('lot_id');
-    fetch(`${API_URL}/lots/${paidLotId}/mark-paid`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${session.access_token}` }
-    }).then(() => {
-        showToast('🎉 Оплата успешно завершена!', 'success');
-        window.history.replaceState({}, document.title, window.location.pathname); // Убираем мусор из ссылки
-    });
-}
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('payment_success') === 'true') {
+            const paidLotId = urlParams.get('lot_id');
+            fetch(`${API_URL}/lots/${paidLotId}/mark-paid`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${session.access_token}` }
+            }).then(() => {
+                showToast('🎉 Оплата успешно завершена!', 'success');
+                window.history.replaceState({}, document.title, window.location.pathname); // Убираем мусор из ссылки
+            });
+        }
+        
         if(guestInfo) guestInfo.style.display = 'none';
         if(userInfo) userInfo.style.display = 'block';
         if(mainNav) mainNav.style.display = 'flex'; 
         if(authModal) closeAuthModal(); 
+        
+        // 👉 2. ПОКАЗЫВАЕМ кнопку чата авторизованному юзеру
+        if(messagesBtn) messagesBtn.style.display = 'block'; 
         
         protectedSections.forEach(el => el.style.display = 'block');
 
@@ -80,6 +87,9 @@ if (urlParams.get('payment_success') === 'true') {
         if(guestInfo) guestInfo.style.display = 'block';
         if(userInfo) userInfo.style.display = 'none';
         if(mainNav) mainNav.style.display = 'none';
+        
+        // 👉 3. ПРЯЧЕМ кнопку чата от гостя
+        if(messagesBtn) messagesBtn.style.display = 'none'; 
         
         protectedSections.forEach(el => el.style.display = 'none');
     }
