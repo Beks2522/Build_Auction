@@ -88,8 +88,7 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
         if(userInfo) userInfo.style.display = 'none';
         if(mainNav) mainNav.style.display = 'none';
         
-        // 👉 3. ПРЯЧЕМ кнопку чата от гостя
-        if(messagesBtn) messagesBtn.style.display = 'none'; 
+
         
         protectedSections.forEach(el => el.style.display = 'none');
     }
