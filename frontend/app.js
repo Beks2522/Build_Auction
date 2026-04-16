@@ -346,21 +346,28 @@ async function loadLots(searchQuery = '', categoryFilter = 'all', sortFilter = '
 </div>
                 <div class="price" id="lot-price-${lot.id}">Текущая ставка: ${lot.current_price} ₸</div>
                 <button onclick="showBidsHistory('${lot.id}')" style="background:none; border:none; box-shadow:none; color:#2980b9; text-decoration:underline; padding:0; margin-top:5px; font-size:14px;">История ставок</button>
-                <div class="timer" id="timer-${lot.id}" data-endtime="${lot.end_time}" style="margin:10px 0;color:#e67e22;font-weight:bold;">Загрузка...</div>
+                
+                <div class="timer" id="timer-${lot.id}" data-endtime="${lot.end_time}" style="margin:10px 0;color:#e67e22;font-weight:bold;">
+                    ${isEnded ? '<span style="color:red;">АУКЦИОН ЗАВЕРШЕН</span>' : 'Загрузка...'}
+                </div>
+                
                 <div class="bid-controls" id="bid-controls-${lot.id}" style="${isEnded ? 'display:none;' : ''}">
                     <input type="number" id="bid-input-${lot.id}" placeholder="Ставка" min="${lot.current_price + 1}">
                     <button onclick="placeBid('${lot.id}')">Ставка</button>
                 </div>
-                ${isEnded ? '<div style="color:red;font-weight:bold;">АУКЦИОН ЗАВЕРШЕН</div>' : ''}
-                ${buyNowBtnHtml} 
+                
+                ${buyNowBtnHtml}
+                ${chatBtnHtml} 
                 ${deleteBtnHtml}
             `;
             container.appendChild(card);
         });
+        
         if (!window.timerInterval) window.timerInterval = setInterval(updateAllTimers, 1000);
-    } catch (error) { console.error(error); }
+    } catch (error) { 
+        console.error(error); 
+    }
 }
-
 async function deleteLot(lotId) {
     if (!confirm('Удалить лот?')) return; 
     const response = await fetch(`${API_URL}/lots/${lotId}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${currentSession.access_token}` }});
