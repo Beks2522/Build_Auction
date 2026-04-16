@@ -326,15 +326,16 @@ async function loadLots(searchQuery = '', categoryFilter = 'all', sortFilter = '
             // Кнопка Купить сейчас
             let buyNowBtnHtml = '';
             if (!isEnded && lot.buy_now_price) {
-                buyNowBtnHtml = `<button onclick="buyNow('${lot.id}')" style="background:#ffc107; color:#000; margin-top:10px; width:100%; font-weight:bold; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">⚡ Купить сейчас за $${lot.buy_now_price}</button>`;
+                // Убрали длинный style, добавили класс btn-buy-now
+                buyNowBtnHtml = `<button class="btn-buy-now" onclick="buyNow('${lot.id}')">⚡ Купить сейчас за $${lot.buy_now_price}</button>`;
             }
 
             // Кнопка Чата (Показываем, если мы вошли и это НЕ наш лот)
             let chatBtnHtml = '';
             if (currentSession && currentSession.user.id !== lot.seller_id) {
-                chatBtnHtml = `<button onclick="openChat('${lot.id}', '${lot.seller_id}', '${lot.profiles?.username || 'Продавец'}')" style="background:#3498db; color:white; width:100%; margin-top:10px; border-radius:8px; font-weight:bold;">💬 Написать продавцу</button>`;
+                // Тут у тебя уже всё было правильно!
+                chatBtnHtml = `<button class="btn-chat" onclick="openChat('${lot.id}', '${lot.seller_id}', '${sellerName}')">💬 Написать продавцу</button>`;
             }
-
             const catNames = { 'electronics': 'Электроника', 'auto': 'Авто', 'home': 'Для дома', 'clothing': 'Одежда', 'other': 'Разное' };
             
             const card = document.createElement('div');
