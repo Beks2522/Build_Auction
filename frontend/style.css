@@ -649,3 +649,69 @@ body.light-theme {
     color: var(--ebay-blue) !important;
     background: rgba(54, 101, 243, 0.05) !important;
 }
+/* =======================================================
+   ДИЗАЙН ЛИЧНОГО КАБИНЕТА (ПРОФИЛЬ)
+   ======================================================= */
+
+/* 1. Шапка профиля: раскидываем элементы по краям */
+.profile-header-container {
+    display: flex;
+    justify-content: space-between; /* Аватар слева, кнопка справа */
+    align-items: center;            /* Выравниваем по центру по вертикали */
+    background: var(--card-bg);
+    padding: 25px 30px;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 40px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+body.dark-mode .profile-header-container {
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+/* Группируем аватар и текст вместе */
+.profile-info-group {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Красивая кнопка выхода */
+.btn-logout {
+    background: transparent !important;
+    color: #e74c3c !important;
+    border: 2px solid #e74c3c !important;
+    border-radius: 8px !important;
+    padding: 10px 20px !important;
+    font-weight: 600 !important;
+    cursor: pointer;
+    transition: all 0.2s ease !important;
+}
+
+.btn-logout:hover {
+    background: #e74c3c !important;
+    color: white !important;
+    transform: translateY(-2px);
+}
+
+/* 2. Премиальные заголовки секций (Лоты, Ставки, Избранное) */
+.section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-heading);
+    padding: 12px 20px;
+    background: var(--card-bg); 
+    border-left: 5px solid var(--ebay-blue); /* Фирменная синяя полоска слева */
+    border-radius: 4px 12px 12px 4px;
+    margin: 40px 0 25px 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+body.dark-mode .section-title {
+    background: #252525;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}

@@ -6,58 +6,53 @@
     <title>Мой профиль | Аукцион</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="dark-theme">
 
 <header>
     <h1>👤 Личный кабинет</h1>
-<nav id="main-nav" style="display: none; gap: 10px;">
-            <button onclick="window.location.href='index.html'">🏠 Главная</button>
-            <button onclick="window.location.href='create.html'">➕ Создать лот</button>
-            
-            <button id="nav-messages-btn" onclick="window.location.href='messages.html'" style="display: none;">💬 Сообщения</button>
-            
-            <button onclick="window.location.href='profile.html'">👤 Профиль</button>
-        </nav>
+    <nav id="main-nav" style="display: none; gap: 10px;">
+        <button onclick="window.location.href='index.html'">🏠 Главная</button>
+        <button onclick="window.location.href='create.html'">➕ Создать лот</button>
+        <button id="nav-messages-btn" onclick="window.location.href='messages.html'" style="display: none;">💬 Сообщения</button>
+        <button onclick="window.location.href='profile.html'">👤 Профиль</button>
+    </nav>
 </header>
 
 <main class="protected-content" style="display: none; max-width: 1200px; margin: 0 auto;">
     
-<div style="display: flex; align-items: center; gap: 20px;">
-    <div id="avatar-container" style="position: relative; cursor: pointer;" onclick="document.getElementById('avatar-input').click()">
-        <img id="user-avatar" src="https://placehold.co/100x100?text=👤" 
-             style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--ebay-blue);">
-        <div style="position: absolute; bottom: 0; right: 0; background: var(--ebay-blue); color: white; border-radius: 50%; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; font-size: 14px;">
-            📷
-        </div>
-    </div>
-    <input type="file" id="avatar-input" accept="image/*" style="display: none;" onchange="uploadAvatar(this)">
-    
-    <div>
-        <h2 id="current-username" style="margin: 0; color: var(--text-heading); font-size: 24px;">Личный кабинет</h2>
-        <p style="margin: 0; color: var(--text-muted); margin-top: 5px;">Нажмите на фото, чтобы изменить аватар</p>
-    </div>
-</div>
-                <h2 style="margin: 0; color: var(--text-heading); font-size: 24px;">Личный кабинет</h2>
-                <p style="margin: 0; color: var(--text-muted); margin-top: 5px;">Управляйте своими лотами и ставками</p>
+    <div class="profile-header-container">
+        
+        <div class="profile-info-group">
+            <div id="avatar-container" style="position: relative; cursor: pointer;" onclick="document.getElementById('avatar-input').click()">
+                <img id="user-avatar" src="https://placehold.co/100x100?text=👤" 
+                     style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--ebay-blue);">
+                <div style="position: absolute; bottom: 0; right: 0; background: var(--ebay-blue); color: white; border-radius: 50%; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; font-size: 14px;">
+                    📷
+                </div>
+            </div>
+            <input type="file" id="avatar-input" accept="image/*" style="display: none;" onchange="uploadAvatar(this)">
+            
+            <div>
+                <h2 id="current-username" style="margin: 0; color: var(--text-heading); font-size: 24px;">Загрузка...</h2>
+                <p style="margin: 0; color: var(--text-muted); margin-top: 5px;">Нажмите на фото, чтобы изменить аватар</p>
             </div>
         </div>
         
-        <button onclick="logout()" style="background: transparent; border: 1px solid #e53238; color: #e53238; border-radius: 20px; padding: 10px 24px; font-weight: 600; cursor: pointer; transition: 0.2s;">
-            Выйти из аккаунта
-        </button>
+        <button class="btn-logout" onclick="logout()">Выйти из аккаунта</button>
+        
     </div>
 
-    <h2 style="font-size: 20px; color: var(--text-heading); border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px;">📦 Мои выставленные лоты</h2>
+    <h2 class="section-title">📦 Мои выставленные лоты</h2>
     <section class="lots-section" style="margin-bottom: 50px;">
         <div id="my-lots-container" class="lots-grid"></div>
     </section>
 
-    <h2 style="font-size: 20px; color: var(--text-heading); border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px;">⚖️ Мои ставки (Аукционы)</h2>
+    <h2 class="section-title">⚖️ Мои ставки (Аукционы)</h2>
     <section class="lots-section" style="margin-bottom: 50px;">
         <div id="my-bids-container" class="lots-grid"></div>
     </section>
 
-    <h2 style="font-size: 20px; color: var(--text-heading); border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px;">❤️ Мое избранное</h2>
+    <h2 class="section-title">❤️ Мое избранное</h2>
     <section class="lots-section" style="margin-bottom: 50px;">
         <div id="my-favorites-container" class="lots-grid"></div>
     </section>
