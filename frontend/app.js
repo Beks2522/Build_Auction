@@ -327,14 +327,14 @@ async function loadLots(searchQuery = '', categoryFilter = 'all', sortFilter = '
             let buyNowBtnHtml = '';
             if (!isEnded && lot.buy_now_price) {
                 // Убрали длинный style, добавили класс btn-buy-now
-                buyNowBtnHtml = `<button class="btn-buy-now" onclick="buyNow('${lot.id}')">⚡ Купить сейчас за ₸${lot.buy_now_price}</button>`;
+                buyNowBtnHtml = `<button class="btn-buy-now" onclick="buyNow('${lot.id}')">Купить сейчас за ₸${lot.buy_now_price}</button>`;
             }
             const currentSellerName = (lot.profiles && lot.profiles.username) ? lot.profiles.username : 'Продавец';
             // Кнопка Чата (Показываем, если мы вошли и это НЕ наш лот)
             let chatBtnHtml = '';
             if (currentSession && currentSession.user.id !== lot.seller_id) {
                 // Теперь передаем нашу новую переменную currentSellerName
-                chatBtnHtml = `<button class="btn-chat" onclick="openChat('${lot.id}', '${lot.seller_id}', '${currentSellerName}')">💬 Написать продавцу</button>`;
+                chatBtnHtml = `<button class="btn-chat" onclick="openChat('${lot.id}', '${lot.seller_id}', '${currentSellerName}')">Написать продавцу</button>`;
             }
             const catNames = { 'electronics': 'Электроника', 'auto': 'Авто', 'home': 'Для дома', 'clothing': 'Одежда', 'other': 'Разное' };
             
@@ -404,7 +404,7 @@ async function loadMyProfile() {
                     ${img}
                     <h3>${lot.title}</h3>
                     <div class="price">₸${lot.current_price}</div>
-                    <button onclick="deleteLot('${lot.id}')" style="margin-top: auto;">🗑️ Удалить</button>
+                    <button onclick="deleteLot('${lot.id}')" style="margin-top: auto;">Удалить</button>
                 </div>`;
         });
 
@@ -427,10 +427,10 @@ let payButtonHtml = '';
             if (isEnded && isWinning) {
                 if (!bid.lots.is_paid) {
                     // Используем наш новый класс btn-pay-lot
-                    payButtonHtml = `<button class="btn-pay-lot" onclick="payForLot('${bid.lots.id}')">💳 Оплатить лот</button>`;
+                    payButtonHtml = `<button class="btn-pay-lot" onclick="payForLot('${bid.lots.id}')">Оплатить лот</button>`;
                 } else {
                     // Добавляем новый класс для статуса "Оплачено"
-                    payButtonHtml = `<div class="status-paid">✅ Оплачено</div>`;
+                    payButtonHtml = `<div class="status-paid">Оплачено</div>`;
                 }
             }
                         
@@ -459,7 +459,7 @@ let payButtonHtml = '';
                         ${img}
                         <h3>${fav.lots.title}</h3>
                         <div class="price">$${fav.lots.current_price}</div>
-                        <button onclick="toggleFavorite('${fav.lots.id}')" style="margin-top: auto; border: 1px solid #e53238; color: #e53238; background: transparent; border-radius: 20px; height: 40px; cursor: pointer;">❌ Убрать из избранного</button>
+                        <button onclick="toggleFavorite('${fav.lots.id}')" style="margin-top: auto; border: 1px solid #e53238; color: #e53238; background: transparent; border-radius: 20px; height: 40px; cursor: pointer;">Убрать из избранного</button>
                     </div>`; 
             }
         });
@@ -698,7 +698,7 @@ async function buyNow(lotId) {
         });
 
         if (response.ok) {
-            showToast('Поздравляем с покупкой! 🎉', 'success');
+            showToast('Поздравляем с покупкой! ', 'success');
             loadLots(); 
         } else {
             const err = await response.json();
