@@ -276,22 +276,23 @@ if (addLotForm) {
     });
 }
 
-
 // --- ЗАГРУЗКА ЛОТОВ ---
-// Добавили третий параметр: sortFilter
 async function loadLots(searchQuery = '', categoryFilter = 'all', sortFilter = 'newest') { 
+    const container = document.getElementById('lots-container');
+    if (!container) return;
+
+    // 1. ВКЛЮЧАЕМ СПИННЕР ПЕРЕД НАЧАЛОМ ЗАГРУЗКИ
+    container.innerHTML = '<div class="loader"></div>';
+
     try {
-        // Передаем сортировку на сервер в ссылке
         let url = `${API_URL}/lots?category=${categoryFilter}&sort=${sortFilter}`;
         if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
         
         const response = await fetch(url);
-        // ... дальше код функции остается без изменений ...
         const lots = await response.json();
-        const container = document.getElementById('lots-container');
-        if (!container) return;
         
-        container.innerHTML = lots.length === 0 ? '<p>Нет активных лотов.</p>' : '';
+        // 2. УБИРАЕМ СПИННЕР И СТАВИМ ПУСТОТУ (ИЛИ НАДПИСЬ, ЧТО ЛОТОВ НЕТ)
+        container.innerHTML = lots.length === 0 ? '<p style="text-align:center; color: var(--text-muted);">Нет активных лотов.</p>' : '';
 
         lots.forEach(lot => {
             const isEnded = new Date() > new Date(lot.end_time);
