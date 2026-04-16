@@ -6,7 +6,6 @@ const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 let currentSession = null;
 const myBidLotIds = new Set();  
 
-// --- УВЕДОМЛЕНИЯ ---
 function showToast(message, type = 'info') {
     const container = document.getElementById('toast-container');
     if (!container) return;
@@ -21,7 +20,6 @@ function showToast(message, type = 'info') {
     }, 3000);
 }
 
-// --- АВТОРИЗАЦИЯ ---
 supabaseClient.auth.onAuthStateChange((event, session) => {
     currentSession = session;
     const guestInfo = document.getElementById('guest-info');
@@ -29,7 +27,6 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
     const mainNav = document.getElementById('main-nav');
     const authModal = document.getElementById('auth-modal');
     
-    // Защищаем контент ТОЛЬКО на страницах профиля и создания лота
     const protectedSections = document.querySelectorAll('.protected-content');
 
     if (session) {
