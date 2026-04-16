@@ -551,19 +551,15 @@ app.post('/api/lots/:id/mark-paid', authenticateToken, async (req, res) => {
     }
 });
 
-// ==========================================
 // ЧАТ (СООБЩЕНИЯ)
-// ==========================================
-
 // Получить список всех диалогов (Inbox) пользователя
 app.get('/api/my/conversations', authenticateToken, async (req, res) => {
     try {
-        // Мы ищем все сообщения, где пользователь либо отправитель, либо получатель
         const { data, error } = await supabase
             .from('messages')
             .select(`
                 lot_id,
-                lots (title, image_url),
+                lots (title),
                 sender_id,
                 receiver_id
             `)
@@ -580,10 +576,11 @@ app.get('/api/my/conversations', authenticateToken, async (req, res) => {
                 seenLots.add(msg.lot_id);
                 // Определяем, кто наш собеседник в этом лоте
                 const partnerId = msg.sender_id === req.user.id ? msg.receiver_id : msg.sender_id;
+                
                 conversations.push({
                     lotId: msg.lot_id,
-                    lotTitle: msg.lots.title,
-                    lotImage: msg.lots.image_url,
+                    // Используем безопасный доступ, вдруг лот удалили
+                    lotTitle: msg.lots ? msg.lots.title : 'Неизвестный лот', 
                     partnerId: partnerId
                 });
             }
