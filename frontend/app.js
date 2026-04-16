@@ -538,6 +538,7 @@ async function loadSellerProfile() {
     } catch (e) { 
         console.error('Ошибка загрузки профиля продавца:', e); 
     }
+    loadReviews(sellerId);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -640,3 +641,95 @@ async function buyNow(lotId) {
         showToast('Системная ошибка', 'error');
     }
 }
+// --- СИСТЕМА ОТЗЫВОВ ---
+
+// 1. Функция загрузки отзывов
+async function loadReviews(sellerId) {
+    const list = document.getElementById('reviews-list');
+    const avgEl = document.getElementById('average-rating');
+    const addSection = document.getElementById('add-review-section');
+    if (!list) return;
+
+    // Показываем форму отзыва только авторизованным (и не самому себе)
+    if (currentSession && currentSession.user.id !== sellerId) {
+        addSection.style.display = 'block';
+    }
+
+    try {
+        const res = await fetch(`${API_URL}/users/${sellerId}/reviews`);
+        const reviews = await res.json();
+
+        if (!reviews.length) {
+            list.innerHTML = '<p style="color: var(--text-muted);">Пока нет отзывов. Будьте первым!</p>';
+            return;
+        }
+
+        // Высчитываем среднюю оценку
+        const sum = reviews.reduce((acc, rev) => acc + rev.rating, 0);
+        const avg = (sum / reviews.length).toFixed(1); // Округляем до 1 знака (например, 4.8)
+        avgEl.innerText = avg;
+
+        list.innerHTML = ''; // Очищаем список
+
+        // Рисуем каждый отзыв
+        reviews.forEach(r => {
+            const stars = '⭐'.repeat(r.rating); // Превращаем цифру 5 в 5 звездочек
+            const avatar = r.buyer.avatar_url 
+                ? `<img src="${r.buyer.avatar_url}" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border: 2px solid var(--ebay-blue);">` 
+                : `<div style="width:45px; height:45px; border-radius:50%; background:var(--border-color); display:flex; align-items:center; justify-content:center; font-size: 20px;">👤</div>`;
+
+            list.innerHTML += `
+                <div style="background: var(--card-bg); padding: 15px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 15px; display:flex; gap:15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    ${avatar}
+                    <div style="flex-grow: 1;">
+                        <div style="font-weight:bold; color: var(--text-heading); font-size: 15px;">
+                            ${r.buyer.username} 
+                            <span style="font-weight:normal; font-size:12px; color:var(--text-muted); margin-left: 5px;">• ${new Date(r.created_at).toLocaleDateString()}</span>
+                        </div>
+                        <div style="margin: 5px 0; letter-spacing: 2px;">${stars}</div>
+                        <div style="color: var(--text-color); font-size: 14px; line-height: 1.4;">${r.comment || '<i>Без комментариев</i>'}</div>
+                    </div>
+                </div>
+            `;
+        });
+    } catch (e) { 
+        console.error('Ошибка загрузки отзывов:', e); 
+        list.innerHTML = '<p style="color: red;">Ошибка загрузки отзывов.</p>';
+    }
+}
+
+// 2. Функция отправки отзыва
+async function submitReview() {
+    const params = new URLSearchParams(window.location.search);
+    const sellerId = params.get('id');
+    const rating = Number(document.getElementById('review-rating').value);
+    const comment = document.getElementById('review-comment').value;
+
+    if (!currentSession) return showToast('Сначала авторизуйтесь!', 'error');
+
+    const btn = event.target;
+    btn.innerText = 'Отправка...';
+    btn.disabled = true;
+
+    try {
+        const res = await fetch(`${API_URL}/users/${sellerId}/reviews`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentSession.access_token}` },
+            body: JSON.stringify({ rating, comment })
+        });
+
+        if (res.ok) {
+            showToast('Отзыв опубликован! Спасибо!', 'success');
+            document.getElementById('review-comment').value = ''; // Очищаем поле ввода
+            loadReviews(sellerId); // Обновляем список отзывов без перезагрузки страницы
+        } else {
+            const err = await res.json();
+            showToast(`Ошибка: ${err.error}`, 'error');
+        }
+    } catch (e) {
+        showToast('Ошибка сети', 'error');
+    } finally {
+        btn.innerText = 'Опубликовать отзыв';
+        btn.disabled = false;
+    }
+}   

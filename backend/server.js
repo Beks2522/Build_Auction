@@ -427,6 +427,57 @@ app.get('/api/admin/lots', async (req, res) => {
   if (error) return res.status(500).json({ error: error.message });
   res.json(data);
 });
+
+// ==========================================
+// ОТЗЫВЫ О ПРОДАВЦАХ
+// ==========================================
+
+// 1. Оставить отзыв
+app.post('/api/users/:id/reviews', authenticateToken, async (req, res) => {
+    const sellerId = req.params.id;
+    const buyerId = req.user.id;
+    const { rating, comment } = req.body;
+
+    if (sellerId === buyerId) return res.status(400).json({ error: 'Нельзя оставить отзыв самому себе!' });
+
+    try {
+        const { error } = await supabase.from('reviews').insert([{
+            seller_id: sellerId,
+            buyer_id: buyerId,
+            rating,
+            comment
+        }]);
+
+        if (error) throw error;
+        res.json({ message: 'Отзыв успешно добавлен!' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// 2. Получить список отзывов продавца
+app.get('/api/users/:id/reviews', async (req, res) => {
+    try {
+        // Достаем все отзывы
+        const { data: reviews, error } = await supabase
+            .from('reviews')
+            .select('*')
+            .eq('seller_id', req.params.id)
+            .order('created_at', { ascending: false });
+            
+        if (error) throw error;
+
+        // Аккуратно подтягиваем имена и аватарки тех, кто оставил отзыв
+        for (let review of reviews) {
+            const { data: profile } = await supabase.from('profiles').select('username, avatar_url').eq('id', review.buyer_id).single();
+            review.buyer = profile || { username: 'Аноним' };
+        }
+
+        res.json(reviews);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 // ---------------- START ---------------- //
 app.listen(port, () => {
   console.log(`Сервер запущен: http://localhost:${port}`);
