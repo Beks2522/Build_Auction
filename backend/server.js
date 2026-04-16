@@ -555,6 +555,46 @@ app.post('/api/lots/:id/mark-paid', authenticateToken, async (req, res) => {
 // ЧАТ (СООБЩЕНИЯ)
 // ==========================================
 
+// Получить список всех диалогов (Inbox) пользователя
+app.get('/api/my/conversations', authenticateToken, async (req, res) => {
+    try {
+        // Мы ищем все сообщения, где пользователь либо отправитель, либо получатель
+        const { data, error } = await supabase
+            .from('messages')
+            .select(`
+                lot_id,
+                lots (title, image_url),
+                sender_id,
+                receiver_id
+            `)
+            .or(`sender_id.eq.${req.user.id},receiver_id.eq.${req.user.id}`);
+
+        if (error) throw error;
+
+        // Фильтруем уникальные диалоги (чтобы один лот не дублировался)
+        const conversations = [];
+        const seenLots = new Set();
+
+        data.forEach(msg => {
+            if (!seenLots.has(msg.lot_id)) {
+                seenLots.add(msg.lot_id);
+                // Определяем, кто наш собеседник в этом лоте
+                const partnerId = msg.sender_id === req.user.id ? msg.receiver_id : msg.sender_id;
+                conversations.push({
+                    lotId: msg.lot_id,
+                    lotTitle: msg.lots.title,
+                    lotImage: msg.lots.image_url,
+                    partnerId: partnerId
+                });
+            }
+        });
+
+        res.json(conversations);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // 1. Получить историю переписки по конкретному лоту
 app.get('/api/lots/:id/messages', authenticateToken, async (req, res) => {
     try {

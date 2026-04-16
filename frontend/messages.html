@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Мои сообщения | Build_Auction</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-theme">
+    <header>
+        <nav id="main-nav">
+            <a href="index.html">🏠 Главная</a>
+            <a href="profile.html">👤 Профиль</a>
+        </nav>
+    </header>
+
+    <div class="container" style="display: flex; height: 80vh; margin-top: 20px; gap: 20px;">
+        <div id="inbox-list" style="width: 300px; background: var(--card-bg); border-radius: 12px; overflow-y: auto; border: 1px solid var(--border-color);">
+            <h2 style="padding: 15px; border-bottom: 1px solid var(--border-color);">Чаты</h2>
+            <div id="conversations-container">
+                <p style="padding: 20px; color: var(--text-muted);">Загрузка диалогов...</p>
+            </div>
+        </div>
+
+        <div id="active-chat-window" style="flex-grow: 1; background: var(--card-bg); border-radius: 12px; display: flex; flex-direction: column; border: 1px solid var(--border-color); position: relative;">
+            <div id="chat-not-selected" style="margin: auto; text-align: center; color: var(--text-muted);">
+                <h3>Выберите чат, чтобы начать общение</h3>
+            </div>
+            
+            <div id="chat-content" style="display: none; flex-direction: column; height: 100%;">
+                <div id="active-chat-header" style="padding: 15px; background: var(--ebay-blue); color: white; border-radius: 12px 12px 0 0;">
+                    <h3 id="active-partner-name" style="margin:0;">Чат</h3>
+                </div>
+                <div id="chat-messages" style="flex-grow: 1; overflow-y: auto; padding: 20px; background: #e5ddd5; display: flex; flex-direction: column; gap: 10px;"></div>
+                <div style="padding: 15px; display: flex; gap: 10px;">
+                    <input type="text" id="chat-input" placeholder="Введите сообщение..." style="flex-grow: 1; padding: 10px; border-radius: 20px; border: 1px solid var(--border-color);">
+                    <button onclick="sendMessage()" style="border-radius: 50%; width: 45px; height: 45px;">➤</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js"></script>
+    <script src="chat.js"></script>
+    <script>
+        // Специальная логика только для этой страницы
+        window.addEventListener('load', async () => {
+            // Ждем авторизации
+            setTimeout(loadInbox, 1000);
+        });
+
+        async function loadInbox() {
+            if (!currentSession) return;
+            try {
+                const res = await fetch(`${API_URL}/my/conversations`, {
+                    headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
+                });
+                const convs = await res.json();
+                const container = document.getElementById('conversations-container');
+                container.innerHTML = '';
+
+                if (convs.length === 0) {
+                    container.innerHTML = '<p style="padding: 20px;">У вас пока нет сообщений.</p>';
+                    return;
+                }
+
+                convs.forEach(c => {
+                    const item = document.createElement('div');
+                    item.style = "padding: 15px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: 0.2s;";
+                    item.className = "inbox-item";
+                    item.innerHTML = `
+                        <div style="font-weight: bold;">${c.lotTitle}</div>
+                        <div style="font-size: 12px; color: var(--text-muted);">Общение по лоту</div>
+                    `;
+                    item.onclick = () => selectChat(c.lotId, c.partnerId, c.lotTitle);
+                    container.appendChild(item);
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        function selectChat(lotId, partnerId, title) {
+            document.getElementById('chat-not-selected').style.display = 'none';
+            document.getElementById('chat-content').style.display = 'flex';
+            // Используем функцию из chat.js
+            openChat(lotId, partnerId, title);
+        }
+    </script>
+</body>
+</html>
