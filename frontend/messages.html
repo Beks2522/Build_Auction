@@ -53,7 +53,7 @@
             setTimeout(loadInbox, 1000);
         });
 
-       async function loadInbox() {
+async function loadInbox() {
             if (!currentSession) return;
             try {
                 const res = await fetch(`${API_URL}/my/conversations`, {
@@ -64,14 +64,11 @@
                 const container = document.getElementById('conversations-container');
                 container.innerHTML = '';
 
-                // НОВОЕ: Если сервер вернул ошибку, показываем её прямо на экране
                 if (convs.error) {
                     container.innerHTML = `<p style="padding: 20px; color: #e74c3c; font-weight: bold;">Ошибка: ${convs.error}</p>`;
-                    console.error("Ошибка бэкенда:", convs.error);
                     return;
                 }
 
-                // Защита от пустых данных
                 if (!Array.isArray(convs) || convs.length === 0) {
                     container.innerHTML = '<p style="padding: 20px; color: var(--text-muted);">У вас пока нет сообщений.</p>';
                     return;
@@ -91,6 +88,17 @@
             } catch (e) { 
                 console.error("Сбой в скрипте:", e); 
             }
+        } // 👈 ВОТ ЗДЕСЬ ЗАКАНЧИВАЕТСЯ loadInbox
+
+        // 👉 А ВОТ ЗДЕСЬ НАЧИНАЕТСЯ selectChat (Она должна быть снаружи!)
+        function selectChat(lotId, partnerId, title) {
+            // Прячем заглушку "Выберите чат"
+            document.getElementById('chat-not-selected').style.display = 'none';
+            // Показываем само окно переписки
+            document.getElementById('chat-content').style.display = 'flex';
+            
+            // Вызываем главную функцию чата (из твоего файла chat.js)
+            openChat(lotId, partnerId, title);
         }
     </script>
 </body>
