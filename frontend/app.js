@@ -6,6 +6,7 @@ const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 let currentSession = null;
 const myBidLotIds = new Set();  
 
+// --- УВЕДОМЛЕНИЯ ---
 function showToast(message, type = 'info') {
     const container = document.getElementById('toast-container');
     if (!container) return;
@@ -20,6 +21,7 @@ function showToast(message, type = 'info') {
     }, 3000);
 }
 
+// --- АВТОРИЗАЦИЯ ---
 supabaseClient.auth.onAuthStateChange((event, session) => {
     currentSession = session;
     const guestInfo = document.getElementById('guest-info');
@@ -33,25 +35,23 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
         if(guestInfo) guestInfo.style.display = 'none';
         if(userInfo) userInfo.style.display = 'block';
         if(mainNav) mainNav.style.display = 'flex'; 
-        if(authModal) closeAuthModal(); // Закрываем окно, если успешно вошли
+        if(authModal) closeAuthModal(); 
         
         protectedSections.forEach(el => el.style.display = 'block');
 
-// Найди место, где получаешь username и замени запрос на этот:
-supabaseClient.from('profiles').select('username, avatar_url').eq('id', session.user.id).single()
-    .then(({data}) => {
-        if (data) {
-            if (document.getElementById('current-username')) {
-                document.getElementById('current-username').innerText = data.username;
-            }
-            // Если ссылка на аватар есть — ставим её в кружочек
-            if (data.avatar_url && document.getElementById('user-avatar')) {
-                document.getElementById('user-avatar').src = data.avatar_url;
-            }
-        }
-    });
+        supabaseClient.from('profiles').select('username, avatar_url').eq('id', session.user.id).single()
+            .then(({data}) => {
+                if (data) {
+                    if (document.getElementById('current-username')) {
+                        document.getElementById('current-username').innerText = data.username;
+                    }
+                    if (data.avatar_url && document.getElementById('user-avatar')) {
+                        document.getElementById('user-avatar').src = data.avatar_url;
+                    }
+                }
+            });
 
-            supabaseClient.from('bids').select('lot_id').eq('bidder_id', session.user.id)
+        supabaseClient.from('bids').select('lot_id').eq('bidder_id', session.user.id)
             .then(({data}) => {
                 if (data) data.forEach(bid => myBidLotIds.add(bid.lot_id));
             });
@@ -73,7 +73,6 @@ supabaseClient.from('profiles').select('username, avatar_url').eq('id', session.
     }
 });
 
-// Функции открытия/закрытия окна авторизации
 function showAuthModal() {
     const modal = document.getElementById('auth-modal');
     if(modal) modal.style.display = 'block';
@@ -118,20 +117,16 @@ async function logout() {
 
 // --- ОПРЕДЕЛЯЕМ, НА КАКОЙ МЫ СТРАНИЦЕ ПРИ ЗАГРУЗКЕ ---
 document.addEventListener('DOMContentLoaded', () => {
-    
-    // Загружаем сохраненную тему
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
         document.body.classList.add('dark-mode');
         updateThemeIcon(true);
     }
-
     if (document.getElementById('lots-container')) loadLots();
 });
 
 // --- СТАВКИ, ЛАЙКИ И УДАЛЕНИЕ ---
 async function placeBid(lotId) {
-    // ВЫЗЫВАЕМ ОКНО, ЕСЛИ НЕТ СЕССИИ
     if (!currentSession) {
         showAuthModal();
         return;
@@ -144,9 +139,9 @@ async function placeBid(lotId) {
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentSession.access_token}` },
         body: JSON.stringify({ amount })
     });
-if (response.ok) { 
+    if (response.ok) { 
         showToast('Ставка принята!', 'success'); 
-        myBidLotIds.add(lotId); // <-- ДОБАВИЛИ: Запоминаем, что мы только что сделали ставку тут
+        myBidLotIds.add(lotId); 
         loadLots(); 
     } else { 
         const err = await response.json(); 
@@ -155,7 +150,6 @@ if (response.ok) {
 }
 
 async function toggleFavorite(lotId) {
-    // ВЫЗЫВАЕМ ОКНО, ЕСЛИ НЕТ СЕССИИ
     if (!currentSession) {
         showAuthModal();
         return;
@@ -169,15 +163,12 @@ async function toggleFavorite(lotId) {
     }
 }
 
-// Закрываем модалки при клике мимо них
 window.addEventListener('click', (e) => { 
     const mBids = document.getElementById('bids-modal'); 
     if (e.target === mBids) mBids.style.display = 'none'; 
     const mAuth = document.getElementById('auth-modal');
     if (e.target === mAuth) mAuth.style.display = 'none';
 });
-
-
 
 // --- REALTIME ---
 supabaseClient.channel('public:lots') 
@@ -191,23 +182,13 @@ supabaseClient.channel('public:lots')
       }
   }).subscribe();
 
-
-  // --- РЕАЛТАЙМ: УВЕДОМЛЕНИЯ О ПЕРЕБИТЫХ СТАВКАХ ---
 supabaseClient.channel('public:bids')
   .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'bids' }, async (payload) => {
       const newBid = payload.new;
-      
-      // Проверяем: авторизованы ли мы, делали ли мы ставку на этот лот ранее, и ЧУЖАЯ ли это ставка?
       if (currentSession && myBidLotIds.has(newBid.lot_id) && newBid.bidder_id !== currentSession.user.id) {
-          
-          // Узнаем название лота, чтобы уведомление было понятным
           const { data } = await supabaseClient.from('lots').select('title').eq('id', newBid.lot_id).single();
           const lotTitle = data ? data.title : 'один из лотов';
-          
-          // Выстреливаем красное уведомление!
           showToast(`⚠️ Вашу ставку на "${lotTitle}" перебили! Новая цена: $${newBid.amount}`, 'error');
-          
-          // Если мы сейчас сидим на странице профиля - незаметно обновляем её, чтобы рамка лота стала красной
           if (document.getElementById('my-bids-container') && document.getElementById('my-bids-container').innerHTML !== '') {
               loadMyProfile();
           }
@@ -215,13 +196,12 @@ supabaseClient.channel('public:bids')
   })
   .subscribe();
 
-// --- ОПРЕДЕЛЯЕМ, НА КАКОЙ МЫ СТРАНИЦЕ ПРИ ЗАГРУЗКЕ ---
 document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('lots-container')) loadLots();
     if (document.getElementById('my-lots-container')) loadMyProfile();
 });
 
-// --- СОЗДАНИЕ ЛОТА (Только для страницы create.html) ---
+// --- СОЗДАНИЕ ЛОТА ---
 const addLotForm = document.getElementById('add-lot-form');
 if (addLotForm) {
     addLotForm.addEventListener('submit', async (e) => {
@@ -236,6 +216,7 @@ if (addLotForm) {
         const description = document.getElementById('description').value;
         const category = document.getElementById('category').value; 
         const starting_price = document.getElementById('starting_price').value;
+        const buy_now_price = document.getElementById('buy_now_price') ? document.getElementById('buy_now_price').value : null; // Добавлено
         const end_time = new Date(document.getElementById('end_time').value).toISOString(); 
         const fileInput = document.getElementById('images');
         const imageUrls = []; 
@@ -257,12 +238,20 @@ if (addLotForm) {
             const response = await fetch(`${API_URL}/lots`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentSession.access_token}` },
-                body: JSON.stringify({ title, description, category, starting_price: Number(starting_price), end_time, images: imageUrls })
+                body: JSON.stringify({ 
+                    title, 
+                    description, 
+                    category, 
+                    starting_price: Number(starting_price), 
+                    end_time, 
+                    images: imageUrls,
+                    buy_now_price: buy_now_price ? Number(buy_now_price) : null // Добавлено
+                })
             });
 
             if (response.ok) {
                 showToast('Лот создан!', 'success');
-                setTimeout(() => window.location.href = 'index.html', 1500); // Кидаем на главную после создания
+                setTimeout(() => window.location.href = 'index.html', 1500); 
             } else {
                 const error = await response.json();
                 showToast(`Ошибка: ${error.error}`, 'error');
@@ -281,7 +270,6 @@ async function loadLots(searchQuery = '', categoryFilter = 'all', sortFilter = '
     const container = document.getElementById('lots-container');
     if (!container) return;
 
-    // 1. ВКЛЮЧАЕМ СПИННЕР ПЕРЕД НАЧАЛОМ ЗАГРУЗКИ
     container.innerHTML = '<div class="loader"></div>';
 
     try {
@@ -291,7 +279,6 @@ async function loadLots(searchQuery = '', categoryFilter = 'all', sortFilter = '
         const response = await fetch(url);
         const lots = await response.json();
         
-        // 2. УБИРАЕМ СПИННЕР И СТАВИМ ПУСТОТУ (ИЛИ НАДПИСЬ, ЧТО ЛОТОВ НЕТ)
         container.innerHTML = lots.length === 0 ? '<p style="text-align:center; color: var(--text-muted);">Нет активных лотов.</p>' : '';
 
         lots.forEach(lot => {
@@ -299,6 +286,12 @@ async function loadLots(searchQuery = '', categoryFilter = 'all', sortFilter = '
             let imagesHtml = lot.lot_images?.length > 0 ? `<img src="${lot.lot_images[0].image_url}" style="width:100%; height: 150px; object-fit: cover; border-radius:8px; margin-bottom:10px;">` : '';
             let deleteBtnHtml = (currentSession && currentSession.user.id === lot.seller_id) ? `<button onclick="deleteLot('${lot.id}')" style="background:#ff4d4d; margin-top:10px; width:100%;">🗑️ Удалить</button>` : '';
             
+            // Кнопка Купить сейчас
+            let buyNowBtnHtml = '';
+            if (!isEnded && lot.buy_now_price) {
+                buyNowBtnHtml = `<button onclick="buyNow('${lot.id}')" style="background:#ffc107; color:#000; margin-top:10px; width:100%; font-weight:bold; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">⚡ Купить сейчас за $${lot.buy_now_price}</button>`;
+            }
+
             const catNames = { 'electronics': 'Электроника', 'auto': 'Авто', 'home': 'Для дома', 'clothing': 'Одежда', 'other': 'Разное' };
             
             const card = document.createElement('div');
@@ -325,38 +318,13 @@ async function loadLots(searchQuery = '', categoryFilter = 'all', sortFilter = '
                     <button onclick="placeBid('${lot.id}')">Ставка</button>
                 </div>
                 ${isEnded ? '<div style="color:red;font-weight:bold;">АУКЦИОН ЗАВЕРШЕН</div>' : ''}
+                ${buyNowBtnHtml} 
                 ${deleteBtnHtml}
             `;
             container.appendChild(card);
         });
         if (!window.timerInterval) window.timerInterval = setInterval(updateAllTimers, 1000);
     } catch (error) { console.error(error); }
-}
-
-// --- СТАВКИ, ЛАЙКИ И УДАЛЕНИЕ ---
-async function placeBid(lotId) {
-    if (!currentSession) return showToast('Авторизуйтесь!', 'error');
-    const amount = Number(document.getElementById(`bid-input-${lotId}`).value);
-    if (!amount) return showToast('Введите сумму', 'error');
-
-    const response = await fetch(`${API_URL}/lots/${lotId}/bids`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentSession.access_token}` },
-        body: JSON.stringify({ amount })
-    });
-    if (response.ok) { showToast('Ставка принята!', 'success'); loadLots(); } 
-    else { const err = await response.json(); showToast(`Ошибка: ${err.error}`, 'error'); }
-}
-
-async function toggleFavorite(lotId) {
-    if (!currentSession) return showToast('Авторизуйтесь!', 'error');
-    const response = await fetch(`${API_URL}/lots/${lotId}/favorite`, { method: 'POST', headers: { 'Authorization': `Bearer ${currentSession.access_token}` }});
-    if (response.ok) {
-        const res = await response.json(); showToast(res.message, 'success');
-        const hBtn = document.getElementById(`heart-${lotId}`);
-        if (hBtn) hBtn.innerText = res.status === 'added' ? '❤️' : '🤍';
-        if (document.getElementById('my-favorites-container')) loadMyProfile();
-    }
 }
 
 async function deleteLot(lotId) {
@@ -369,12 +337,10 @@ async function deleteLot(lotId) {
     }
 }
 
-
 // --- ПРОФИЛЬ ---
 async function loadMyProfile() {
     if (!currentSession) return;
     try {
-        // 1. Мои лоты
         const resLots = await fetch(`${API_URL}/users/me/lots`, { headers: { 'Authorization': `Bearer ${currentSession.access_token}` }});
         const myLots = await resLots.json();
         const cLots = document.getElementById('my-lots-container');
@@ -391,7 +357,6 @@ async function loadMyProfile() {
                 </div>`;
         });
 
-        // 2. Мои ставки (Выделяем победные зеленым, а перебитые - красным)
         const resBids = await fetch(`${API_URL}/users/me/bids`, { headers: { 'Authorization': `Bearer ${currentSession.access_token}` }});
         const myBids = await resBids.json();
         const cBids = document.getElementById('my-bids-container');
@@ -401,7 +366,7 @@ async function loadMyProfile() {
             if (!bid.lots) return;
             let img = bid.lots.lot_images?.length > 0 ? `<img src="${bid.lots.lot_images[0].image_url}" alt="Лот">` : '';
             let isWinning = bid.amount >= bid.lots.current_price;
-            let statusColor = isWinning ? '#008a00' : '#e53238'; // Зеленый если побеждаем, красный если перебили
+            let statusColor = isWinning ? '#008a00' : '#e53238'; 
             
             cBids.innerHTML += `
                 <div class="lot-card" style="border: 2px solid ${statusColor};">
@@ -413,7 +378,6 @@ async function loadMyProfile() {
                 </div>`;
         });
 
-        // 3. Избранное
         const resFavs = await fetch(`${API_URL}/users/me/favorites`, { headers: { 'Authorization': `Bearer ${currentSession.access_token}` }});
         const myFavs = await resFavs.json();
         const cFavs = document.getElementById('my-favorites-container');
@@ -436,14 +400,12 @@ async function loadMyProfile() {
     }
 }
 
-
 // --- ПОИСК И СОРТИРОВКА ---
 const searchInput = document.getElementById('search-input');
 const categoryFilter = document.getElementById('category-filter');
-const sortFilter = document.getElementById('sort-filter'); // Нашли новый список
+const sortFilter = document.getElementById('sort-filter'); 
 const searchBtn = document.getElementById('search-btn');
 
-// Создали единую функцию, которая собирает все 3 параметра и отправляет запрос
 function triggerSearch() {
     const text = searchInput ? searchInput.value : '';
     const cat = categoryFilter ? categoryFilter.value : 'all';
@@ -452,24 +414,15 @@ function triggerSearch() {
 }
 
 let searchTimeout;
-
-// 1. Поиск при вводе текста
 if (searchInput) searchInput.addEventListener('input', () => { 
     clearTimeout(searchTimeout); 
     searchTimeout = setTimeout(triggerSearch, 300); 
 });
-
-// 2. Поиск при смене категории
 if (categoryFilter) categoryFilter.addEventListener('change', triggerSearch);
-
-// 3. Поиск при смене сортировки (НОВОЕ)
 if (sortFilter) sortFilter.addEventListener('change', triggerSearch);
-
-// 4. Поиск по клику на кнопку
 if (searchBtn) searchBtn.addEventListener('click', triggerSearch);
 
 // --- ТАЙМЕРЫ И МОДАЛКА ---
-
 function updateAllTimers() {
     document.querySelectorAll('[id^="timer-"]').forEach(el => {
         const dist = new Date(el.getAttribute('data-endtime')).getTime() - new Date().getTime();
@@ -492,84 +445,56 @@ async function showBidsHistory(lotId) {
 }
 function closeBidsModal() { document.getElementById('bids-modal').style.display = 'none'; }
 window.addEventListener('click', (e) => { const m = document.getElementById('bids-modal'); if (e.target === m) m.style.display = 'none'; });
+
 // --- ЛОГИКА ТЕМНОЙ ТЕМЫ ---
 function toggleTheme() {
-    // Переключаем класс на body
     document.body.classList.toggle('dark-mode');
-    
-    // Проверяем, включена ли тема сейчас
     const isDark = document.body.classList.contains('dark-mode');
-    
-    // Сохраняем выбор в память браузера (чтобы не сбрасывалось при обновлении)
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    
-    // Меняем иконку
     updateThemeIcon(isDark);
 }
 
 function updateThemeIcon(isDark) {
     const themeBtn = document.getElementById('theme-btn');
     if (themeBtn) {
-        // Если темно - показываем солнышко, если светло - луну
         themeBtn.innerText = isDark ? '🔆' : '⏾';
     }
 }
-// --- ЛОГИКА ЖИВОГО ПРЕДПРОСМОТРА (ДЛЯ CREATE.HTML) ---
+
+// --- ЛОГИКА ЖИВОГО ПРЕДПРОСМОТРА ---
 const titleInput = document.getElementById('title');
 const priceInput = document.getElementById('starting_price');
 const categoryInput = document.getElementById('category');
 const imagesInput = document.getElementById('images');
 
-// Проверяем, находимся ли мы на странице создания лота
 if (titleInput && priceInput && categoryInput) {
     const previewTitle = document.getElementById('preview-title');
     const previewPrice = document.getElementById('preview-price');
     const previewCategory = document.getElementById('preview-category');
     const previewImg = document.getElementById('preview-img');
 
-    const catNames = { 
-        'electronics': 'Электроника', 
-        'auto': 'Авто и мото', 
-        'home': 'Для дома', 
-        'clothing': 'Одежда и обувь', 
-        'other': 'Разное' 
-    };
+    const catNames = { 'electronics': 'Электроника', 'auto': 'Авто и мото', 'home': 'Для дома', 'clothing': 'Одежда и обувь', 'other': 'Разное' };
 
-    // Обновляем название
-    titleInput.addEventListener('input', (e) => {
-        previewTitle.innerText = e.target.value || 'Название лота';
-    });
+    titleInput.addEventListener('input', (e) => { previewTitle.innerText = e.target.value || 'Название лота'; });
+    priceInput.addEventListener('input', (e) => { previewPrice.innerText = `$${e.target.value || '10'}`; });
+    categoryInput.addEventListener('change', (e) => { previewCategory.innerText = catNames[e.target.value] || 'Разное'; });
 
-    // Обновляем цену
-    priceInput.addEventListener('input', (e) => {
-        previewPrice.innerText = `$${e.target.value || '10'}`;
-    });
-
-    // Обновляем категорию
-    categoryInput.addEventListener('change', (e) => {
-        previewCategory.innerText = catNames[e.target.value] || 'Разное';
-    });
-
-    // Обновляем картинку (читаем файл с компьютера и показываем)
     imagesInput.addEventListener('change', (e) => {
         if (e.target.files && e.target.files[0]) {
             const reader = new FileReader();
-            reader.onload = function(event) {
-                previewImg.src = event.target.result;
-            }
-            reader.readAsDataURL(e.target.files[0]); // Превращаем картинку в ссылку для предпросмотра
+            reader.onload = function(event) { previewImg.src = event.target.result; }
+            reader.readAsDataURL(e.target.files[0]); 
         } else {
             previewImg.src = 'https://via.placeholder.com/400x300?text=Загрузите+фото';
         }
     });
     
-    // Автоматически ставим время окончания на завтрашний день (чтобы пользователю не кликать лишний раз)
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    // Корректируем время с учетом часового пояса
     tomorrow.setMinutes(tomorrow.getMinutes() - tomorrow.getTimezoneOffset());
     document.getElementById('end_time').value = tomorrow.toISOString().slice(0, 16);
 }
+
 // --- ПУБЛИЧНЫЙ ПРОФИЛЬ ПРОДАВЦА ---
 async function loadSellerProfile() {
     const params = new URLSearchParams(window.location.search);
@@ -580,7 +505,6 @@ async function loadSellerProfile() {
     if (!sellerId || !container) return;
 
     try {
-        // 1. СНАЧАЛА ЗАПРАШИВАЕМ ИМЯ И АВАТАРКУ ИЗ БАЗЫ СОВЕРШЕННО ТОЧНО
         const { data: profileData } = await supabaseClient
             .from('profiles')
             .select('username, avatar_url')
@@ -588,18 +512,15 @@ async function loadSellerProfile() {
             .single();
 
         if (profileData) {
-            nameHeader.innerText = profileData.username; // Ставим имя
-            // Если есть фото - ставим фото
+            nameHeader.innerText = profileData.username; 
             if (profileData.avatar_url && document.getElementById('seller-avatar')) {
                 document.getElementById('seller-avatar').src = profileData.avatar_url;
             }
         }
 
-        // 2. ЗАТЕМ ПОЛУЧАЕМ ЛОТЫ ПРОДАВЦА ЧЕРЕЗ ТВОЙ СЕРВЕР
         const response = await fetch(`${API_URL}/users/${sellerId}/public`);
         const data = await response.json();
 
-        // (Если профиль не загрузился на 1 шаге, подстраховочно ставим имя с сервера)
         if (!profileData && data.username) nameHeader.innerText = data.username;
 
         container.innerHTML = data.lots.length ? '' : '<p>У этого продавца пока нет активных лотов.</p>';
@@ -619,11 +540,10 @@ async function loadSellerProfile() {
     }
 }
 
-// Добавь инициализацию в DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
-    // ... твои старые проверки ...
     if (document.getElementById('seller-lots-container')) loadSellerProfile();
 });
+
 // --- ПАНЕЛЬ АДМИНИСТРАТОРА ---
 async function loadAdminPanel() {
     const tbody = document.getElementById('admin-lots-tbody');
@@ -665,6 +585,7 @@ async function loadAdminPanel() {
         console.error('Ошибка загрузки админки:', error);
     }
 }
+
 // --- ЗАГРУЗКА АВАТАРКИ ---
 async function uploadAvatar(input) {
     const file = input.files[0];
@@ -672,38 +593,50 @@ async function uploadAvatar(input) {
 
     try {
         showToast('Загружаем фото...', 'success');
-
-        // 1. Создаем уникальное имя файла (id_пользователя + время)
         const fileExt = file.name.split('.').pop();
         const fileName = `${currentSession.user.id}_${Math.random()}.${fileExt}`;
         const filePath = `${fileName}`;
 
-        // 2. Загружаем файл в бакет 'avatars'
-        let { error: uploadError } = await supabaseClient.storage
-            .from('avatars')
-            .upload(filePath, file);
-
+        let { error: uploadError } = await supabaseClient.storage.from('avatars').upload(filePath, file);
         if (uploadError) throw uploadError;
 
-        // 3. Получаем публичную ссылку на файл
-        const { data: { publicUrl } } = supabaseClient.storage
-            .from('avatars')
-            .getPublicUrl(filePath);
+        const { data: { publicUrl } } = supabaseClient.storage.from('avatars').getPublicUrl(filePath);
 
-        // 4. Обновляем колонку avatar_url в таблице profiles
-        const { error: updateError } = await supabaseClient
-            .from('profiles')
-            .update({ avatar_url: publicUrl })
-            .eq('id', currentSession.user.id);
-
+        const { error: updateError } = await supabaseClient.from('profiles').update({ avatar_url: publicUrl }).eq('id', currentSession.user.id);
         if (updateError) throw updateError;
 
-        // 5. Обновляем картинку на странице
         document.getElementById('user-avatar').src = publicUrl;
         showToast('Аватар обновлен! ✨', 'success');
-
     } catch (error) {
         console.error('Ошибка загрузки аватара:', error);
         showToast('Не удалось загрузить фото', 'error');
+    }
+}
+
+// --- ФУНКЦИЯ: КУПИТЬ СЕЙЧАС ---
+async function buyNow(lotId) {
+    if (!currentSession) {
+        showAuthModal();
+        return;
+    }
+    
+    if (!confirm('Вы уверены, что хотите мгновенно купить этот лот?')) return;
+
+    try {
+        const response = await fetch(`${API_URL}/lots/${lotId}/buy-now`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
+        });
+
+        if (response.ok) {
+            showToast('Поздравляем с покупкой! 🎉', 'success');
+            loadLots(); 
+        } else {
+            const err = await response.json();
+            showToast(`Ошибка: ${err.error}`, 'error');
+        }
+    } catch (error) {
+        console.error(error);
+        showToast('Системная ошибка', 'error');
     }
 }

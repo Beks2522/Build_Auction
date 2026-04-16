@@ -80,27 +80,26 @@ app.post('/api/lots', async (req, res) => {
       return res.status(401).json({ error: 'Неверный токен' });
     }
 
-    const seller_id = user.id;
-    const { title, description, starting_price, end_time, images, category } = req.body; 
+    const seller_id = user.id; // <-- Ты молодец, что сохранил ID сюда
+    const { title, description, category, starting_price, end_time, images, buy_now_price } = req.body;
 
     if (!title || starting_price == null || !end_time) {
       return res.status(400).json({ error: 'Заполни обязательные поля' });
     }
-
+  
     // 1. Создаем сам лот
     const { data, error } = await supabase
       .from('lots')
-      .insert([
-        {
-          seller_id,
-          title,
-          description,
-          starting_price,
-          current_price: starting_price,
-          end_time,
-          category
-        },
-      ])
+      .insert([{ 
+          title, 
+          description, 
+          category, 
+          starting_price, 
+          current_price: starting_price, 
+          end_time, 
+          seller_id: seller_id, // <--- ИСПРАВИЛИ ЗДЕСЬ! Берем переменную из 12 строки
+          buy_now_price: buy_now_price || null // <-- А ЭТО СТРОЧКА ИДЕАЛЬНА!
+      }])
       .select()
       .single();
 
@@ -126,6 +125,50 @@ app.post('/api/lots', async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+});
+// ==========================================
+// НОВЫЙ РОУТ: Мгновенная покупка "Купить сейчас"
+// ==========================================
+app.post('/api/lots/:id/buy-now', async (req, res) => {
+    // --- БЛОК АВТОРИЗАЦИИ (как в остальных твоих роутах) ---
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ error: 'Вы не авторизованы!' });
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    if (authError || !user) return res.status(401).json({ error: 'Неверный токен' });
+    // -------------------------------------------------------
+
+    const lotId = req.params.id;
+    const userId = user.id; // <-- Берем id из user
+
+    try {
+        // 1. Ищем лот
+        const { data: lot, error: fetchError } = await supabase.from('lots').select('*').eq('id', lotId).single();
+        if (fetchError || !lot) return res.status(404).json({ error: 'Лот не найден' });
+        
+        // 2. Проверяем, можно ли его купить
+        if (new Date() > new Date(lot.end_time)) return res.status(400).json({ error: 'Аукцион уже завершен' });
+        if (!lot.buy_now_price) return res.status(400).json({ error: 'Для этого лота нет опции "Купить сейчас"' });
+
+        // 3. Делаем победную ставку от лица покупателя
+        const { error: bidError } = await supabase.from('bids').insert([{
+            lot_id: lotId,
+            bidder_id: userId,
+            amount: lot.buy_now_price
+        }]);
+        if (bidError) throw bidError;
+
+        // 4. Обновляем цену и СРАЗУ ЗАВЕРШАЕМ аукцион (меняем время на текущее)
+        const { error: updateError } = await supabase.from('lots').update({
+            current_price: lot.buy_now_price,
+            end_time: new Date().toISOString()
+        }).eq('id', lotId);
+        if (updateError) throw updateError;
+
+        res.json({ message: 'Поздравляем с покупкой!' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
 // 4. Сделать ставку на лот
@@ -353,7 +396,7 @@ app.get('/api/users/:id/public', async (req, res) => {
   // Получаем его активные лоты
   const { data: lots, error } = await supabase
     .from('lots')
-    .select('*, lot_images(image_url)')
+    .select('*, lot_images(image_url)')   
     .eq('seller_id', sellerId)
     .gt('end_time', new Date().toISOString());
 
