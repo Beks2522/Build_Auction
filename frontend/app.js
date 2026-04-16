@@ -310,7 +310,7 @@ async function loadLots(searchQuery = '', categoryFilter = 'all', sortFilter = '
         ${lot.profiles?.username || 'Аноним'}
     </a>
 </div>
-                <div class="price" id="lot-price-${lot.id}">Tг ${lot.current_price}</div>
+                <div class="price" id="lot-price-${lot.id}">Текущая ставка: ${lot.current_price} ₸</div>
                 <button onclick="showBidsHistory('${lot.id}')" style="background:none; border:none; box-shadow:none; color:#2980b9; text-decoration:underline; padding:0; margin-top:5px; font-size:14px;">История ставок</button>
                 <div class="timer" id="timer-${lot.id}" data-endtime="${lot.end_time}" style="margin:10px 0;color:#e67e22;font-weight:bold;">Загрузка...</div>
                 <div class="bid-controls" id="bid-controls-${lot.id}" style="${isEnded ? 'display:none;' : ''}">
