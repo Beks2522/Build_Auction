@@ -92,6 +92,18 @@
         <div id="bids-list"></div>
     </div>
 </div>
+<div id="chat-modal" style="display: none; position: fixed; bottom: 20px; right: 20px; width: 350px; background: var(--card-bg); border-radius: 12px; box-shadow: 0 5px 25px rgba(0,0,0,0.3); z-index: 9999; border: 1px solid var(--border-color); overflow: hidden;">
+        <div style="background: var(--ebay-blue); color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center;">
+            <h3 id="chat-title" style="margin: 0; font-size: 16px;">💬 Чат</h3>
+            <button onclick="closeChat()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 0; line-height: 1;">&times;</button>
+        </div>
+        <div id="chat-messages" style="height: 350px; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; background: #e5ddd5;">
+            </div>
+        <div style="padding: 10px; border-top: 1px solid var(--border-color); display: flex; gap: 10px; background: var(--card-bg);">
+            <input type="text" id="chat-input" placeholder="Сообщение..." style="flex-grow: 1; padding: 10px 15px; border-radius: 20px; border: 1px solid #ccc; outline: none; font-family: inherit;">
+            <button onclick="sendMessage()" style="background: #27ae60; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px;">➤</button>
+        </div>
+    </div>
 
 <div id="toast-container"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

@@ -208,6 +208,22 @@ supabaseClient.channel('public:bids')
   })
   .subscribe();
 
+  // --- РЕАЛТАЙМ: ЧАТ ---
+supabaseClient.channel('public:messages')
+  .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, (payload) => {
+      const newMsg = payload.new;
+      
+      // Если мы сейчас прямо сидим в чате этого лота — рисуем пузырек
+      if (currentChatLotId === newMsg.lot_id) {
+          appendMessageToChat(newMsg);
+      } 
+      // Если чат закрыт, но сообщение адресовано нам — показываем тост-уведомление!
+      else if (currentSession && newMsg.receiver_id === currentSession.user.id) {
+          showToast('💬 Вам новое сообщение в чате!', 'info');
+      }
+  })
+  .subscribe();
+
 document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('lots-container')) loadLots();
     if (document.getElementById('my-lots-container')) loadMyProfile();
@@ -302,6 +318,12 @@ async function loadLots(searchQuery = '', categoryFilter = 'all', sortFilter = '
             let buyNowBtnHtml = '';
             if (!isEnded && lot.buy_now_price) {
                 buyNowBtnHtml = `<button onclick="buyNow('${lot.id}')" style="background:#ffc107; color:#000; margin-top:10px; width:100%; font-weight:bold; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">⚡ Купить сейчас за $${lot.buy_now_price}</button>`;
+            }
+
+            // Кнопка Чата (Показываем, если мы вошли и это НЕ наш лот)
+            let chatBtnHtml = '';
+            if (currentSession && currentSession.user.id !== lot.seller_id) {
+                chatBtnHtml = `<button onclick="openChat('${lot.id}', '${lot.seller_id}', '${lot.profiles?.username || 'Продавец'}')" style="background:#3498db; color:white; width:100%; margin-top:10px; border-radius:8px; font-weight:bold;">💬 Написать продавцу</button>`;
             }
 
             const catNames = { 'electronics': 'Электроника', 'auto': 'Авто', 'home': 'Для дома', 'clothing': 'Одежда', 'other': 'Разное' };
@@ -780,3 +802,75 @@ async function payForLot(lotId) {
         showToast('Ошибка сети', 'error');
     }
 }
+// ==========================================
+// СИСТЕМА ЧАТА (ОЛХ-style)
+// ==========================================
+let currentChatLotId = null;
+let currentChatReceiverId = null;
+
+// 1. Открытие окна чата
+async function openChat(lotId, sellerId, sellerName) {
+    currentChatLotId = lotId;
+    currentChatReceiverId = sellerId;
+    
+    document.getElementById('chat-modal').style.display = 'block';
+    document.getElementById('chat-title').innerText = `💬 ${sellerName}`;
+    document.getElementById('chat-messages').innerHTML = '<p style="text-align:center; color:#888; font-size:12px;">Загрузка...</p>';
+
+    try {
+        const res = await fetch(`${API_URL}/lots/${lotId}/messages`, { headers: { 'Authorization': `Bearer ${currentSession.access_token}` } });
+        const messages = await res.json();
+        
+        const container = document.getElementById('chat-messages');
+        container.innerHTML = messages.length === 0 ? '<p style="text-align:center; color:#888; font-size:12px;">Напишите первое сообщение!</p>' : '';
+        
+        messages.forEach(msg => appendMessageToChat(msg));
+    } catch (e) { console.error('Ошибка загрузки чата', e); }
+}
+
+function closeChat() {
+    document.getElementById('chat-modal').style.display = 'none';
+    currentChatLotId = null;
+}
+
+// 2. Рисование пузырька сообщения
+function appendMessageToChat(msg) {
+    const container = document.getElementById('chat-messages');
+    if (container.innerHTML.includes('Напишите первое сообщение')) container.innerHTML = '';
+
+    // Если отправитель — мы, красим в зеленый и прижимаем вправо. Если чужое — белое слева.
+    const isMine = msg.sender_id === currentSession.user.id;
+    const align = isMine ? 'align-self: flex-end; background: #dcf8c6;' : 'align-self: flex-start; background: #ffffff;';
+    const time = new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+    container.innerHTML += `
+        <div style="max-width: 75%; padding: 8px 12px; border-radius: 12px; box-shadow: 0 1px 1px rgba(0,0,0,0.1); ${align}">
+            <div style="font-size: 14px; color: #000;">${msg.content}</div>
+            <div style="font-size: 10px; color: #999; text-align: right; margin-top: 4px;">${time}</div>
+        </div>
+    `;
+    container.scrollTop = container.scrollHeight; // Автоматически крутим вниз
+}
+
+// 3. Отправка сообщения
+async function sendMessage() {
+    const input = document.getElementById('chat-input');
+    const content = input.value.trim();
+    if (!content || !currentChatLotId) return;
+
+    input.value = ''; // Сразу очищаем строку
+
+    try {
+        await fetch(`${API_URL}/lots/${currentChatLotId}/messages`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentSession.access_token}` },
+            body: JSON.stringify({ receiver_id: currentChatReceiverId, content })
+        });
+        // Мы не добавляем сообщение на экран вручную. Оно прилетит через вебсокет!
+    } catch (e) { showToast('Ошибка отправки', 'error'); }
+}
+
+// Позволяем отправлять по кнопке Enter
+document.getElementById('chat-input')?.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendMessage();
+});
