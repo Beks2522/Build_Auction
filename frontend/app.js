@@ -327,14 +327,14 @@ async function loadLots(searchQuery = '', categoryFilter = 'all', sortFilter = '
             let buyNowBtnHtml = '';
             if (!isEnded && lot.buy_now_price) {
                 // Убрали длинный style, добавили класс btn-buy-now
-                buyNowBtnHtml = `<button class="btn-buy-now" onclick="buyNow('${lot.id}')">⚡ Купить сейчас за $${lot.buy_now_price}</button>`;
+                buyNowBtnHtml = `<button class="btn-buy-now" onclick="buyNow('${lot.id}')">⚡ Купить сейчас за ₸${lot.buy_now_price}</button>`;
             }
-
+            const currentSellerName = (lot.profiles && lot.profiles.username) ? lot.profiles.username : 'Продавец';
             // Кнопка Чата (Показываем, если мы вошли и это НЕ наш лот)
             let chatBtnHtml = '';
             if (currentSession && currentSession.user.id !== lot.seller_id) {
-                // Тут у тебя уже всё было правильно!
-                chatBtnHtml = `<button class="btn-chat" onclick="openChat('${lot.id}', '${lot.seller_id}', '${sellerName}')">💬 Написать продавцу</button>`;
+                // Теперь передаем нашу новую переменную currentSellerName
+                chatBtnHtml = `<button class="btn-chat" onclick="openChat('${lot.id}', '${lot.seller_id}', '${currentSellerName}')">💬 Написать продавцу</button>`;
             }
             const catNames = { 'electronics': 'Электроника', 'auto': 'Авто', 'home': 'Для дома', 'clothing': 'Одежда', 'other': 'Разное' };
             
@@ -439,8 +439,8 @@ let payButtonHtml = '';
                     ${img}
                     <h3>${bid.lots.title}</h3>
                     <p style="margin: 10px 0 0 0; color: var(--text-muted);">Ваша ставка:</p>
-                    <div class="price" style="margin-top: 0 !important; color: ${statusColor} !important;">$${bid.amount}</div>
-                    <p style="font-size: 13px; color: var(--text-muted); margin-top: auto;">Текущая цена лота: $${bid.lots.current_price}</p>
+                    <div class="price" style="margin-top: 0 !important; color: ${statusColor} !important;">₸${bid.amount}</div>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-top: auto;">Текущая цена лота: ₸${bid.lots.current_price}</p>
                     ${isEnded ? '<p style="color:red; font-weight:bold; margin-top:5px;">Аукцион завершен</p>' : ''}
                     ${payButtonHtml}
                 </div>`;
