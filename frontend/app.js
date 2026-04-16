@@ -32,6 +32,18 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
     const protectedSections = document.querySelectorAll('.protected-content');
 
     if (session) {
+        // Проверяем возврат со Stripe
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('payment_success') === 'true') {
+    const paidLotId = urlParams.get('lot_id');
+    fetch(`${API_URL}/lots/${paidLotId}/mark-paid`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${session.access_token}` }
+    }).then(() => {
+        showToast('🎉 Оплата успешно завершена!', 'success');
+        window.history.replaceState({}, document.title, window.location.pathname); // Убираем мусор из ссылки
+    });
+}
         if(guestInfo) guestInfo.style.display = 'none';
         if(userInfo) userInfo.style.display = 'block';
         if(mainNav) mainNav.style.display = 'flex'; 
@@ -352,7 +364,7 @@ async function loadMyProfile() {
                 <div class="lot-card">
                     ${img}
                     <h3>${lot.title}</h3>
-                    <div class="price">$${lot.current_price}</div>
+                    <div class="price">₸${lot.current_price}</div>
                     <button onclick="deleteLot('${lot.id}')" style="margin-top: auto;">🗑️ Удалить</button>
                 </div>`;
         });
@@ -365,9 +377,22 @@ async function loadMyProfile() {
         myBids.forEach(bid => {
             if (!bid.lots) return;
             let img = bid.lots.lot_images?.length > 0 ? `<img src="${bid.lots.lot_images[0].image_url}" alt="Лот">` : '';
-            let isWinning = bid.amount >= bid.lots.current_price;
-            let statusColor = isWinning ? '#008a00' : '#e53238'; 
             
+            // Оставили переменные только один раз!
+            let isWinning = bid.amount >= bid.lots.current_price;
+            let isEnded = new Date() > new Date(bid.lots.end_time);
+            let statusColor = isWinning ? '#008a00' : '#e53238'; 
+
+            // Рисуем кнопку оплаты, если победили и аукцион завершен
+            let payButtonHtml = '';
+            if (isEnded && isWinning) {
+                if (!bid.lots.is_paid) {
+                    payButtonHtml = `<button onclick="payForLot('${bid.lots.id}')" style="background:#6772e5; color:white; width:100%; margin-top:10px; border-radius:8px; font-weight:bold;">💳 Оплатить лот</button>`;
+                } else {
+                    payButtonHtml = `<div style="background:#27ae60; color:white; text-align:center; padding:10px; margin-top:10px; border-radius:8px; font-weight:bold;">✅ Оплачено</div>`;
+                }
+            }
+                        
             cBids.innerHTML += `
                 <div class="lot-card" style="border: 2px solid ${statusColor};">
                     ${img}
@@ -375,6 +400,8 @@ async function loadMyProfile() {
                     <p style="margin: 10px 0 0 0; color: var(--text-muted);">Ваша ставка:</p>
                     <div class="price" style="margin-top: 0 !important; color: ${statusColor} !important;">$${bid.amount}</div>
                     <p style="font-size: 13px; color: var(--text-muted); margin-top: auto;">Текущая цена лота: $${bid.lots.current_price}</p>
+                    ${isEnded ? '<p style="color:red; font-weight:bold; margin-top:5px;">Аукцион завершен</p>' : ''}
+                    ${payButtonHtml}
                 </div>`;
         });
 
@@ -733,3 +760,23 @@ async function submitReview() {
         btn.disabled = false;
     }
 }   
+// --- СИСТЕМА ОПЛАТЫ ---
+async function payForLot(lotId) {
+    if (!currentSession) return;
+    try {
+        showToast('Создаем безопасный платеж...', 'info');
+        const res = await fetch(`${API_URL}/lots/${lotId}/checkout`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
+        });
+        const data = await res.json();
+
+        if (data.url) {
+            window.location.href = data.url; // Улетаем на страницу Stripe!
+        } else {
+            showToast(data.error || 'Ошибка', 'error');
+        }
+    } catch (e) {
+        showToast('Ошибка сети', 'error');
+    }
+}

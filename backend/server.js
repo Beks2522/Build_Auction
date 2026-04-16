@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { createClient } = require('@supabase/supabase-js');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -492,6 +493,59 @@ app.get('/api/users/:id/reviews', async (req, res) => {
         }
 
         res.json(reviews);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// ==========================================
+// ОПЛАТА (STRIPE)
+// ==========================================
+
+// 1. Создание сессии оплаты
+app.post('/api/lots/:id/checkout', authenticateToken, async (req, res) => {
+    const lotId = req.params.id;
+    const userId = req.user.id;
+
+    try {
+        // Получаем лот и победную ставку
+        const { data: lot } = await supabase.from('lots').select('*').eq('id', lotId).single();
+        const { data: bids } = await supabase.from('bids').select('*').eq('lot_id', lotId).order('amount', { ascending: false }).limit(1);
+        const winningBid = bids && bids.length > 0 ? bids[0] : null;
+
+        // Проверяем, завершен ли аукцион и является ли юзер победителем
+        if (new Date() < new Date(lot.end_time)) return res.status(400).json({ error: 'Аукцион еще не завершен' });
+        if (!winningBid || winningBid.bidder_id !== userId) return res.status(403).json({ error: 'Вы не победитель этого лота' });
+        if (lot.is_paid) return res.status(400).json({ error: 'Лот уже оплачен' });
+
+        // Создаем чек в Stripe
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: [{
+                price_data: {
+                    currency: 'usd',
+                    product_data: { name: lot.title },
+                    unit_amount: Math.round(winningBid.amount * 100), // Stripe работает в центах
+                },
+                quantity: 1,
+            }],
+            mode: 'payment',
+            // ВАЖНО: Stripe вернет пользователя по этим ссылкам
+            success_url: `https://build-auction-1.onrender.com/?payment_success=true&lot_id=${lotId}`,
+            cancel_url: `https://build-auction-1.onrender.com/`,
+        });
+
+        res.json({ url: session.url });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// 2. Отметка об успешной оплате
+app.post('/api/lots/:id/mark-paid', authenticateToken, async (req, res) => {
+    try {
+        await supabase.from('lots').update({ is_paid: true }).eq('id', req.params.id);
+        res.json({ success: true });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
