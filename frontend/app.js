@@ -423,12 +423,14 @@ async function loadMyProfile() {
             let statusColor = isWinning ? '#008a00' : '#e53238'; 
 
             // Рисуем кнопку оплаты, если победили и аукцион завершен
-            let payButtonHtml = '';
+let payButtonHtml = '';
             if (isEnded && isWinning) {
                 if (!bid.lots.is_paid) {
-                    payButtonHtml = `<button onclick="payForLot('${bid.lots.id}')" style="background:#6772e5; color:white; width:100%; margin-top:10px; border-radius:8px; font-weight:bold;">💳 Оплатить лот</button>`;
+                    // Используем наш новый класс btn-pay-lot
+                    payButtonHtml = `<button class="btn-pay-lot" onclick="payForLot('${bid.lots.id}')">💳 Оплатить лот</button>`;
                 } else {
-                    payButtonHtml = `<div style="background:#27ae60; color:white; text-align:center; padding:10px; margin-top:10px; border-radius:8px; font-weight:bold;">✅ Оплачено</div>`;
+                    // Добавляем новый класс для статуса "Оплачено"
+                    payButtonHtml = `<div class="status-paid">✅ Оплачено</div>`;
                 }
             }
                         
