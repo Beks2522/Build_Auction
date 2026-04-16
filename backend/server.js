@@ -550,6 +550,47 @@ app.post('/api/lots/:id/mark-paid', authenticateToken, async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
+// ==========================================
+// ЧАТ (СООБЩЕНИЯ)
+// ==========================================
+
+// 1. Получить историю переписки по конкретному лоту
+app.get('/api/lots/:id/messages', authenticateToken, async (req, res) => {
+    try {
+        const { data, error } = await supabase
+            .from('messages')
+            .select(`
+                *,
+                sender:profiles!messages_sender_id_fkey(username, avatar_url)
+            `)
+            .eq('lot_id', req.params.id)
+            .order('created_at', { ascending: true }); // Сообщения по порядку
+
+        if (error) throw error;
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// 2. Отправить новое сообщение
+app.post('/api/lots/:id/messages', authenticateToken, async (req, res) => {
+    const { receiver_id, content } = req.body;
+    try {
+        const { error } = await supabase.from('messages').insert([{
+            lot_id: req.params.id,
+            sender_id: req.user.id,
+            receiver_id,
+            content
+        }]);
+
+        if (error) throw error;
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 // ---------------- START ---------------- //
 app.listen(port, () => {
   console.log(`Сервер запущен: http://localhost:${port}`);
