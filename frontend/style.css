@@ -975,6 +975,6 @@ main {
    ФИКС ОТСТУПА ОТ ФИКСИРОВАННОЙ ШАПКИ
    ======================================================= */
 main {
-    margin-top: 100px !important; /* !important ломает броню inline-стилей */
+    margin-top: 50px !important; /* !important ломает броню inline-стилей */
     padding-top: 10px !important;
 }
