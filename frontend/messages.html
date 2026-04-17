@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="dark-theme">
+
 <header class="mangalib-header">
     <div class="header-left">
         <h1 style="cursor: pointer; margin: 0; font-size: 24px; color: var(--text-heading);" onclick="window.location.href='index.html'">Build_Auction</h1>
@@ -13,18 +14,17 @@
         <nav id="main-nav" class="desktop-nav" style="display: none;">
             <a href="index.html">Главная</a>
             <a href="create.html">Создать лот</a>
-            <a href="messages.html" id="nav-messages-btn" style="display: none;">Чат</a>
+            <a href="messages.html" id="nav-messages-btn" style="display: none;" class="active">Чат</a>
+            <a href="profile.html">Профиль</a>
         </nav>
     </div>
 
     <div class="header-right">
         <button class="icon-btn" onclick="toggleSearchModal()">🔎</button>
         <button class="icon-btn" onclick="toggleTheme()" id="theme-btn">🌙</button>
-        
         <div id="guest-info">
             <button onclick="showAuthModal()" class="auth-btn-small">Войти</button>
         </div>
-        
         <div id="user-info" style="display: none; cursor: pointer;" onclick="window.location.href='profile.html'">
              <img id="user-avatar" src="https://placehold.co/40x40?text=👤" class="header-avatar">
         </div>
@@ -62,93 +62,119 @@
             <span onclick="document.getElementById('search-input').value='Изумрудный Тарик';">Изумрудный Тарик</span>
         </div>
     </div>
-    
     <button id="search-btn" class="auth-btn-small" style="width: 100%; margin-top: 20px; padding: 12px; font-size: 16px;">Найти</button>
 </div>
 
-    <div class="container" style="display: flex; height: 80vh; margin-top: 20px; gap: 20px;">
-        <div id="inbox-list" style="width: 300px; background: var(--card-bg); border-radius: 12px; overflow-y: auto; border: 1px solid var(--border-color);">
-            <h2 style="padding: 15px; border-bottom: 1px solid var(--border-color);">Чаты</h2>
-            <div id="conversations-container">
-                <p style="padding: 20px; color: var(--text-muted);">Загрузка диалогов...</p>
+<main style="max-width: 1400px; margin: 0 auto; height: calc(100vh - 120px); padding: 0 20px;">
+    
+    <div class="mangalib-chat-container">
+        
+        <div class="chat-sidebar">
+            <div class="chat-sidebar-header">
+                <h2>Чаты</h2>
+            </div>
+            
+            <div id="conversations-container" class="chat-contacts-list">
+                <p style="padding: 20px; color: #888888;">Загрузка диалогов...</p>
             </div>
         </div>
 
-        <div id="active-chat-window" style="flex-grow: 1; background: var(--card-bg); border-radius: 12px; display: flex; flex-direction: column; border: 1px solid var(--border-color); position: relative;">
-            <div id="chat-not-selected" style="margin: auto; text-align: center; color: var(--text-muted);">
-                <h3>Выберите чат, чтобы начать общение</h3>
+        <div class="chat-main">
+            
+            <div id="chat-not-selected" style="margin: auto; text-align: center; color: #666;">
+                <span style="font-size: 50px;"></span>
+                <p>Выберите чат, чтобы начать общение</p>
             </div>
             
             <div id="chat-content" style="display: none; flex-direction: column; height: 100%;">
-                <div id="active-chat-header" style="padding: 15px; background: var(--ebay-blue); color: white; border-radius: 12px 12px 0 0;">
-                    <h3 id="active-partner-name" style="margin:0;">Чат</h3>
+                
+                <div class="chat-header" id="active-chat-header">
+                    <div class="chat-header-info">
+                        <div style="text-align: center; width: 100%;">
+                            <h3 id="active-partner-name">Имя продавца</h3>
+                            <span style="color: #888888; font-size: 13px;">В сети</span>
+                        </div>
+                        <img src="https://placehold.co/40x40?text=👤" class="contact-avatar" style="position: absolute; right: 0; width: 36px; height: 36px;">
+                    </div>
                 </div>
-                <div id="chat-messages" style="flex-grow: 1; overflow-y: auto; padding: 20px; background: #e5ddd5; display: flex; flex-direction: column; gap: 10px;"></div>
-                <div style="padding: 15px; display: flex; gap: 10px;">
-                    <input type="text" id="chat-input" placeholder="Введите сообщение..." style="flex-grow: 1; padding: 10px; border-radius: 20px; border: 1px solid var(--border-color);">
-                    <button onclick="sendMessage()" style="border-radius: 50%; width: 45px; height: 45px;">➤</button>
+
+                <div id="chat-messages" class="chat-messages">
+                    </div>
+
+                <div class="chat-input-area">
+                    <input type="text" id="chat-input" placeholder="Введите сообщение...">
+                    <button class="chat-send-btn" onclick="sendMessage()">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
+                    </button>
                 </div>
+
             </div>
         </div>
     </div>
+</main>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="app.js"></script>
-    <script src="chat.js"></script>
-    <script>
-        // Специальная логика только для этой страницы
-        window.addEventListener('load', async () => {
-            // Ждем авторизации
-            setTimeout(loadInbox, 1000);
-        });
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="app.js"></script>
+<script src="chat.js"></script>
+<script>
+    window.addEventListener('load', async () => {
+        setTimeout(loadInbox, 1000);
+    });
 
-async function loadInbox() {
-            if (!currentSession) return;
-            try {
-                const res = await fetch(`${API_URL}/my/conversations`, {
-                    headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
-                });
-                const convs = await res.json();
-                
-                const container = document.getElementById('conversations-container');
-                container.innerHTML = '';
-
-                if (convs.error) {
-                    container.innerHTML = `<p style="padding: 20px; color: #e74c3c; font-weight: bold;">Ошибка: ${convs.error}</p>`;
-                    return;
-                }
-
-                if (!Array.isArray(convs) || convs.length === 0) {
-                    container.innerHTML = '<p style="padding: 20px; color: var(--text-muted);">У вас пока нет сообщений.</p>';
-                    return;
-                }
-
-                convs.forEach(c => {
-                    const item = document.createElement('div');
-                    item.style = "padding: 15px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: 0.2s;";
-                    item.className = "inbox-item";
-                    item.innerHTML = `
-                        <div style="font-weight: bold;">${c.lotTitle || 'Чат по лоту'}</div>
-                        <div style="font-size: 12px; color: var(--text-muted);">Нажмите, чтобы открыть</div>
-                    `;
-                    item.onclick = () => selectChat(c.lotId, c.partnerId, c.lotTitle || 'Чат');
-                    container.appendChild(item);
-                });
-            } catch (e) { 
-                console.error("Сбой в скрипте:", e); 
-            }
-        } 
-
-        
-        function selectChat(lotId, partnerId, title) {
-            // Прячем заглушку "Выберите чат"
-            document.getElementById('chat-not-selected').style.display = 'none';
-            // Показываем само окно переписки
-            document.getElementById('chat-content').style.display = 'flex';
+    async function loadInbox() {
+        if (!currentSession) return;
+        try {
+            const res = await fetch(`${API_URL}/my/conversations`, {
+                headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
+            });
+            const convs = await res.json();
             
-            // Вызываем главную функцию чата (из твоего файла chat.js)
-            openChat(lotId, partnerId, title);
+            const container = document.getElementById('conversations-container');
+            container.innerHTML = '';
+
+            if (convs.error) {
+                container.innerHTML = `<p style="padding: 20px; color: #e74c3c;">Ошибка: ${convs.error}</p>`;
+                return;
+            }
+
+            if (!Array.isArray(convs) || convs.length === 0) {
+                container.innerHTML = '<p style="padding: 20px; color: #888888;">У вас пока нет сообщений.</p>';
+                return;
+            }
+
+            convs.forEach(c => {
+                const item = document.createElement('div');
+                item.className = "chat-contact"; // ИСПОЛЬЗУЕМ НОВЫЙ КЛАСС ИЗ CSS
+                item.innerHTML = `
+                    <img src="https://placehold.co/40x40?text=👤" class="contact-avatar">
+                    <div class="contact-info">
+                        <span class="contact-name">${c.lotTitle || 'Чат по лоту'}</span>
+                        <span class="contact-last-msg">Нажмите, чтобы открыть</span>
+                    </div>
+                `;
+                item.onclick = function() {
+                    // Убираем подсветку у всех, добавляем тому, на кого нажали
+                    document.querySelectorAll('.chat-contact').forEach(el => el.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    selectChat(c.lotId, c.partnerId, c.lotTitle || 'Чат');
+                };
+                container.appendChild(item);
+            });
+        } catch (e) { 
+            console.error("Сбой в скрипте:", e); 
         }
-    </script>
+    } 
+
+    function selectChat(lotId, partnerId, title) {
+        document.getElementById('chat-not-selected').style.display = 'none';
+        document.getElementById('chat-content').style.display = 'flex';
+        
+        // Меняем имя в шапке
+        document.getElementById('active-partner-name').innerText = title;
+        
+        openChat(lotId, partnerId, title);
+    }
+</script>
 </body>
 </html>

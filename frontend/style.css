@@ -978,3 +978,179 @@ main {
     margin-top: 20px !important; /* !important ломает броню inline-стилей */
     padding-top: 10px !important;
 }
+/* =======================================================
+   ЧАТ В СТИЛЕ MANGALIB
+   ======================================================= */
+
+.mangalib-chat-container {
+    display: flex;
+    height: 100%;
+    background: #141414; /* Очень глубокий темный цвет, как на скрине */
+    border-radius: 12px;
+    border: 1px solid #2a2a2a;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+/* --- ЛЕВАЯ ПАНЕЛЬ (СПИСОК ЧАТОВ) --- */
+.chat-sidebar {
+    width: 320px;
+    background: #141414;
+    border-right: 1px solid #2a2a2a;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid #2a2a2a;
+}
+
+.chat-sidebar-header h2 {
+    margin: 0;
+    font-size: 18px;
+    color: #ffffff;
+}
+
+.chat-contacts-list {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+/* Контакт в списке */
+.chat-contact {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 20px;
+    cursor: pointer;
+    border-bottom: 1px solid #1f1f1f;
+    transition: background 0.2s;
+}
+
+.chat-contact:hover {
+    background: #1f1f1f; /* Легкая подсветка при наведении */
+}
+
+.chat-contact.active {
+    background: #1a1a1a;
+    border-left: 3px solid #8b5cf6; /* Фиолетовая полоска слева */
+}
+
+.contact-avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.contact-name {
+    color: #e0e0e0;
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 3px;
+}
+
+.contact-last-msg {
+    color: #888888;
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* --- ПРАВАЯ ПАНЕЛЬ (СООБЩЕНИЯ) --- */
+.chat-main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    background: #0f0f0f; /* Чуть темнее, чем боковая панель */
+    position: relative;
+}
+
+.chat-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid #2a2a2a;
+    background: #141414;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 70px;
+}
+
+.chat-header-info {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    position: relative;
+}
+
+.chat-header h3 {
+    margin: 0;
+    color: #e0e0e0;
+    font-size: 16px;
+}
+
+.chat-messages {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.empty-chat-placeholder {
+    margin: auto;
+    text-align: center;
+    color: #666;
+}
+
+/* --- ПОЛЕ ВВОДА --- */
+.chat-input-area {
+    padding: 20px;
+    background: #141414;
+    border-top: 1px solid #2a2a2a;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+#chat-message-input {
+    flex-grow: 1;
+    background: transparent !important;
+    border: none !important;
+    color: #e0e0e0 !important;
+    font-size: 15px;
+    padding: 10px !important;
+    box-shadow: none !important;
+}
+
+#chat-message-input:focus {
+    outline: none;
+}
+
+.chat-send-btn {
+    background: #8b5cf6 !important; /* Тот самый фиолетовый */
+    border: none !important;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px !important; /* Чуть квадратная кнопка, как в Discord/MangaLib */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: none !important;
+}
+
+.chat-send-btn:hover {
+    background: #7c3aed !important;
+    transform: scale(1.05);
+}

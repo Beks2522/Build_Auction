@@ -1,6 +1,3 @@
-// ==========================================
-// СИСТЕМА ЧАТА
-// ==========================================
 
 let currentChatLotId = null;
 let currentChatReceiverId = null;
@@ -85,57 +82,53 @@ function closeChat() {
 // Добавление сообщения
 // ==========================================
 
+// ==========================================
+// Добавление сообщения (Темная тема)
+// ==========================================
+
 function appendMessageToChat(msg) {
     const container = document.getElementById('chat-messages');
 
     if (!container) return;
 
-    if (
-        container.innerHTML.includes(
-            'Напишите первое сообщение'
-        )
-    ) {
+    if (container.innerHTML.includes('Напишите первое сообщение') || container.innerHTML.includes('😴')) {
         container.innerHTML = '';
     }
 
-    const isMine =
-        msg.sender_id === currentSession.user.id;
+    const isMine = msg.sender_id === currentSession.user.id;
 
     const bubble = document.createElement('div');
 
     bubble.style.maxWidth = '75%';
-    bubble.style.padding = '8px 12px';
+    bubble.style.padding = '10px 15px';
     bubble.style.borderRadius = '12px';
-    bubble.style.boxShadow =
-        '0 1px 1px rgba(0,0,0,0.1)';
     bubble.style.margin = '5px 0';
 
-    if (isMine) {
-        bubble.style.alignSelf = 'flex-end';
-        bubble.style.background = '#dcf8c6';
-    } else {
-        bubble.style.alignSelf = 'flex-start';
-        bubble.style.background = '#ffffff';
-    }
-
     const text = document.createElement('div');
-
-    text.style.fontSize = '14px';
-    text.style.color = '#000';
-
-    // защита от XSS
-    text.innerText = msg.content;
+    text.style.fontSize = '15px';
+    text.innerText = msg.content; // защита от XSS
 
     const time = document.createElement('div');
-
-    time.style.fontSize = '10px';
-    time.style.color = '#999';
+    time.style.fontSize = '11px';
     time.style.textAlign = 'right';
-    time.style.marginTop = '4px';
+    time.style.marginTop = '6px';
 
-    time.innerText = new Date(
-        msg.created_at
-    ).toLocaleTimeString([], {
+    // ПРИМЕНЯЕМ ТЕМНУЮ ТЕМУ
+    if (isMine) {
+        bubble.style.alignSelf = 'flex-end';
+        bubble.style.background = '#8b5cf6'; /* Фиолетовый (наш) */
+        bubble.style.borderBottomRightRadius = '2px'; /* Острый уголок */
+        text.style.color = '#ffffff';
+        time.style.color = 'rgba(255, 255, 255, 0.7)';
+    } else {
+        bubble.style.alignSelf = 'flex-start';
+        bubble.style.background = '#2a2a2a'; /* Темно-серый (собеседник) */
+        bubble.style.borderBottomLeftRadius = '2px'; /* Острый уголок */
+        text.style.color = '#e0e0e0';
+        time.style.color = '#888888';
+    }
+
+    time.innerText = new Date(msg.created_at).toLocaleTimeString([], {
         hour: '2-digit',
         minute: '2-digit'
     });
@@ -145,8 +138,8 @@ function appendMessageToChat(msg) {
 
     container.appendChild(bubble);
 
-    container.scrollTop =
-        container.scrollHeight;
+    // Прокручиваем вниз
+    container.scrollTop = container.scrollHeight;
 }
 
 // ==========================================
