@@ -115,20 +115,42 @@
 <script src="app.js"></script>
 <script src="chat.js"></script>
 <script>
-    window.addEventListener('load', async () => {
-        setTimeout(loadInbox, 1000);
+window.addEventListener('load', () => {
+        let attempts = 0;
+        // Проверяем наличие сессии каждые 100мс
+        const checkSession = setInterval(() => {
+            if (typeof currentSession !== 'undefined' && currentSession) {
+                clearInterval(checkSession);
+                loadInbox(); // Сессия есть - грузим чаты!
+            } else if (attempts > 50) { 
+                // Если прошло 5 секунд, а сессии нет - останавливаемся
+                clearInterval(checkSession);
+                const container = document.getElementById('conversations-container');
+                if (container) {
+                    container.innerHTML = '<p style="padding: 20px; color: #e74c3c;">Пожалуйста, войдите в аккаунт для просмотра чатов.</p>';
+                }
+            }
+            attempts++;
+        }, 100);
     });
 
+    // 2. ЗАГРУЗКА ЧАТОВ
     async function loadInbox() {
-        if (!currentSession) return;
+        const container = document.getElementById('conversations-container');
+        if (!container) return; // Защита, если элемента нет на странице
+
         try {
+            // Показываем понятный индикатор загрузки
+            container.innerHTML = '<p style="padding: 20px; color: #888888;">⏳ Загрузка диалогов...</p>';
+
             const res = await fetch(`${API_URL}/my/conversations`, {
                 headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
             });
+
+            if (!res.ok) throw new Error('Не удалось получить ответ от сервера');
+
             const convs = await res.json();
-            
-            const container = document.getElementById('conversations-container');
-            container.innerHTML = '';
+            container.innerHTML = ''; // Очищаем контейнер
 
             if (convs.error) {
                 container.innerHTML = `<p style="padding: 20px; color: #e74c3c;">Ошибка: ${convs.error}</p>`;
@@ -136,47 +158,69 @@
             }
 
             if (!Array.isArray(convs) || convs.length === 0) {
-                container.innerHTML = '<p style="padding: 20px; color: #888888;">У вас пока нет сообщений.</p>';
+                container.innerHTML = '<p style="padding: 20px; color: #888888;">У вас пока нет диалогов.</p>';
                 return;
             }
 
+            // 3. ОПТИМИЗАЦИЯ ОТРИСОВКИ (DocumentFragment)
+            // Собираем все элементы в "виртуальный" контейнер, чтобы добавить их на страницу за 1 раз
+            const fragment = document.createDocumentFragment();
+
             convs.forEach(c => {
-                const title = c.lotTitle || 'Чат';
-                // Генерируем красивую аватарку с первой буквой названия
-                const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(title)}&background=2a2a2a&color=fff&rounded=true`;
+                const title = c.lotTitle || 'Чат без названия';
+                // Добавил параметр &bold=true, чтобы буква на аватарке смотрелась жирнее и красивее
+                const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(title)}&background=2a2a2a&color=fff&rounded=true&bold=true`;
                 
                 const item = document.createElement('div');
                 item.className = "chat-contact"; 
                 item.innerHTML = `
-                    <img src="${avatarUrl}" class="contact-avatar">
+                    <img src="${avatarUrl}" class="contact-avatar" alt="Аватар">
                     <div class="contact-info">
                         <span class="contact-name">${title}</span>
                         <span class="contact-last-msg">Нажмите, чтобы открыть</span>
                     </div>`;
+                
                 item.onclick = function() {
+                    // Убираем класс active у всех, вешаем на текущий
                     document.querySelectorAll('.chat-contact').forEach(el => el.classList.remove('active'));
                     this.classList.add('active');
-                    selectChat(c.lotId, c.partnerId, title, avatarUrl); // Передаем аватарку
+                    selectChat(c.lotId, c.partnerId, title, avatarUrl);
                 };
-                container.appendChild(item);
+                
+                fragment.appendChild(item);
             });
+
+            // Выгружаем все чаты на страницу одним махом (очень быстро!)
+            container.appendChild(fragment);
+
         } catch (e) { 
-            console.error("Сбой в скрипте:", e); 
+            console.error("Сбой в loadInbox:", e); 
+            // 4. ПОНЯТНАЯ ОШИБКА ДЛЯ ПОЛЬЗОВАТЕЛЯ
+            container.innerHTML = `<p style="padding: 20px; color: #e74c3c;">Произошла ошибка при загрузке. Проверьте интернет или обновите страницу.</p>`;
         }
     } 
 
+    // 5. ВЫБОР ЧАТА С ПРОВЕРКАМИ
     function selectChat(lotId, partnerId, title, avatarUrl) {
-        document.getElementById('chat-not-selected').style.display = 'none';
-        document.getElementById('chat-content').style.display = 'flex';
+        const notSelectedEl = document.getElementById('chat-not-selected');
+        const contentEl = document.getElementById('chat-content');
+        const partnerNameEl = document.getElementById('active-partner-name');
+        const chatAvatarEl = document.getElementById('active-chat-avatar');
+
+        // Безопасно меняем видимость
+        if (notSelectedEl) notSelectedEl.style.display = 'none';
+        if (contentEl) contentEl.style.display = 'flex';
         
-        // Меняем имя в шапке
-        document.getElementById('active-partner-name').innerText = title;
-        // Меняем аватарку в шапке
-        if(avatarUrl) {
-            document.getElementById('active-chat-avatar').src = avatarUrl;
+        // Обновляем данные в шапке
+        if (partnerNameEl) partnerNameEl.innerText = title;
+        if (chatAvatarEl && avatarUrl) chatAvatarEl.src = avatarUrl;
+        
+        // Вызываем функцию из chat.js, только если она там реально есть
+        if (typeof openChat === 'function') {
+            openChat(lotId, partnerId, title);
+        } else {
+            console.error("Функция openChat не найдена! Проверьте файл chat.js");
         }
-        
-        openChat(lotId, partnerId, title);
     }
 </script>
 </body>
