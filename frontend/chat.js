@@ -24,7 +24,7 @@ async function openChat(lotId, sellerId, sellerName) {
         document.getElementById('active-partner-name');
 
     if (titleEl) {
-        titleEl.innerText = `💬 ${sellerName}`;
+        titleEl.innerText = ` ${sellerName}`;
     }
 
     const container = document.getElementById('chat-messages');
@@ -91,7 +91,7 @@ function appendMessageToChat(msg) {
 
     if (!container) return;
 
-    if (container.innerHTML.includes('Напишите первое сообщение') || container.innerHTML.includes('😴')) {
+    if (container.innerHTML.includes('Напишите первое сообщение') || container.innerHTML.includes('')) {
         container.innerHTML = '';
     }
 
@@ -249,7 +249,7 @@ function initChatRealtime() {
                             currentSession.user.id
                     ) {
                         showToast(
-                            '💬 Новое сообщение',
+                            'Новое сообщение',
                             'info'
                         );
                     }

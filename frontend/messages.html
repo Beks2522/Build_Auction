@@ -88,25 +88,24 @@
             
             <div id="chat-content" style="display: none; flex-direction: column; height: 100%;">
                 
-                <div class="chat-header" id="active-chat-header">
-                    <div class="chat-header-info">
-                        <div style="text-align: center; width: 100%;">
-                            <h3 id="active-partner-name">Имя продавца</h3>
-                            <span style="color: #888888; font-size: 13px;">В сети</span>
-                        </div>
-                        <img src="https://placehold.co/40x40?text=👤" class="contact-avatar" style="position: absolute; right: 0; width: 36px; height: 36px;">
-                    </div>
-                </div>
+<div class="chat-header" id="active-chat-header">
+    <div class="chat-header-info">
+        <div style="text-align: center; width: 100%;">
+            <h3 id="active-partner-name">Имя продавца</h3>
+            <span style="color: #888888; font-size: 13px;">В сети</span>
+        </div>
+        <img id="active-chat-avatar" src="https://ui-avatars.com/api/?name=User&background=2a2a2a&color=fff&rounded=true" class="contact-avatar" style="position: absolute; right: 0; width: 36px; height: 36px;">
+    </div>
+</div>
 
-                <div id="chat-messages" class="chat-messages">
-                    </div>
+<div id="chat-messages" class="chat-messages"></div>
 
-                <div class="chat-input-area">
-                    <input type="text" id="chat-input" placeholder="Введите сообщение...">
-                    <button class="chat-send-btn" onclick="sendMessage()">
-                        <svg viewBox="0 0 24 24" width="20" height="20" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
-                    </button>
-                </div>
+<div class="chat-input-area">
+    <input type="text" id="chat-input" placeholder="Ваше сообщение">
+    <button class="chat-send-btn" onclick="sendMessage()">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
+    </button>
+</div>
 
             </div>
         </div>
@@ -143,21 +142,22 @@
             }
 
             convs.forEach(c => {
+                const title = c.lotTitle || 'Чат';
+                // Генерируем красивую аватарку с первой буквой названия
+                const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(title)}&background=2a2a2a&color=fff&rounded=true`;
+                
                 const item = document.createElement('div');
-                item.className = "chat-contact"; // ИСПОЛЬЗУЕМ НОВЫЙ КЛАСС ИЗ CSS
+                item.className = "chat-contact"; 
                 item.innerHTML = `
-                    <img src="https://placehold.co/40x40?text=👤" class="contact-avatar">
+                    <img src="${avatarUrl}" class="contact-avatar">
                     <div class="contact-info">
-                        <span class="contact-name">${c.lotTitle || 'Чат по лоту'}</span>
+                        <span class="contact-name">${title}</span>
                         <span class="contact-last-msg">Нажмите, чтобы открыть</span>
-                    </div>
-                `;
+                    </div>`;
                 item.onclick = function() {
-                    // Убираем подсветку у всех, добавляем тому, на кого нажали
                     document.querySelectorAll('.chat-contact').forEach(el => el.classList.remove('active'));
                     this.classList.add('active');
-                    
-                    selectChat(c.lotId, c.partnerId, c.lotTitle || 'Чат');
+                    selectChat(c.lotId, c.partnerId, title, avatarUrl); // Передаем аватарку
                 };
                 container.appendChild(item);
             });
@@ -166,12 +166,16 @@
         }
     } 
 
-    function selectChat(lotId, partnerId, title) {
+    function selectChat(lotId, partnerId, title, avatarUrl) {
         document.getElementById('chat-not-selected').style.display = 'none';
         document.getElementById('chat-content').style.display = 'flex';
         
         // Меняем имя в шапке
         document.getElementById('active-partner-name').innerText = title;
+        // Меняем аватарку в шапке
+        if(avatarUrl) {
+            document.getElementById('active-chat-avatar').src = avatarUrl;
+        }
         
         openChat(lotId, partnerId, title);
     }
