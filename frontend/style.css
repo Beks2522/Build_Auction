@@ -43,8 +43,8 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     line-height: 1.6;
-    padding: 100px 20px 40px 20px; 
-    max-width: 1400px; 
+    padding: 0 20px 40px 20px; 
+    max-width: 1400px;
     margin: 0 auto;
 }
 
@@ -975,6 +975,6 @@ main {
    ФИКС ОТСТУПА ОТ ФИКСИРОВАННОЙ ШАПКИ
    ======================================================= */
 main {
-    margin-top: 120px !important; /* !important ломает броню inline-стилей */
-    padding-top: 20px !important;
+    margin-top: 19px !important; /* !important ломает броню inline-стилей */
+    padding-top: 0 !important;
 }
