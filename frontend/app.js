@@ -821,3 +821,26 @@ async function payForLot(lotId) {
         showToast('Ошибка сети', 'error');
     }
 }
+// Открытие/закрытие окна поиска
+function toggleSearchModal() {
+    const modal = document.getElementById('mangalib-search-modal');
+    if (modal.style.display === 'block') {
+        modal.style.display = 'none';
+    } else {
+        modal.style.display = 'block';
+        document.getElementById('search-input').focus(); // Ставим курсор
+    }
+}
+
+// Переключение фиолетовых "таблеток" с категориями
+function setCategory(value, buttonElement) {
+    // 1. Убираем класс 'active' у всех кнопок-таблеток
+    const pills = document.querySelectorAll('.filter-pill');
+    pills.forEach(pill => pill.classList.remove('active'));
+    
+    // 2. Добавляем фиолетовый цвет той кнопке, на которую нажали
+    buttonElement.classList.add('active');
+    
+    // 3. Тайно меняем значение в нашем скрытом селекте, чтобы поиск работал как раньше
+    document.getElementById('category-filter').value = value;
+}

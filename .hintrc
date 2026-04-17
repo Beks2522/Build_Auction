@@ -8,6 +8,7 @@
     "button-type": "off",
     "axe/parsing": "off",
     "axe/text-alternatives": "off",
-    "meta-viewport": "off"
+    "meta-viewport": "off",
+    "compat-api/css": "off"
   }
 }

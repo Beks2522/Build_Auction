@@ -8,56 +8,65 @@
 </head>
 <body>
 
-<header>
-    <h1> Build_Auction</h1>
-    <div style="display: flex; align-items: center; gap: 20px;">
-        <button onclick="toggleTheme()" id="theme-btn" style="background: none; border: none; box-shadow: none; font-size: 24px; padding: 0; cursor: pointer; transform: none;">🌙</button>
-<nav id="main-nav" style="display: none; gap: 10px;">
-            <button onclick="window.location.href='index.html'">Главная</button>
-            <button onclick="window.location.href='create.html'">Создать лот</button> 
-            <button id="nav-messages-btn" onclick="window.location.href='messages.html'" style="display: none;">Сообщения</button> 
-            <button onclick="window.location.href='profile.html'">Профиль</button>
+<header class="mangalib-header">
+    <div class="header-left">
+        <h1 style="cursor: pointer; margin: 0; font-size: 24px; color: var(--text-heading);" onclick="window.location.href='index.html'">Build_Auction</h1>
+        
+        <nav id="main-nav" class="desktop-nav" style="display: none;">
+            <a href="index.html" class="active">Главная</a>
+            <a href="create.html">Каталог (Лоты)</a>
+            <a href="messages.html" id="nav-messages-btn" style="display: none;">Чат</a>
+            <a href="profile.html">Профиль</a>
         </nav>
+    </div>
 
+    <div class="header-right">
+        <button class="icon-btn" onclick="toggleSearchModal()">🔎</button>
+        <button class="icon-btn" onclick="toggleTheme()" id="theme-btn">🌙</button>
+        
         <div id="guest-info">
-            <button onclick="showAuthModal()" style="background: #2c3e50; padding: 8px 20px;">Войти</button>
+            <button onclick="showAuthModal()" class="auth-btn-small">Войти</button>
         </div>
-
+        
+        <div id="user-info" style="display: none; cursor: pointer;" onclick="window.location.href='profile.html'">
+             <img id="user-avatar" src="https://placehold.co/40x40?text=👤" class="header-avatar">
+        </div>
     </div>
 </header>
 
-<main>
-    <section class="ebay-search-container">
-        
-        <div class="search-box-wrapper">
-            <span class="search-icon">🔍</span>
-            <input type="text" id="search-input" placeholder="Найдите любые товары">
-            
-            <div class="divider"></div>
-            
-            <select id="category-filter">
-                <option value="all">Все категории</option>
-                <option value="electronics">Электроника</option>
-                <option value="auto">Авто и мото</option>
-                <option value="home">Для дома</option>
-                <option value="clothing">Одежда и обувь</option>
-                <option value="other">Разное</option>
-            </select>
+<div id="search-overlay" class="search-overlay" onclick="toggleSearchModal()"></div>
 
-            <div class="divider"></div>
-            
-            <select id="sort-filter" style="font-weight: 500; color: var(--ebay-blue);">
-                <option value="newest"> Сначала новые</option>
-                <option value="ending_soon"> Заканчиваются скоро</option>
-                <option value="price_asc"> Сначала дешевые</option>
-                <option value="price_desc"> Сначала дорогие</option>
-            </select>
-        </div>
-        
-        <button id="search-btn" class="ebay-search-btn">Найти</button>
+<div id="mangalib-search-modal" class="search-popover-centered">
+    <div class="search-input-wrapper">
+        <span style="color: var(--text-muted);">🔍</span>
+        <input type="text" id="search-input" placeholder="Что ищем?">
+        <button onclick="toggleSearchModal()" class="close-search-btn">✖</button>
+    </div>
+    
+    <select id="category-filter" style="display: none;">
+        <option value="all">Все</option>
+        <option value="electronics">Электроника</option>
+        <option value="auto">Авто</option>
+        <option value="home">Для дома</option>
+        <option value="clothing">Одежда</option>
+        <option value="other">Разное</option>
+    </select>
+    <select id="sort-filter" style="display: none;"><option value="newest"></option></select>
+    
+    <div class="search-filters">
+        <button class="filter-pill active" onclick="setCategory('all', this)">Все категории</button>
+        <button class="filter-pill" onclick="setCategory('electronics', this)">Электроника</button>
+        <button class="filter-pill" onclick="setCategory('auto', this)">Авто</button>
+    </div>
 
-    </section>
+    <div class="search-popular">
+        <h4 style="margin: 0 0 10px 0; color: var(--text-muted); font-size: 13px;">Что ищут</h4>
+        <div class="popular-tags">
+            <span onclick="document.getElementById('search-input').value='Porsche 718';">Porsche 718</span>
+            <span onclick="document.getElementById('search-input').value='Изумрудный Тарик';">Изумрудный Тарик</span>
         </div>
+    </div>
+</div>
 
     </section>
 
