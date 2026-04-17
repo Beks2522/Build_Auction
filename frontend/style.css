@@ -769,10 +769,18 @@ body.dark-mode .section-title {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 0;
-    position: relative; /* Важно! Чтобы поиск выпадал ровно из под шапки */
+    padding: 15px 40px; /* Добавили отступы по бокам внутри шапки */
+    
+    /* ДЕЛАЕМ ШАПКУ НА ВСЮ ШИРИНУ И ПРИБИВАЕМ НАВЕРХ */
+    width: 100%; 
+    position: fixed; 
+    top: 0;
+    left: 0;
+    background: var(--bg-color); /* Чтобы шапка не была прозрачной при прокрутке */
+    z-index: 9000; /* Шапка поверх всего контента */
+    box-sizing: border-box; /* Важно, чтобы padding не ломал ширину */
+    
     border-bottom: 1px solid var(--border-color);
-    margin-bottom: 30px;
 }
 
 .header-left, .header-right {
@@ -956,4 +964,7 @@ body.dark-mode .search-popover {
 .popular-tags span:hover {
     border-color: #8b5cf6;
     color: var(--text-color);
+}
+main {
+    margin-top: 100px; /* Отступ сверху, чтобы контент не прятался под шапку */
 }
