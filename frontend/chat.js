@@ -77,53 +77,50 @@ function closeChat() {
     currentChatLotId = null;
     currentChatReceiverId = null;
 }
-
-// ==========================================
 // Добавление сообщения
-// ==========================================
-
-// ==========================================
-// Добавление сообщения (Темная тема)
-// ==========================================
-
 function appendMessageToChat(msg) {
     const container = document.getElementById('chat-messages');
-
     if (!container) return;
 
-    if (container.innerHTML.includes('Напишите первое сообщение') || container.innerHTML.includes('')) {
-        container.innerHTML = '';
-    }
+    // 1. БЕЗОПАСНАЯ ОЧИСТКА ЗАГЛУШЕК
+    // Ищем только параграфы с текстом "Загрузка" или "Напишите первое..." и удаляем ТОЛЬКО ИХ
+    const placeholders = container.querySelectorAll('p');
+    placeholders.forEach(p => {
+        if (p.innerText.includes('Напишите') || p.innerText.includes('Загрузка')) {
+            p.remove();
+        }
+    });
 
+    // 2. ФОРМИРУЕМ ПУЗЫРЬ СООБЩЕНИЯ
     const isMine = msg.sender_id === currentSession.user.id;
-
     const bubble = document.createElement('div');
 
     bubble.style.maxWidth = '75%';
     bubble.style.padding = '10px 15px';
     bubble.style.borderRadius = '12px';
     bubble.style.margin = '5px 0';
+    bubble.style.width = 'fit-content'; // Чтобы короткие сообщения не растягивались на весь экран
 
     const text = document.createElement('div');
     text.style.fontSize = '15px';
-    text.innerText = msg.content; // защита от XSS
+    text.innerText = msg.content; // Защита от XSS
 
     const time = document.createElement('div');
     time.style.fontSize = '11px';
     time.style.textAlign = 'right';
     time.style.marginTop = '6px';
 
-    // ПРИМЕНЯЕМ ТЕМНУЮ ТЕМУ
+    // 3. ПРИМЕНЯЕМ ЦВЕТА (Фиолетовый для тебя, Серый для собеседника)
     if (isMine) {
         bubble.style.alignSelf = 'flex-end';
-        bubble.style.background = '#8b5cf6'; /* Фиолетовый (наш) */
-        bubble.style.borderBottomRightRadius = '2px'; /* Острый уголок */
+        bubble.style.background = '#8b5cf6'; 
+        bubble.style.borderBottomRightRadius = '2px'; // Острый уголок
         text.style.color = '#ffffff';
         time.style.color = 'rgba(255, 255, 255, 0.7)';
     } else {
         bubble.style.alignSelf = 'flex-start';
-        bubble.style.background = '#2a2a2a'; /* Темно-серый (собеседник) */
-        bubble.style.borderBottomLeftRadius = '2px'; /* Острый уголок */
+        bubble.style.background = '#2a2a2a'; 
+        bubble.style.borderBottomLeftRadius = '2px'; // Острый уголок
         text.style.color = '#e0e0e0';
         time.style.color = '#888888';
     }
@@ -136,9 +133,10 @@ function appendMessageToChat(msg) {
     bubble.appendChild(text);
     bubble.appendChild(time);
 
+    // 4. ДОБАВЛЯЕМ В КОНЕЦ СПИСКА (appendChild никогда не стирает старое!)
     container.appendChild(bubble);
 
-    // Прокручиваем вниз
+    // 5. ПРОКРУТКА В САМЫЙ НИЗ
     container.scrollTop = container.scrollHeight;
 }
 
