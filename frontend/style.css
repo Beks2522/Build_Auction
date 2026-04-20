@@ -1190,52 +1190,80 @@ main {
     transform: scale(1.05);
 }
 /* =======================================================
-   АНИМИРОВАННОЕ СВЕЧЕНИЕ НА ФОНЕ (YANDEX MUSIC STYLE)
+   ANIMATED MESH GRADIENT (INFINITY LOOP + NOISE)
    ======================================================= */
-.ambient-glow {
+
+/* Контейнер на весь экран, который всегда сзади */
+.mesh-gradient-wrapper {
     position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #0c0c0c; /* Глубокий фон */
+    overflow: hidden;
+    z-index: -2; /* Самый дальний слой */
+    pointer-events: none;
+}
+
+/* Общие стили для светящихся шаров */
+.orb {
+    position: absolute;
+    width: 50vw;
+    height: 50vw;
+    max-width: 500px;
+    max-height: 500px;
+    border-radius: 50%;
+    filter: blur(140px); /* Сильное размытие для мягкости */
+    opacity: 0.5;
+    will-change: transform;
+}
+
+/* Первый шар (Фиолетовый) */
+.orb-1 {
+    background: #8b5cf6;
     top: 50%;
     left: 50%;
-    width: 60vw;
-    height: 60vw;
-    max-width: 600px;
-    max-height: 600px;
-    
-    /* Сделали цвета чуть прозрачнее внутри самого градиента для мягкости */
-    background: conic-gradient(from 0deg, rgba(40, 255, 40, 0.8), rgba(0, 64, 255, 0.8), rgba(32, 255, 181, 0.8), rgba(255, 217, 2, 0.8));
-    
-    border-radius: 50%;
-    
-    /* Добавляем ось Z (0), чтобы включить аппаратное ускорение GPU */
-    transform: translate3d(-50%, -50%, 0); 
-    
-    filter: blur(120px);
-    opacity: 0.35;
-    animation: spinGlow 15s linear infinite;
-    pointer-events: none;
-    z-index: -1;
-    
-    /* Подсказываем браузеру, что этот элемент будет меняться, чтобы он не экономил ресурсы */
-    will-change: transform, filter;
-    /* Убедись, что тут стоит 20s и ОБЯЗАТЕЛЬНО linear (равномерно) */
-    animation: spinGlow 20s linear infinite;
+    /* Анимация движения по бесконечности */
+    animation: infinityLoop1 12s linear infinite;
 }
-/* Анимация медленного вращения */
-@keyframes spinGlow {
-    /* Начало: 0 градусов */
-    0% { 
-        transform: translate3d(-50%, -50%, 0) rotate(0deg); 
-    }
-    /* Фаза 1 (Медленная): За 30% времени проходим всего 45 градусов */
-    30% { 
-        transform: translate3d(-50%, -50%, 0) rotate(45deg); 
-    }
-    /* Фаза 2 (Быстрая): Рывок! Пролетаем 270 градусов */
-    70% { 
-        transform: translate3d(-50%, -50%, 0) rotate(900deg); 
-    }
-    /* Фаза 3 (Медленная): Замедляемся перед концом, чтобы бесшовно уйти на новый круг */
-    100% { 
-        transform: translate3d(-50%, -50%, 0) rotate(360deg); 
-    }
+
+/* Второй шар (Синий) */
+.orb-2 {
+    background: #3665f3;
+    top: 50%;
+    left: 50%;
+    /* Зеркальная анимация */
+    animation: infinityLoop2 12s linear infinite;
+}
+
+/* --- ШЕРШАВОСТЬ (ШУМ) --- */
+/* Накладываем слой с микро-зернистостью поверх шаров */
+.noise-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    opacity: 0.12; /* Уровень шершавости (можно менять) */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* --- АНИМАЦИИ ДВИЖЕНИЯ ПО ВОСЬМЕРКЕ --- */
+/* Математика: смещение по X идет с одной частотой, а по Y — в два раза быстрее */
+@keyframes infinityLoop1 {
+    0%   { transform: translate(-120%, -50%); }
+    25%  { transform: translate(-50%, 20%); }
+    50%  { transform: translate(20%, -50%); }
+    75%  { transform: translate(-50%, -120%); }
+    100% { transform: translate(-120%, -50%); }
+}
+
+@keyframes infinityLoop2 {
+    0%   { transform: translate(20%, -50%); }
+    25%  { transform: translate(-50%, -120%); }
+    50%  { transform: translate(-120%, -50%); }
+    75%  { transform: translate(-50%, 20%); }
+    100% { transform: translate(20%, -50%); }
 }
