@@ -852,7 +852,12 @@ async function payForLot(lotId) {
         showToast('Создаем безопасный платеж...', 'info');
         const res = await fetch(`${API_URL}/lots/${lotId}/checkout`, {
             method: 'POST',
-            headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
+            headers: { 
+                'Content-Type': 'application/json', // <--- КРИТИЧЕСКИ ВАЖНОЕ ДОБАВЛЕНИЕ
+                'Authorization': `Bearer ${currentSession.access_token}` 
+            },
+            // Отправляем пустое тело, чтобы бэкенд понял запрос и не искал флаг "Купить сейчас"
+            body: JSON.stringify({}) 
         });
         const data = await res.json();
 
