@@ -255,7 +255,10 @@ body.dark-mode .lot-card:hover { box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
     font-size: 14px !important;
     margin: 5px 0 15px 0 !important;
 }
-body.dark-mode .lot-card .timer { color: #ff6b6b !important; }
+body.dark-mode .lot-card .timer {
+    background: rgba(30, 30, 30, 0.7); /* Полупрозрачный темный фон */
+    backdrop-filter: blur(10px); /* Размываем свечение, которое проходит сквозь карточку */
+     color: #ff6b6b !important; }
 
 /* Контролы ставок в один ряд */
 .bid-controls {
@@ -1171,4 +1174,39 @@ main {
 .chat-send-btn:hover {
     background: #7c3aed !important;
     transform: scale(1.05);
+}
+/* =======================================================
+   АНИМИРОВАННОЕ СВЕЧЕНИЕ НА ФОНЕ (YANDEX MUSIC STYLE)
+   ======================================================= */
+.ambient-glow {
+    position: fixed; /* Прибиваем к центру экрана, чтобы свечение не уезжало при скролле */
+    top: 50%;
+    left: 50%;
+    width: 60vw; /* Размер круга зависит от экрана */
+    height: 60vw;
+    max-width: 600px;
+    max-height: 600px;
+    
+    /* Красивый градиент по кругу */
+    background: conic-gradient(from 0deg, #8b5cf6, var(--ebay-blue), #e53238, #8b5cf6);
+    
+    border-radius: 50%;
+    transform: translate(-50%, -50%); /* Центрируем точно по осям */
+    
+    /* ГЛАВНАЯ МАГИЯ: Гигантское размытие и прозрачность */
+    filter: blur(120px);
+    opacity: 0.5; /* Сделай 0.5, если хочешь поярче */
+    
+    /* Вращение на 360 градусов за 15 секунд */
+    animation: spinGlow 13s linear infinite;
+    
+    /* КРИТИЧЕСКИ ВАЖНО: */
+    pointer-events: none; /* Чтобы круг не перекрывал клики по карточкам лотов! */
+    z-index: -1; /* Отправляем под весь контент */
+}
+
+/* Анимация медленного вращения */
+@keyframes spinGlow {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
 }
