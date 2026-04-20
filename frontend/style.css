@@ -420,7 +420,7 @@ body.dark-mode .add-lot-section form input[type="datetime-local"]::-webkit-calen
     font-weight: 500 !important;
     font-size: 12px !important;
     margin: 10px 0 !important;
-}
+}   
 
 /* 2. Контейнер для ставки: строго ограничиваем ширину */
 .bid-controls {
