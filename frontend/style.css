@@ -1217,9 +1217,25 @@ main {
     
     /* Подсказываем браузеру, что этот элемент будет меняться, чтобы он не экономил ресурсы */
     will-change: transform, filter;
+    /* Убедись, что тут стоит 20s и ОБЯЗАТЕЛЬНО linear (равномерно) */
+    animation: spinGlow 20s linear infinite;
 }
 /* Анимация медленного вращения */
 @keyframes spinGlow {
-    0% { transform: translate3d(-50%, -50%, 0) rotate(0deg); }
-    100% { transform: translate3d(-50%, -50%, 0) rotate(360deg); }
+    /* Начало: 0 градусов */
+    0% { 
+        transform: translate3d(-50%, -50%, 0) rotate(0deg); 
+    }
+    /* Фаза 1 (Медленная): За 30% времени проходим всего 45 градусов */
+    30% { 
+        transform: translate3d(-50%, -50%, 0) rotate(45deg); 
+    }
+    /* Фаза 2 (Быстрая): Рывок! Пролетаем 270 градусов */
+    70% { 
+        transform: translate3d(-50%, -50%, 0) rotate(315deg); 
+    }
+    /* Фаза 3 (Медленная): Замедляемся перед концом, чтобы бесшовно уйти на новый круг */
+    100% { 
+        transform: translate3d(-50%, -50%, 0) rotate(360deg); 
+    }
 }
