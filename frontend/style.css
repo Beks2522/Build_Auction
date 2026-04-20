@@ -181,30 +181,41 @@ body.dark-mode #main-nav button:hover, body.dark-mode #guest-info button:hover {
     gap: 30px;
 }
 
+/* --- ОСНОВНАЯ КАРТОЧКА (ЭФФЕКТ СТЕКЛА) --- */
 .lot-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color); /* Тонкая граница вместо теней */
+    /* Полупрозрачный темный фон */
+    background: rgba(30, 30, 30, 0.5); 
+    
+    /* Магия размытия (преломление лучей) */
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px); /* Для старых браузеров Apple */
+    
+    /* Тонкий блик по краям стекла */
+    border: 1px solid rgba(255, 255, 255, 0.08); 
     border-radius: 12px;
     padding: 15px;
     display: flex;
     flex-direction: column;
-    transition: transform 0.2s, box-shadow 0.2s;
+    
+    /* Легкая тень, чтобы оторвать карточку от фона */
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s, box-shadow 0.2s, background 0.2s, border 0.2s;
 }
 
+/* Эффект при наведении на "стеклянную" карточку */
 .lot-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    background: rgba(40, 40, 40, 0.65); /* Чуть светлеет при наведении */
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.15); /* Блик становится ярче */
 }
 
-body.dark-mode .lot-card:hover { box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
-
-/* Изображения: делаем пропорции красивее */
+/* Изображения: убираем глухой фон, чтобы вписалось в стекло */
 .lot-card img {
     height: 220px !important;
-    object-fit: contain !important; /* Картинка не обрезается */
-    background-color: #11111a; /* Или var(--bg-color) */    
-    background-color: var(--input-bg);
-    border: 1px solid var(--border-color);
+    object-fit: contain !important; 
+    background-color: rgba(0, 0, 0, 0.2); /* Слегка затемненный прозрачный фон */
+    border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 8px;
     padding: 10px;
 }
@@ -397,14 +408,15 @@ body.dark-mode .add-lot-section form input[type="datetime-local"]::-webkit-calen
    ======================================================= */
 
 /* 1. Делаем тег категории компактным "пузырьком", а не длинной полосой */
+/* --- КАТЕГОРИЯ (ПУЗЫРЕК) --- */
 .lot-card span[style*="background"] {
     display: inline-block !important;
-    width: fit-content !important; /* Строго по размеру текста! Не дает растягиваться */
+    width: fit-content !important;
     background-color: var(--input-bg) !important;
     color: var(--text-color) !important;
     border: 1px solid var(--border-color) !important;
     padding: 4px 12px !important;
-    border-radius: 20px !important; /* Круглые края */
+    border-radius: 20px !important;
     font-weight: 500 !important;
     font-size: 12px !important;
     margin: 10px 0 !important;
