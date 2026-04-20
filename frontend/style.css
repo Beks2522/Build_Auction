@@ -1190,7 +1190,7 @@ main {
     transform: scale(1.05);
 }
 /* =======================================================
-   АНИМИРОВАННОЕ СВЕЧЕНИЕ НА ФОНЕ (YANDEX MUSIC STYLE)
+   АНИМИРОВАННОЕ СВЕЧЕНИЕ НА ФОНЕ (ИСПРАВЛЕННОЕ)
    ======================================================= */
 .ambient-glow {
     position: fixed;
@@ -1201,42 +1201,36 @@ main {
     max-width: 600px;
     max-height: 600px;
     
-    /* Сделали цвета чуть прозрачнее внутри самого градиента для мягкости */
     background: conic-gradient(from 0deg, rgba(40, 255, 40, 0.8), rgba(0, 64, 255, 0.8), rgba(32, 255, 181, 0.8), rgba(255, 217, 2, 0.8));
-    
     border-radius: 50%;
     
-    /* Добавляем ось Z (0), чтобы включить аппаратное ускорение GPU */
-    transform: translate3d(-50%, -50%, 0); 
-    
-    filter: blur(120px);
+    /* 1. Немного уменьшили blur, чтобы видеокарте было легче */
+    filter: blur(90px); 
     opacity: 0.35;
-    animation: spinGlow 15s linear infinite;
+    
+    /* 2. Убрали дублирующуюся строчку animation, оставили только 20s */
+    animation: spinGlow 20s linear infinite;
+    
     pointer-events: none;
     z-index: -1;
-    
-    /* Подсказываем браузеру, что этот элемент будет меняться, чтобы он не экономил ресурсы */
+    transform: translate3d(-50%, -50%, 0); 
     will-change: transform, filter;
-    /* Убедись, что тут стоит 20s и ОБЯЗАТЕЛЬНО linear (равномерно) */
-    animation: spinGlow 20s linear infinite;
 }
-/* Анимация медленного вращения */
+
+/* ИСПРАВЛЕННАЯ Анимация */
 @keyframes spinGlow {
-    /* Начало: 0 градусов */
     0% { 
         transform: translate3d(-50%, -50%, 0) rotate(0deg); 
     }
-    /* Фаза 1 (Медленная): За 30% времени проходим всего 45 градусов */
     30% { 
         transform: translate3d(-50%, -50%, 0) rotate(45deg); 
     }
-    /* Фаза 2 (Быстрая): Рывок! Пролетаем 270 градусов */
     70% { 
-        transform: translate3d(-50%, -50%, 0) rotate(900deg); 
+        /* Было 900, но чтобы плавно дойти до конца, делаем 315 */
+        transform: translate3d(-50%, -50%, 0) rotate(315deg); 
     }
-    /* Фаза 3 (Медленная): Замедляемся перед концом, чтобы бесшовно уйти на новый круг */
     100% { 
+        /* Логичное завершение полного круга */
         transform: translate3d(-50%, -50%, 0) rotate(360deg); 
     }
 }
-
