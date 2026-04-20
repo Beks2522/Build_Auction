@@ -1206,34 +1206,31 @@ main {
     pointer-events: none;
 }
 
-/* Общие стили для светящихся шаров */
+/* Общие стили для шаров (УБРАЛИ filter: blur!) */
 .orb {
     position: absolute;
-    width: 50vw;
-    height: 50vw;
-    max-width: 500px;
-    max-height: 500px;
+    width: 60vw; /* Сделали чуть больше, так как градиент затухает к краям */
+    height: 60vw;
+    max-width: 700px;
+    max-height: 700px;
     border-radius: 50%;
-    filter: blur(140px); /* Сильное размытие для мягкости */
-    opacity: 0.5;
     will-change: transform;
+    /* Убрали opacity, будем контролировать прозрачность цветом */
 }
 
-/* Первый шар (Фиолетовый) */
+/* Первый шар (Фиолетовый) - Идеальный градиент от цвета к прозрачности */
 .orb-1 {
-    background: #8b5cf6;
+    background: radial-gradient(circle at center, rgba(139, 92, 246, 0.25) 0%, rgba(139, 92, 246, 0) 65%);
     top: 50%;
     left: 50%;
-    /* Анимация движения по бесконечности */
     animation: infinityLoop1 12s linear infinite;
 }
 
-/* Второй шар (Синий) */
+/* Второй шар (Синий) - Идеальный градиент */
 .orb-2 {
-    background: #3665f3;
+    background: radial-gradient(circle at center, rgba(54, 101, 243, 0.25) 0%, rgba(54, 101, 243, 0) 65%);
     top: 50%;
     left: 50%;
-    /* Зеркальная анимация */
     animation: infinityLoop2 12s linear infinite;
 }
 
