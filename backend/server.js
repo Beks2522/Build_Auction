@@ -502,35 +502,51 @@ app.get('/api/users/:id/reviews', async (req, res) => {
 // ОПЛАТА (STRIPE)
 // ==========================================
 
-// 1. Создание сессии оплаты
+// 1. Создание сессии оплаты (Универсальное)
 app.post('/api/lots/:id/checkout', authenticateToken, async (req, res) => {
     const lotId = req.params.id;
     const userId = req.user.id;
+    // Фронтенд будет передавать флаг isBuyNow: true при мгновенном выкупе
+    const { isBuyNow } = req.body; 
 
     try {
-        // Получаем лот и победную ставку
         const { data: lot } = await supabase.from('lots').select('*').eq('id', lotId).single();
-        const { data: bids } = await supabase.from('bids').select('*').eq('lot_id', lotId).order('amount', { ascending: false }).limit(1);
-        const winningBid = bids && bids.length > 0 ? bids[0] : null;
-
-        // Проверяем, завершен ли аукцион и является ли юзер победителем
-        if (new Date() < new Date(lot.end_time)) return res.status(400).json({ error: 'Аукцион еще не завершен' });
-        if (!winningBid || winningBid.bidder_id !== userId) return res.status(403).json({ error: 'Вы не победитель этого лота' });
+        if (!lot) return res.status(404).json({ error: 'Лот не найден' });
         if (lot.is_paid) return res.status(400).json({ error: 'Лот уже оплачен' });
+
+        let finalPrice = 0;
+
+        if (isBuyNow) {
+            // --- ЛОГИКА "КУПИТЬ СЕЙЧАС" ---
+            if (lot.status === 'sold') return res.status(400).json({ error: 'Уже продан' });
+            finalPrice = lot.buy_now_price;
+            
+            // Сразу бронируем лот за покупателем, чтобы никто другой не нажал кнопку
+            await supabase.from('lots').update({ status: 'sold', buyer_id: userId }).eq('id', lotId);
+            
+        } else {
+            // --- ЛОГИКА "ОПЛАТА ПОСЛЕ ПОБЕДЫ В АУКЦИОНЕ" ---
+            if (new Date() < new Date(lot.end_time)) return res.status(400).json({ error: 'Аукцион еще не завершен' });
+            
+            const { data: bids } = await supabase.from('bids').select('*').eq('lot_id', lotId).order('amount', { ascending: false }).limit(1);
+            const winningBid = bids && bids.length > 0 ? bids[0] : null;
+
+            if (!winningBid || winningBid.bidder_id !== userId) return res.status(403).json({ error: 'Вы не победитель' });
+            finalPrice = winningBid.amount;
+        }
 
         // Создаем чек в Stripe
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items: [{
                 price_data: {
-                    currency: 'usd',
+                    currency: 'kzt', // Ставим тенге!
                     product_data: { name: lot.title },
-                    unit_amount: Math.round(winningBid.amount * 100), // Stripe работает в центах
+                    unit_amount: Math.round(finalPrice * 100), // Stripe работает в тиынах (копейках)
                 },
                 quantity: 1,
             }],
             mode: 'payment',
-            // ВАЖНО: Stripe вернет пользователя по этим ссылкам
             success_url: `https://build-auction-1.onrender.com/?payment_success=true&lot_id=${lotId}`,
             cancel_url: `https://build-auction-1.onrender.com/`,
         });

@@ -302,7 +302,9 @@ if (addLotForm) {
     });
 }
 
-// --- ЗАГРУЗКА ЛОТОВ ---
+// ==========================================
+// 1. ЗАГРУЗКА И ОТРИСОВКА ЛОТОВ
+// ==========================================
 async function loadLots(searchQuery = '', categoryFilter = 'all', sortFilter = 'newest') { 
     const container = document.getElementById('lots-container');
     if (!container) return;
@@ -319,21 +321,23 @@ async function loadLots(searchQuery = '', categoryFilter = 'all', sortFilter = '
         container.innerHTML = lots.length === 0 ? '<p style="text-align:center; color: var(--text-muted);">Нет активных лотов.</p>' : '';
 
         lots.forEach(lot => {
-            const isEnded = new Date() > new Date(lot.end_time);
+            // ВАЖНО: Теперь лот считается завершенным, если вышло время ИЛИ если он продан/оплачен
+            const isEnded = new Date() > new Date(lot.end_time) || lot.status === 'sold' || lot.is_paid === true;
+            
             let imagesHtml = lot.lot_images?.length > 0 ? `<img src="${lot.lot_images[0].image_url}" style="width:100%; height: 150px; object-fit: cover; border-radius:8px; margin-bottom:10px;">` : '';
             let deleteBtnHtml = (currentSession && currentSession.user.id === lot.seller_id) ? `<button onclick="deleteLot('${lot.id}')" style="background:#ff4d4d; margin-top:10px; width:100%;">🗑️ Удалить</button>` : '';
             
-            // Кнопка Купить сейчас
+            // Кнопка Купить сейчас (только если лот активен)
             let buyNowBtnHtml = '';
             if (!isEnded && lot.buy_now_price) {
-                // Убрали длинный style, добавили класс btn-buy-now
                 buyNowBtnHtml = `<button class="btn-buy-now" onclick="buyNow('${lot.id}')">Купить сейчас за ₸${lot.buy_now_price}</button>`;
             }
+            
             const currentSellerName = (lot.profiles && lot.profiles.username) ? lot.profiles.username : 'Продавец';
+            
             // Кнопка Чата (Показываем, если мы вошли и это НЕ наш лот)
             let chatBtnHtml = '';
             if (currentSession && currentSession.user.id !== lot.seller_id) {
-                // Теперь передаем нашу новую переменную currentSellerName
                 chatBtnHtml = `<button class="btn-chat" onclick="openChat('${lot.id}', '${lot.seller_id}', '${currentSellerName}')">Написать продавцу</button>`;
             }
             const catNames = { 'electronics': 'Электроника', 'auto': 'Авто', 'home': 'Для дома', 'clothing': 'Одежда', 'other': 'Разное' };
@@ -358,7 +362,7 @@ async function loadLots(searchQuery = '', categoryFilter = 'all', sortFilter = '
                 <button onclick="showBidsHistory('${lot.id}')" style="background:none; border:none; box-shadow:none; color:#2980b9; text-decoration:underline; padding:0; margin-top:5px; font-size:14px;">История ставок</button>
                 
                 <div class="timer" id="timer-${lot.id}" data-endtime="${lot.end_time}" style="margin:10px 0;color:#e67e22;font-weight:bold;">
-                    ${isEnded ? '<span style="color:red;">АУКЦИОН ЗАВЕРШЕН</span>' : 'Загрузка...'}
+                    ${isEnded ? (lot.status === 'sold' || lot.is_paid ? '<span class="status-paid">ПРОДАНО</span>' : '<span style="color:red;">АУКЦИОН ЗАВЕРШЕН</span>') : 'Загрузка...'}
                 </div>
                 
                 <div class="bid-controls" id="bid-controls-${lot.id}" style="${isEnded ? 'display:none;' : ''}">
@@ -376,6 +380,46 @@ async function loadLots(searchQuery = '', categoryFilter = 'all', sortFilter = '
         if (!window.timerInterval) window.timerInterval = setInterval(updateAllTimers, 1000);
     } catch (error) { 
         console.error(error); 
+    }
+}
+
+// ==========================================
+// 2. ФУНКЦИЯ ОПЛАТЫ (STRIPE CHECKOUT)
+// ==========================================
+async function buyNow(lotId) {
+    if (!currentSession) {
+        showToast('Пожалуйста, войдите в систему', 'error');
+        showAuthModal();
+        return;
+    }
+
+    if (!confirm('Вы уверены, что хотите перейти к оплате и выкупить этот лот?')) {
+        return;
+    }
+
+    try {
+        showToast('Создаем безопасный платеж Stripe...', 'info');
+        
+        const res = await fetch(`${API_URL}/lots/${lotId}/checkout`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${currentSession.access_token}` 
+            },
+            // Передаем флаг isBuyNow, чтобы бэкенд знал, что это покупка по блиц-цене!
+            body: JSON.stringify({ isBuyNow: true }) 
+        });
+        
+        const data = await res.json();
+
+        if (data.url) {
+            window.location.href = data.url; // Улетаем на страницу оплаты Stripe!
+        } else {
+            showToast(data.error || 'Ошибка при создании чека', 'error');
+        }
+    } catch (e) {
+        console.error(e);
+        showToast('Ошибка сети при связи со Stripe', 'error');
     }
 }
 async function deleteLot(lotId) {
@@ -440,7 +484,7 @@ let payButtonHtml = '';
                     <h3>${bid.lots.title}</h3>
                     <p style="margin: 10px 0 0 0; color: var(--text-muted);">Ваша ставка:</p>
                     <div class="price" style="margin-top: 0 !important; color: ${statusColor} !important;">₸${bid.amount}</div>
-                    <p style="font-size: 13px; color: var(--text-muted); margin-top: auto;">Текущая цена лота: ₸${bid.lots.current_price}</p>
+                    <p style="font-size: 8px; color: var(--text-muted); margin-top: auto;">Текущая цена лота: ₸${bid.lots.current_price}</p>
                     ${isEnded ? '<p style="color:red; font-weight:bold; margin-top:5px;">Аукцион завершен</p>' : ''}
                     ${payButtonHtml}
                 </div>`;
@@ -741,7 +785,7 @@ async function loadReviews(sellerId) {
 
         // Рисуем каждый отзыв
         reviews.forEach(r => {
-            const stars = '⭐'.repeat(r.rating); // Превращаем цифру 5 в 5 звездочек
+            const stars = '✦'.repeat(r.rating); // Превращаем цифру 5 в 5 звездочек
             const avatar = r.buyer.avatar_url 
                 ? `<img src="${r.buyer.avatar_url}" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border: 2px solid var(--ebay-blue);">` 
                 : `<div style="width:45px; height:45px; border-radius:50%; background:var(--border-color); display:flex; align-items:center; justify-content:center; font-size: 20px;">👤</div>`;
@@ -844,3 +888,33 @@ function setCategory(value, buttonElement) {
     // 3. Тайно меняем значение в нашем скрытом селекте, чтобы поиск работал как раньше
     document.getElementById('category-filter').value = value;
 }
+// ==========================================
+// ЛОВИМ ВОЗВРАТ ИЗ STRIPE ПОСЛЕ ОПЛАТЫ
+// ==========================================
+window.addEventListener('load', async () => {
+    // Читаем параметры из адресной строки
+    const urlParams = new URLSearchParams(window.location.search);
+    const isSuccess = urlParams.get('payment_success');
+    const paidLotId = urlParams.get('lot_id');
+
+    if (isSuccess === 'true' && paidLotId && currentSession) {
+        // Очищаем адресную строку, чтобы при обновлении страницы код не сработал дважды
+        window.history.replaceState({}, document.title, "/");
+
+        try {
+            // Дергаем твой роут mark-paid
+            const res = await fetch(`${API_URL}/lots/${paidLotId}/mark-paid`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
+            });
+            
+            if (res.ok) {
+                showToast('🎉 Оплата прошла успешно! Лот ваш.', 'success');
+                // Можно добавить эффект конфетти или перезагрузить лоты
+                setTimeout(() => loadLots(), 1000); 
+            }
+        } catch (e) {
+            console.error('Ошибка подтверждения:', e);
+        }
+    }
+});
