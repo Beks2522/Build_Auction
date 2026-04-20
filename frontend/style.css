@@ -1,6 +1,8 @@
-/* --- МАГИЯ ТЕМНОЙ ТЕМЫ (EBAY STYLE) --- */
+/* =======================================================
+   1. ПЕРЕМЕННЫЕ ТЕМ И БАЗОВЫЕ НАСТРОЙКИ
+   ======================================================= */
 :root {
-    --bg-color: #f7f7f9; /* Светлый фон как у eBay */
+    --bg-color: #f7f7f9;
     --text-color: #191414;
     --text-muted: #707070;
     --text-heading: #111820;
@@ -16,17 +18,23 @@
 }
 
 body.dark-mode {
-    --bg-color: #121212; /* Глубокий черный */
+    --bg-color: #121212;
     --text-color: #e0e0e0;
     --text-muted: #999999;
     --text-heading: #ffffff;
-    --card-bg: #1e1e1e; /* Темные карточки */
+    --card-bg: #1e1e1e;
     --border-color: #333333;
     --input-bg: #2c2c2c; 
     --modal-bg: #1e1e1e;
     --ebay-blue: #4a75ff;
     --ebay-blue-hover: #3665f3;
     --price-color: #ffffff;
+}
+
+body.light-theme {
+    --bg-color: #f5f7fa; 
+    --auth-btn-bg: #0654ba;
+    --auth-btn-text: #ffffff;
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -48,741 +56,32 @@ body {
     margin: 0 auto;
 }
 
-/* --- ЧИСТАЯ ШАПКА --- */
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 0;
-    border-bottom: 1px solid var(--border-color); /* Полоска вместо тени */
-    background: transparent;
-    margin-bottom: 30px;
-}
-
-header h1 {
-    color: var(--text-heading);
-    margin: 0;
-    font-size: 24px;
-}
-
-/* Кнопки в шапке превращаем в аккуратные ссылки */
-#main-nav button, #guest-info button {
-    background: transparent;
-    color: var(--text-color);
-    box-shadow: none;
-    font-weight: 500;
-    padding: 10px 15px;
-    border: none; /* <-- САМОЕ ГЛАВНОЕ: Убиваем жесткую рамку! */
-    border-radius: 8px; /* Добавляем современное мягкое скругление */
-    cursor: pointer;
-    font-size: 15px;
-    transition: all 0.2s ease;
-}
-
-#main-nav button:hover, #guest-info button:hover {
-    color: var(--ebay-blue);
-    background: rgba(0,0,0,0.05); /* Легкий серый фон при наведении в светлой теме */
-    transform: none;
-}
-
-/* Эффект наведения для темной темы */
-body.dark-mode #main-nav button:hover, body.dark-mode #guest-info button:hover {
-    background: rgba(255,255,255,0.1); /* Легкое светлое свечение в темной теме */
-}
-
-/* --- СТРОКА ПОИСКА EBAY --- */
-.ebay-search-container {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-    margin-bottom: 40px;
+main {
     width: 100%;
-}
-
-.search-box-wrapper {
-    display: flex;
-    flex: 1; 
-    align-items: center;
-    border: 2px solid var(--text-heading); /* Черная/белая рамка */
-    border-radius: 40px; 
-    background-color: var(--input-bg);
-    padding: 0 5px 0 15px;
-    height: 48px;
-}
-
-.search-box-wrapper:focus-within {
-    border-color: var(--ebay-blue); 
-}
-
-.search-icon {
-    font-size: 18px;
-    color: var(--text-muted);
-    margin-right: 5px;
-}
-
-.search-box-wrapper input {
-    border: none;
-    background: transparent;
-    margin-bottom: 0;
-    box-shadow: none;
-    flex: 1;
-    padding: 12px 5px;
-    font-size: 16px;
-    color: var(--text-color);
-}
-
-.search-box-wrapper input:focus { box-shadow: none; }
-
-.search-box-wrapper .divider {
-    width: 1px;
-    height: 24px;
-    background-color: var(--border-color);
-    margin: 0 10px;
-}
-
-.search-box-wrapper select {
-    border: none;
-    background: transparent;
-    margin-bottom: 0;
-    box-shadow: none;
-    width: auto;
-    min-width: 140px;
-    padding: 12px 10px;
-    font-size: 15px;
-    cursor: pointer;
-    color: var(--text-color);
-}
-
-.search-box-wrapper select:focus { box-shadow: none; }
-
-.ebay-search-btn {
-    background-color: var(--ebay-blue); 
-    color: white;
-    border-radius: 40px;
-    padding: 0 40px;
-    height: 48px;
-    font-size: 16px;
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
-    box-shadow: none;
-    transition: background 0.2s;
-}
-
-.ebay-search-btn:hover {
-    background-color: var(--ebay-blue-hover);
-    transform: none; 
-}
-
-/* --- ДИЗАЙН КАРТОЧЕК ЛОТОВ --- */
-.lots-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 30px;
-}
-
-.lot-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color); /* Тонкая граница вместо теней */
-    border-radius: 12px;
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.lot-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-}
-
-body.dark-mode .lot-card:hover { box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
-
-/* Изображения: делаем пропорции красивее */
-.lot-card img {
-    height: 220px !important;
-    object-fit: contain !important; /* Картинка не обрезается */
-    background-color: #11111a; /* Или var(--bg-color) */    
-    background-color: var(--input-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 10px;
-}
-
-/* Категория: скромный тег */
-.lot-card span[style*="background:#e1f5fe"] {
-    background: var(--input-bg) !important;
-    color: var(--text-muted) !important;
-    border: 1px solid var(--border-color);
-    font-weight: 500 !important;
-    margin-top: 10px;
-}
-
-/* Название */
-.lot-card h3 {
-    font-size: 16px;
-    color: var(--text-heading);
-    margin-top: 10px !important;
-    font-weight: 600;
-    line-height: 1.3;
-}
-
-/* Цена: большая и жирная */
-.lot-card .price {
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--price-color) !important;
-    margin: 10px 0 5px 0 !important;
-}
-
-/* Ссылка на историю */
-.lot-card button[onclick^="showBidsHistory"] {
-    color: var(--text-muted) !important;
-    font-size: 13px !important;
-    text-decoration: underline !important;
-    text-align: left;
-    margin: 0 !important;
-}
-.lot-card button[onclick^="showBidsHistory"]:hover { color: var(--ebay-blue) !important; }
-
-/* Таймер (Красный цвет, как на eBay) */
-.lot-card .timer {
-    background: transparent !important;
-    border: none !important;
-    color: #e53238 !important; /* Цвет срочности */
+    margin: 0 !important; 
     padding: 0 !important;
-    text-align: left !important;
-    font-size: 14px !important;
-    margin: 5px 0 15px 0 !important;
 }
-body.dark-mode .lot-card .timer { color: #ff6b6b !important; }
-
-/* Контролы ставок в один ряд */
-.bid-controls {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    margin-top: auto; /* Прижимаем к низу карточки */
-}
-
-.bid-controls input {
-    margin-bottom: 0;
-    height: 40px;
-    border-radius: 20px;
-    padding: 0 15px;
-}
-
-.bid-controls button {
-    height: 40px;
-    background: var(--ebay-blue);
-    border-radius: 20px;
-    padding: 0 25px;
-    box-shadow: none;
-}
-.bid-controls button:hover { background: var(--ebay-blue-hover); transform: none; }
-
-/* Кнопка "Удалить" (Делаем ее вторичной) */
-.lot-card button[onclick^="deleteLot"] {
-    background: transparent !important;
-    color: #e74c3c !important;
-    border: 1px solid #e74c3c !important;
-    border-radius: 20px !important;
-    margin-top: 15px !important;
-    height: 40px;
-}
-.lot-card button[onclick^="deleteLot"]:hover {
-    background: #e74c3c !important;
-    color: white !important;
-    transform: none;
-}
-
-/* Описание */
-.lot-card p { color: var(--text-muted); font-size: 14px; margin-bottom: 10px; }
-
-/* --- ФОРМЫ --- */
-.add-lot-section, .auth-section {
-    background: var(--card-bg);
-    padding: 30px;
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
-}
-.auth-section { max-width: 400px; margin: 40px auto; }
-button { transition: all 0.2s ease; }
-
-/* --- МОДАЛЬНЫЕ ОКНА --- */
-#bids-modal > div { animation: slideDown 0.3s ease-out; background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-color); }
-@keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-
-/* --- TOAST --- */
-#toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
-.toast { min-width: 250px; padding: 15px 20px; color: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-size: 15px; font-weight: 500; opacity: 0; transform: translateX(100%); transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
-.toast.show { opacity: 1; transform: translateX(0); }
-.toast.success { background-color: #008a00; }
-.toast.error { background-color: #e53238; }
-.toast.info { background-color: #3665f3; }
-/* --- СТИЛИ ДЛЯ ФОРМЫ СОЗДАНИЯ ЛОТА --- */
-
-/* Делаем поля ввода стильными и адаптируемыми под темную тему */
-.add-lot-section form input[type="text"],
-.add-lot-section form input[type="number"],
-.add-lot-section form input[type="datetime-local"],
-.add-lot-section form textarea,
-.add-lot-section form select {
-    background-color: var(--input-bg) !important;
-    color: var(--text-color) !important;
-    border: 1px solid var(--border-color) !important;
-    border-radius: 8px !important;
-    padding: 12px 15px !important;
-    font-size: 15px;
-    width: 100%;
+button {
     transition: all 0.2s ease;
-    box-shadow: none !important;
-    appearance: none; /* Убирает стандартные стили браузера */
-}
-
-/* Красивое синее свечение при клике на поле (как у eBay) */
-.add-lot-section form input:focus,
-.add-lot-section form textarea:focus,
-.add-lot-section form select:focus {
-    border-color: var(--ebay-blue) !important;
-    box-shadow: 0 0 0 3px rgba(54, 101, 243, 0.15) !important;
-    outline: none;
-}
-
-/* Изменяем цвет иконки календарика в темной теме */
-body.dark-mode .add-lot-section form input[type="datetime-local"]::-webkit-calendar-picker-indicator {
-    filter: invert(1);
     cursor: pointer;
 }
 
-/* Делаем зону загрузки фото похожей на Drop-zone (зону перетаскивания) */
-.add-lot-section form input[type="file"] {
-    background-color: transparent !important;
-    color: var(--text-muted) !important;
-    border: 2px dashed var(--border-color) !important;
-    padding: 20px 15px !important;
-    border-radius: 8px !important;
-    cursor: pointer;
-    width: 100%;
-    transition: all 0.3s ease;
-}
-
-.add-lot-section form input[type="file"]:hover {
-    border-color: var(--ebay-blue) !important;
-    background-color: rgba(54, 101, 243, 0.05) !important;
-}
-
-/* Если у файлов есть кнопка "Выберите файл", стилизуем и её */
-.add-lot-section form input[type="file"]::-webkit-file-upload-button {
-    background-color: var(--border-color);
-    color: var(--text-color);
-    border: none;
-    border-radius: 4px;
-    padding: 8px 12px;
-    margin-right: 15px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: 0.2s;
-}
-
-.add-lot-section form input[type="file"]::-webkit-file-upload-button:hover {
-    background-color: var(--text-muted);
-    color: white;
-}
 /* =======================================================
-   ИСПРАВЛЕНИЯ ДЛЯ КАРТОЧЕК ЛОТОВ (ФИКС ВЫЛЕЗАНИЯ И ЦВЕТОВ)
-   ======================================================= */
-
-/* 1. Делаем тег категории компактным "пузырьком", а не длинной полосой */
-.lot-card span[style*="background"] {
-    display: inline-block !important;
-    width: fit-content !important; /* Строго по размеру текста! Не дает растягиваться */
-    background-color: var(--input-bg) !important;
-    color: var(--text-color) !important;
-    border: 1px solid var(--border-color) !important;
-    padding: 4px 12px !important;
-    border-radius: 20px !important; /* Круглые края */
-    font-weight: 500 !important;
-    font-size: 12px !important;
-    margin: 10px 0 !important;
-}
-
-/* 2. Контейнер для ставки: строго ограничиваем ширину */
-.bid-controls {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    margin-top: auto;
-    width: 100% !important; /* Не выходим за пределы карточки */
-    box-sizing: border-box; 
-}
-
-/* 3. Поле ввода ставки (делаем его темным и "гибким") */
-.bid-controls input {
-    flex: 1; /* Занимает доступное место... */
-    min-width: 0; /* ...НО сжимается, если карточка узкая (ЭТО РЕШАЕТ ВЫЛЕЗАНИЕ КНОПКИ!) */
-    margin-bottom: 0 !important;
-    height: 40px !important;
-    border-radius: 20px !important;
-    padding: 0 15px !important;
-    background-color: var(--input-bg) !important;
-    color: var(--text-color) !important;
-    border: 1px solid var(--border-color) !important;
-}
-
-/* 4. Синяя кнопка "Ставка" */
-.bid-controls button[onclick^="placeBid"] {
-    flex-shrink: 0; /* Запрещаем кнопке сжиматься */
-    height: 40px !important;
-    background-color: var(--ebay-blue) !important;
-    color: white !important;
-    border-radius: 20px !important;
-    padding: 0 20px !important;
-    border: none !important;
-    box-shadow: none !important;
-    width: auto !important; /* Кнопка занимает ровно столько места, сколько нужно тексту */
-}
-
-.bid-controls button[onclick^="placeBid"]:hover {
-    background-color: var(--ebay-blue-hover) !important;
-}
-/* =======================================================
-   📱 АДАПТИВНОСТЬ (МОБИЛЬНЫЕ УСТРОЙСТВА И ПЛАНШЕТЫ)
-   ======================================================= */
-
-/* Для планшетов и телефонов (экраны меньше 768px) */
-@media (max-width: 768px) {
-    body {
-        padding: 0 15px 30px 15px; /* Уменьшаем отступы по краям */
-    }
-
-    /* Шапка: центрируем и складываем элементы */
-    header {
-        flex-direction: column;
-        gap: 15px;
-        text-align: center;
-        padding: 15px 0;
-    }
-
-    header > div {
-        flex-direction: column;
-        width: 100%;
-        gap: 15px !important;
-    }
-
-    #main-nav {
-        flex-wrap: wrap;
-        justify-content: center;
-        width: 100%;
-    }
-
-    /* Поиск eBay: кнопка перепрыгивает вниз */
-    .ebay-search-container {
-        flex-direction: column;
-    }
-
-    .search-box-wrapper {
-        width: 100%;
-    }
-
-    .ebay-search-btn {
-        width: 100%; /* Кнопка на всю ширину для удобного нажатия пальцем */
-    }
-
-    /* Сетка карточек: 1 колонка на смартфонах */
-    .lots-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-
-    /* Страница создания лота: форма и превью выстраиваются друг под другом */
-    main > div[style*="display: flex; gap: 40px;"] {
-        flex-direction: column;
-        gap: 30px !important;
-    }
-
-    .add-lot-section {
-        min-width: 100% !important;
-        padding: 20px;
-    }
-
-    /* Секция превью на мобилке занимает 100% */
-    main > div section:nth-child(2) {
-        min-width: 100% !important;
-        max-width: 100% !important;
-    }
-
-    /* Модальные окна: делаем их на весь экран, но с отступами */
-    .auth-section, #auth-modal > div, #bids-modal > div {
-        width: 95%;
-        padding: 25px 20px;
-        margin: 15% auto;
-    }
-
-    /* Шапка профиля: центрируем аватарку и кнопку выхода */
-    main > div[style*="justify-content: space-between"] {
-        flex-direction: column;
-        text-align: center;
-        padding: 20px;
-    }
-    main > div[style*="justify-content: space-between"] > div {
-        flex-direction: column;
-    }
-}
-
-/* Для совсем маленьких экранов (смартфоны вертикально, меньше 480px) */
-@media (max-width: 480px) {
-    /* Ломаем "капсулу" поиска на два этажа: поле ввода сверху, категории снизу */
-    .search-box-wrapper {
-        flex-direction: column;
-        border-radius: 16px;
-        padding: 10px;
-        height: auto;
-    }
-    
-    .search-box-wrapper .divider {
-        display: none; /* Убираем палочку-разделитель */
-    }
-    
-    .search-box-wrapper input {
-        width: 100%;
-        border-bottom: 1px solid var(--border-color);
-        margin-bottom: 5px !important;
-    }
-    
-    .search-box-wrapper select {
-        width: 100%;
-    }
-
-    /* Два инпута в один ряд (Категория и Цена) при создании лота - ломаем в колонку */
-    .add-lot-section form > div[style*="display: flex; gap: 15px;"] {
-        flex-direction: column;
-        gap: 15px !important;
-    }
-}
-/* =======================================================
-   ИСПРАВЛЕНИЕ МОДАЛЬНОГО ОКНА АВТОРИЗАЦИИ
-   ======================================================= */
-
-#auth-modal input {
-    width: 100% !important; /* Растягиваем поля на всю ширину */
-    box-sizing: border-box !important; 
-    margin-bottom: 15px !important; /* Добавляем воздух между полями */
-    background-color: var(--input-bg) !important; /* Правильный цвет для темной/светлой темы */
-    color: var(--text-color) !important;
-    border: 1px solid var(--border-color) !important;
-    border-radius: 8px !important;
-    padding: 15px !important;
-    font-size: 15px !important;
-    outline: none !important;
-    transition: all 0.2s ease !important;
-}
-
-/* Красивое синее свечение при клике, как и везде на сайте */
-#auth-modal input:focus {
-    border-color: var(--ebay-blue) !important;
-    box-shadow: 0 0 0 3px rgba(54, 101, 243, 0.15) !important;
-}
-
-/* Немного скруглим кнопки для красоты */
-#auth-modal button {
-    border: none !important;
-    font-weight: 600 !important;
-    transition: transform 0.1s, opacity 0.2s !important;
-}
-
-#auth-modal button:hover {
-    opacity: 0.9 !important;
-}
-/* В конец style.css (Светлая тема) */
-body.light-theme {
-    /* ... твои старые светлые переменные ... */
-    --bg-color: #f5f7fa; 
-
-    /* ДОБАВЬ ЭТИ ДВЕ ПЕРЕМЕННЫЕ ДЛЯ СВЕТЛОЙ ТЕМЫ */
-    --auth-btn-bg: #0654ba;   /* В светлой теме синий чуть темнее для контраста */
-    --auth-btn-text: #ffffff; /* Текст пусть остается белым */
-}
-/* =======================================================
-   УЛУЧШЕННЫЕ КНОПКИ "КУПИТЬ СЕЙЧАС" И "НАПИСАТЬ"
-   ======================================================= */
-
-/* Золотая кнопка "Купить сейчас" */
-.btn-buy-now {
-    background: linear-gradient(135deg, #FFD700 0%, #F6A811 100%) !important;
-    color: #111820 !important; /* Темный текст для максимального контраста */
-    border: none !important;
-    border-radius: 20px !important;
-    height: 40px !important;
-    font-size: 14px !important;
-    font-weight: 700 !important;
-    width: 100% !important;
-    margin-top: 10px !important;
-    box-shadow: 0 4px 12px rgba(246, 168, 17, 0.2) !important;
-    cursor: pointer;
-    transition: all 0.2s ease !important;
-}
-
-.btn-buy-now:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 6px 16px rgba(246, 168, 17, 0.4) !important;
-    filter: brightness(1.05);
-}
-
-/* Кнопка "Написать продавцу" (Стиль Outline/Ghost) */
-.btn-chat {
-    background: transparent !important;
-    color: var(--text-color) !important;
-    border: 1px solid var(--border-color) !important;
-    border-radius: 20px !important;
-    height: 40px !important;
-    font-size: 14px !important;
-    font-weight: 600 !important;
-    width: 100% !important;
-    margin-top: 10px !important;
-    cursor: pointer;
-    transition: all 0.2s ease !important;
-}
-
-.btn-chat:hover {
-    border-color: var(--ebay-blue) !important;
-    color: var(--ebay-blue) !important;
-    background: rgba(54, 101, 243, 0.05) !important;
-}
-/* =======================================================
-   ДИЗАЙН ЛИЧНОГО КАБИНЕТА (ПРОФИЛЬ)
-   ======================================================= */
-
-/* 1. Шапка профиля: раскидываем элементы по краям */
-.profile-header-container {
-    display: flex;
-    justify-content: space-between; /* Аватар слева, кнопка справа */
-    align-items: center;            /* Выравниваем по центру по вертикали */
-    background: var(--card-bg);
-    padding: 25px 30px;
-    border-radius: 16px;
-    border: 1px solid var(--border-color);
-    margin-bottom: 40px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-}
-
-body.dark-mode .profile-header-container {
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-}
-
-/* Группируем аватар и текст вместе */
-.profile-info-group {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-/* Красивая кнопка выхода */
-.btn-logout {
-    background: transparent !important;
-    color: #e74c3c !important;
-    border: 2px solid #e74c3c !important;
-    border-radius: 8px !important;
-    padding: 10px 20px !important;
-    font-weight: 600 !important;
-    cursor: pointer;
-    transition: all 0.2s ease !important;
-}
-
-.btn-logout:hover {
-    background: #e74c3c !important;
-    color: white !important;
-    transform: translateY(-2px);
-}
-
-/* 2. Премиальные заголовки секций (Лоты, Ставки, Избранное) */
-.section-title {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--text-heading);
-    padding: 12px 20px;
-    background: var(--card-bg); 
-    border-left: 5px solid var(--ebay-blue); /* Фирменная синяя полоска слева */
-    border-radius: 4px 12px 12px 4px;
-    margin: 40px 0 25px 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-body.dark-mode .section-title {
-    background: #252525;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-}
-/* =======================================================
-   КНОПКА ОПЛАТЫ (ПРЕМИУМ ДИЗАЙН)
-   ======================================================= */
-
-.btn-pay-lot {
-    /* Современный градиент от синего к глубокому фиолетовому */
-    background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%) !important; 
-    color: #ffffff !important;
-    border: none !important;
-    border-radius: 12px !important; /* Делаем чуть менее круглой для "серьезности" */
-    padding: 12px 20px !important;
-    font-size: 15px !important;
-    font-weight: 700 !important;
-    width: 100% !important;
-    margin-top: 15px !important;
-    /* Красивое неоновое свечение в цвет кнопки */
-    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3) !important; 
-    cursor: pointer;
-    
-    /* Выравниваем иконку и текст ровно по центру */
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 8px !important; 
-    
-    transition: all 0.3s ease !important;
-}
-
-.btn-pay-lot:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 6px 20px rgba(124, 58, 237, 0.5) !important;
-    filter: brightness(1.1);
-}
-/* =======================================================
-   СТАТУС "ОПЛАЧЕНО"
-   ======================================================= */
-.status-paid {
-    background: linear-gradient(135deg, #10B981 0%, #059669 100%); /* Сочный изумрудный градиент */
-    color: white;
-    text-align: center;
-    padding: 12px;
-    margin-top: 15px;
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: 15px;
-    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2); /* Легкое зеленое свечение */
-}
-/* =======================================================
-   ШАПКА В СТИЛЕ MANGALIB И POP-UP ПОИСК
+   2. ШАПКА САЙТА (MANGALIB STYLE)
    ======================================================= */
 .mangalib-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 20px; /* Чуть уменьшим боковые отступы, чтобы было ровно с лотами */
-    
+    padding: 15px 20px;
     position: fixed; 
     top: 0;
-    
-    /* ВОТ 3 ГЛАВНЫЕ СТРОЧКИ ДЛЯ ВЫРАВНИВАНИЯ */
     left: 0;
     right: 0;
-    max-width: 1400px; /* Такая же ширина, как у твоего body */
-    margin: 0 auto;    /* Центрируем шапку */
-    
+    max-width: 1400px;
+    margin: 0 auto;
     background: var(--bg-color); 
     z-index: 9000; 
-    box-sizing: border-box; 
     border-bottom: 1px solid var(--border-color);
 }
 
@@ -792,7 +91,12 @@ body.dark-mode .section-title {
     gap: 20px;
 }
 
-/* Навигация (Ссылки) */
+.mangalib-header h1 {
+    color: var(--text-heading);
+    margin: 0;
+    font-size: 24px;
+}
+
 .desktop-nav {
     display: flex;
     gap: 20px;
@@ -805,43 +109,28 @@ body.dark-mode .section-title {
     font-weight: 600;
     font-size: 15px;
     padding-bottom: 5px;
-    transition: color 0.2s;
 }
 
-.desktop-nav a:hover {
+.desktop-nav a:hover,
+.desktop-nav a.active {
     color: var(--text-heading);
 }
 
 .desktop-nav a.active {
-    color: var(--text-heading);
-    border-bottom: 2px solid #8b5cf6; /* Фиолетовая полоса под активным разделом */
+    border-bottom: 2px solid #8b5cf6;
 }
 
-/* Иконки (Лупа, Тема) */
+/* Иконки и аватар в шапке */
 .icon-btn {
-    background: transparent !important;
-    border: none !important;
-    font-size: 20px !important;
-    color: var(--text-heading) !important;
-    cursor: pointer;
-    transition: transform 0.2s !important;
-    padding: 0 !important;
-    box-shadow: none !important;
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    color: var(--text-heading);
 }
 
 .icon-btn:hover {
-    transform: scale(1.1) !important;
-    color: #8b5cf6 !important;
-}
-
-.auth-btn-small {
-    background: #8b5cf6 !important; /* Фиолетовая кнопка */
-    color: white !important;
-    border: none !important;
-    border-radius: 20px !important;
-    padding: 8px 20px !important;
-    font-weight: 600 !important;
-    box-shadow: none !important;
+    transform: scale(1.1);
+    color: #8b5cf6;
 }
 
 .header-avatar {
@@ -851,7 +140,10 @@ body.dark-mode .section-title {
     object-fit: cover;
     border: 2px solid #8b5cf6;
 }
-/* --- ЗАТЕМНЕНИЕ ФОНА ПРИ ПОИСКЕ --- */
+
+/* =======================================================
+   3. ВСПЛЫВАЮЩИЙ ПОИСК (POP-UP)
+   ======================================================= */
 .search-overlay {
     display: none; 
     position: fixed;
@@ -859,36 +151,29 @@ body.dark-mode .section-title {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.6); /* Полупрозрачный черный */
-    backdrop-filter: blur(4px); /* Эффект размытия сайта */
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
     z-index: 9998;
 }
 
-/* --- ОКНО ПОИСКА ПО ЦЕНТРУ --- */
 .search-popover-centered {
     display: none; 
-    position: fixed; /* Отвязываем от шапки, привязываем к экрану */
-    top: 1vh; /* Отступ сверху (15% от высоты экрана) */
-    left: 50%; /* Сдвигаем на середину экрана... */
-    transform: translateX(-50%); /* ...и центрируем точно по оси X */
+    position: fixed;
+    top: 10vh;
+    left: 50%;
+    transform: translateX(-50%);
     width: 90%; 
-    max-width: 550px; /* Делаем чуть шире для удобства */
+    max-width: 550px;
     background: var(--card-bg);
     border: 1px solid var(--border-color);
     border-radius: 16px;
     padding: 25px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.5); /* Глубокая тень */
-    z-index: 9999; /* Окно всегда поверх затемнения */
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    z-index: 9999;
 }
 
 body.dark-mode .search-popover-centered {
-    background: #1e1e1e;
     box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-}
-
-body.dark-mode .search-popover {
-    background: #1e1e1e;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
 }
 
 .search-input-wrapper {
@@ -902,97 +187,321 @@ body.dark-mode .search-popover {
 }
 
 .search-input-wrapper input {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    width: 100%;
-    padding: 0 10px !important;
-    color: var(--text-color) !important;
-    margin-bottom: 0 !important;
+    flex-grow: 1;
+    background: transparent;
+    border: none;
+    padding: 0 10px;
+    color: var(--text-color);
+    outline: none;
 }
 
 .close-search-btn {
-    background: none !important;
-    border: none !important;
-    color: var(--text-muted) !important;
-    cursor: pointer;
-    padding: 0 !important;
-    box-shadow: none !important;
+    background: none;
+    border: none;
+    color: var(--text-muted);
 }
 
-.search-filters {
+/* Фильтры и популярные теги */
+.search-filters, .popular-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
     margin-bottom: 20px;
 }
 
+.filter-pill, .popular-tags span {
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    border-radius: 8px;
+}
+
 .filter-pill {
-    background: var(--bg-color) !important;
-    border: 1px solid var(--border-color) !important;
-    color: var(--text-muted) !important;
-    padding: 6px 14px !important;
-    border-radius: 20px !important;
-    font-size: 13px !important;
-    cursor: pointer;
-    font-weight: 500 !important;
-    box-shadow: none !important;
-    margin: 0 !important;
-    height: auto !important;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
 }
 
 .filter-pill.active {
-    background: #8b5cf6 !important;
-    color: white !important;
-    border-color: #8b5cf6 !important;
-}
-
-.popular-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    background: #8b5cf6;
+    color: white;
+    border-color: #8b5cf6;
 }
 
 .popular-tags span {
-    background: var(--bg-color);
-    color: var(--text-muted);
     padding: 6px 12px;
-    border-radius: 8px;
     font-size: 12px;
     cursor: pointer;
-    border: 1px solid var(--border-color);
-    transition: 0.2s;
 }
 
 .popular-tags span:hover {
     border-color: #8b5cf6;
     color: var(--text-color);
 }
-main {
-    margin-top: 100px; /* Отступ сверху, чтобы контент не прятался под шапку */
-}
-/* =======================================================
-   ФИКС ОТСТУПА ОТ ФИКСИРОВАННОЙ ШАПКИ
-   ======================================================= */
-main {
-    margin-top: 5px !important; /* !important ломает броню inline-стилей */
-    padding-top: 10px !important;
-}
-/* =======================================================
-   ЧАТ В СТИЛЕ MANGALIB
-   ======================================================= */
 
+/* =======================================================
+   4. КАРТОЧКИ ЛОТОВ И СЕТКА
+   ======================================================= */
+.lots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 30px;
+}
+
+.lot-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+
+.lot-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+body.dark-mode .lot-card:hover { 
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4); 
+}
+
+.lot-card img {
+    height: 220px;
+    object-fit: contain;
+    background-color: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.lot-card h3 {
+    font-size: 16px;
+    color: var(--text-heading);
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+.lot-card p {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.lot-card .price {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--price-color);
+    margin: 10px 0 5px 0;
+}
+
+.lot-card .timer {
+    color: #e53238;
+    font-size: 14px;
+    margin: 5px 0 15px 0;
+}
+
+body.dark-mode .lot-card .timer { color: #ff6b6b; }
+
+/* Категория карточки (Оставляем !important для перебивки inline) */
+.lot-card span[style*="background"] {
+    display: inline-block !important;
+    width: fit-content !important;
+    background-color: var(--input-bg) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color) !important;
+    padding: 4px 12px !important;
+    border-radius: 20px !important;
+    font-weight: 500 !important;
+    font-size: 12px !important;
+    margin: 10px 0 !important;
+}
+
+/* Контролы ставок внутри карточки */
+.bid-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: auto;
+    width: 100%;
+}
+
+.bid-controls input {
+    flex: 1;
+    min-width: 0;
+    height: 40px;
+    border-radius: 20px;
+    padding: 0 15px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    outline: none;
+}
+
+.bid-controls input:focus {
+    border-color: var(--ebay-blue);
+}
+
+/* =======================================================
+   5. ГЛОБАЛЬНЫЕ КНОПКИ САЙТА
+   ======================================================= */
+/* Синие кнопки (Найти, Ставка) */
+.ebay-search-btn, .auth-btn-small, .bid-controls button[onclick^="placeBid"] {
+    background-color: var(--ebay-blue);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-weight: 600;
+    box-shadow: none;
+}
+
+.ebay-search-btn { height: 48px; padding: 0 40px; border-radius: 40px; }
+.auth-btn-small { padding: 8px 20px; }
+.bid-controls button[onclick^="placeBid"] { height: 40px; padding: 0 20px; flex-shrink: 0; }
+
+.ebay-search-btn:hover, .auth-btn-small:hover, .bid-controls button[onclick^="placeBid"]:hover {
+    background-color: var(--ebay-blue-hover);
+}
+
+/* Золотая кнопка "Купить сейчас" */
+.btn-buy-now {
+    background: linear-gradient(135deg, #FFD700 0%, #F6A811 100%);
+    color: #111820;
+    border: none;
+    border-radius: 20px;
+    height: 40px;
+    font-weight: 700;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.btn-buy-now:hover { filter: brightness(1.05); }
+
+/* Прозрачные кнопки с границей (Удалить, Написать) */
+.btn-chat, .lot-card button[onclick^="deleteLot"] {
+    background: transparent;
+    border-radius: 20px;
+    height: 40px;
+    width: 100%;
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+.btn-chat {
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+.btn-chat:hover {
+    border-color: var(--ebay-blue);
+    color: var(--ebay-blue);
+    background: rgba(54, 101, 243, 0.05);
+}
+
+.lot-card button[onclick^="deleteLot"] {
+    color: #e74c3c;
+    border: 1px solid #e74c3c;
+}
+.lot-card button[onclick^="deleteLot"]:hover {
+    background: #e74c3c;
+    color: white;
+}
+
+/* =======================================================
+   6. ФОРМЫ (СОЗДАНИЕ ЛОТА, АВТОРИЗАЦИЯ)
+   ======================================================= */
+.add-lot-section, .auth-section {
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.auth-section { max-width: 400px; margin: 40px auto; }
+
+/* Общие стили для всех инпутов в формах */
+.add-lot-section form input,
+.add-lot-section form textarea,
+.add-lot-section form select,
+#auth-modal input {
+    width: 100%;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px 15px;
+    font-size: 15px;
+    outline: none;
+    margin-bottom: 15px;
+}
+
+.add-lot-section form input:focus,
+.add-lot-section form textarea:focus,
+.add-lot-section form select:focus,
+#auth-modal input:focus {
+    border-color: var(--ebay-blue);
+    box-shadow: 0 0 0 3px rgba(54, 101, 243, 0.15);
+}
+
+body.dark-mode .add-lot-section form input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+}
+
+.add-lot-section form input[type="file"] {
+    border: 2px dashed var(--border-color);
+    cursor: pointer;
+}
+.add-lot-section form input[type="file"]:hover {
+    border-color: var(--ebay-blue);
+}
+
+/* =======================================================
+   7. ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ
+   ======================================================= */
+.profile-header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--card-bg);
+    padding: 25px 30px;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 40px;
+}
+
+.profile-info-group {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-heading);
+    padding: 12px 20px;
+    background: var(--card-bg); 
+    border-left: 5px solid var(--ebay-blue);
+    border-radius: 4px 12px 12px 4px;
+    margin: 40px 0 25px 0;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* =======================================================
+   8. ЧАТ (MANGALIB)
+   ======================================================= */
 .mangalib-chat-container {
     display: flex;
-    height: 100%;
-    background: #141414; /* Очень глубокий темный цвет, как на скрине */
+    height: calc(100vh - 120px);
+    background: #141414; 
     border-radius: 12px;
     border: 1px solid #2a2a2a;
     overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
-/* --- ЛЕВАЯ ПАНЕЛЬ (СПИСОК ЧАТОВ) --- */
 .chat-sidebar {
     width: 320px;
     background: #141414;
@@ -1005,19 +514,10 @@ main {
     padding: 20px;
     border-bottom: 1px solid #2a2a2a;
 }
+.chat-sidebar-header h2 { margin: 0; font-size: 18px; color: #ffffff; }
 
-.chat-sidebar-header h2 {
-    margin: 0;
-    font-size: 18px;
-    color: #ffffff;
-}
+.chat-contacts-list { flex-grow: 1; overflow-y: auto; }
 
-.chat-contacts-list {
-    flex-grow: 1;
-    overflow-y: auto;
-}
-
-/* Контакт в списке */
 .chat-contact {
     display: flex;
     align-items: center;
@@ -1025,52 +525,24 @@ main {
     padding: 15px 20px;
     cursor: pointer;
     border-bottom: 1px solid #1f1f1f;
-    transition: background 0.2s;
 }
 
-.chat-contact:hover {
-    background: #1f1f1f; /* Легкая подсветка при наведении */
-}
-
+.chat-contact:hover { background: #1f1f1f; }
 .chat-contact.active {
     background: #1a1a1a;
-    border-left: 3px solid #8b5cf6; /* Фиолетовая полоска слева */
+    border-left: 3px solid #8b5cf6;
 }
 
-.contact-avatar {
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-    object-fit: cover;
-}
+.contact-avatar { width: 46px; height: 46px; border-radius: 50%; object-fit: cover; }
+.contact-info { display: flex; flex-direction: column; overflow: hidden; }
+.contact-name { color: #e0e0e0; font-weight: 600; font-size: 15px; margin-bottom: 3px; }
+.contact-last-msg { color: #888888; font-size: 13px; }
 
-.contact-info {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-.contact-name {
-    color: #e0e0e0;
-    font-weight: 600;
-    font-size: 15px;
-    margin-bottom: 3px;
-}
-
-.contact-last-msg {
-    color: #888888;
-    font-size: 13px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* --- ПРАВАЯ ПАНЕЛЬ (СООБЩЕНИЯ) --- */
 .chat-main {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    background: #0f0f0f; /* Чуть темнее, чем боковая панель */
+    background: #0f0f0f;
     position: relative;
 }
 
@@ -1079,23 +551,12 @@ main {
     border-bottom: 1px solid #2a2a2a;
     background: #141414;
     display: flex;
-    justify-content: center;
     align-items: center;
     min-height: 70px;
 }
 
-.chat-header-info {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    position: relative;
-}
-
-.chat-header h3 {
-    margin: 0;
-    color: #e0e0e0;
-    font-size: 16px;
-}
+.chat-header-info { display: flex; align-items: center; width: 100%; position: relative; }
+.chat-header h3 { margin: 0; color: #e0e0e0; font-size: 16px; }
 
 .chat-messages {
     flex-grow: 1;
@@ -1106,69 +567,60 @@ main {
     gap: 10px;
 }
 
-.empty-chat-placeholder {
-    margin: auto;
-    text-align: center;
-    color: #666;
-}
-
-/* --- ПОЛЕ ВВОДА --- */
 .chat-input-area {
     padding: 15px 20px;
-    background: #141414; /* Темный фон */
+    background: #141414;
     border-top: 1px solid #2a2a2a;
     display: flex;
     align-items: center;
     gap: 15px;
 }
 
-#chat-input {
+.chat-input-area input {
     flex-grow: 1;
-    background: transparent !important;
-    border: none !important;
-    color: #e0e0e0 !important;
+    background: transparent;
+    border: none;
+    color: #e0e0e0;
     font-size: 15px;
-    padding: 10px 0 !important;
-    box-shadow: none !important;
-    outline: none !important;
-    margin-bottom: 0 !important;
+    padding: 10px 0;
+    outline: none;
 }
 
-#chat-input::placeholder {
-    color: #666666; /* Темный цвет плейсхолдера */
-}
+.chat-input-area input::placeholder { color: #666666; }
 
 .emoji-btn {
-    background: transparent !important;
-    border: none !important;
-    color: #888888 !important;
+    background: transparent;
+    border: none;
     font-size: 22px;
-    cursor: pointer;
-    padding: 0;
-    transition: filter 0.2s;
-    box-shadow: none !important;
+    color: #888888;
 }
-
-.emoji-btn:hover {
-    filter: brightness(1.5);
-}
+.emoji-btn:hover { filter: brightness(1.5); }
 
 .chat-send-btn {
-    background: #8b5cf6 !important;
-    border: none !important;
+    background: #8b5cf6;
+    border: none;
     width: 44px;
     height: 44px;
-    border-radius: 10px !important;
+    border-radius: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
-    cursor: pointer;
-    transition: 0.2s;
-    box-shadow: none !important;
-    flex-shrink: 0; /* Чтобы кнопка не сжималась */
+    flex-shrink: 0;
 }
+.chat-send-btn:hover { background: #7c3aed; transform: scale(1.05); }
 
-.chat-send-btn:hover {
-    background: #7c3aed !important;
-    transform: scale(1.05);
+/* =======================================================
+   9. АДАПТИВНОСТЬ (МОБИЛЬНЫЕ УСТРОЙСТВА)
+   ======================================================= */
+@media (max-width: 768px) {
+    main { padding: 0 15px !important; }
+    .mangalib-header { flex-direction: column; gap: 15px; padding: 15px; }
+    .mangalib-header > div { flex-direction: column; width: 100%; gap: 10px; text-align: center; }
+    .desktop-nav { flex-wrap: wrap; justify-content: center; margin-left: 0; }
+    
+    .lots-grid { grid-template-columns: 1fr; }
+    .profile-header-container { flex-direction: column; text-align: center; gap: 20px; }
+    .profile-info-group { flex-direction: column; }
+    
+    .chat-sidebar { display: none; /* На мобилке скрываем левую панель чатов */ }
 }
