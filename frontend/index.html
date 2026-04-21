@@ -11,6 +11,7 @@
 
     <header class="mangalib-header">
         <div class="header-left">
+            <button class="mobile-menu-btn" onclick="openSidebar()">☰</button>
             <h1 style="cursor: pointer; margin: 0; font-size: 24px; color: var(--text-heading);" onclick="window.location.href='index.html'">Build Auction</h1>
             
             <nav id="main-nav" class="desktop-nav" style="display: none;">
@@ -32,7 +33,27 @@
                  <img id="user-avatar" src="https://placehold.co/40x40?text=👤" class="header-avatar">
             </div>
         </div>
+        
     </header>
+    <div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+    <div id="mobile-sidebar" class="mobile-sidebar">
+        <div class="sidebar-header">
+            <span style="font-size: 20px; font-weight: bold; color: var(--text-heading);">Build Auction</span>
+            <button class="close-sidebar-btn" onclick="closeSidebar()">✕</button>
+        </div>
+        
+        <div class="sidebar-content">
+            <a href="index.html" class="sidebar-link active">Главная</a>
+            <a href="create.html" class="sidebar-link">Создать лот</a>
+            <a href="messages.html" class="sidebar-link">Чат</a>
+            
+            <div class="sidebar-divider"></div>
+            
+            <a href="#" onclick="showAuthModal(); closeSidebar();" class="sidebar-link">🔑 Войти / Регистрация</a>
+            <a href="#" onclick="toggleTheme(); closeSidebar();" class="sidebar-link">🌗 Сменить тему</a>
+        </div>
+    </div>
 
     <div id="search-overlay" class="search-overlay" onclick="toggleSearchModal()"></div>
 

@@ -901,8 +901,8 @@ body.dark-mode .section-title {
     border: 1px solid var(--border-color);
     
     /* 2. Магия матового стекла (преломление лучей) */
-    backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
     
     border-radius: 16px;
     padding: 25px;
@@ -1250,5 +1250,126 @@ body::after {
     }
     100% { 
         transform: translate3d(-50%, -50%, 0) rotate(360deg); 
+    }
+}
+/* =======================================================
+   МОБИЛЬНАЯ АДАПТАЦИЯ (БОКОВОЕ МЕНЮ)
+   ======================================================= */
+
+/* По умолчанию прячем кнопку гамбургера и само боковое меню */
+.mobile-menu-btn {
+    display: none;
+    background: transparent;
+    border: none;
+    color: var(--text-heading);
+    font-size: 26px;
+    cursor: pointer;
+    margin-right: 15px;
+    padding: 0;
+}
+
+/* Настройки для самого выезжающего меню */
+.mobile-sidebar {
+    position: fixed;
+    top: 0;
+    left: -320px; /* Прячем меню за левым краем экрана */
+    width: 280px;
+    height: 100vh;
+    background: var(--card-bg); /* Берем цвет карточек из твоей темы */
+    border-right: 1px solid var(--border-color);
+    z-index: 10001; /* Поверх всего */
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Плавный выезд */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Класс, который JS будет добавлять для открытия меню */
+.mobile-sidebar.open {
+    left: 0;
+}
+
+/* Темный фон-затемнение позади меню */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Внутрянка меню */
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.close-sidebar-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.sidebar-content {
+    padding: 10px 0;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.sidebar-link {
+    padding: 15px 20px;
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: background 0.2s;
+}
+
+.sidebar-link:hover, .sidebar-link.active {
+    background: var(--border-color);
+    border-left: 3px solid var(--ebay-blue); /* Акцент как на Mangalib */
+}
+
+.sidebar-divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 10px 20px;
+}
+
+/* =======================================================
+   ПРАВИЛА ДЛЯ ТЕЛЕФОНОВ (Экраны меньше 768px)
+   ======================================================= */
+@media (max-width: 768px) {
+    /* Прячем обычное меню "Главная | Создать лот | Чат" */
+    .desktop-nav {
+        display: none !important;
+    }
+    
+    /* Показываем кнопку-гамбургер */
+    .mobile-menu-btn {
+        display: block;
+    }
+    
+    /* Делаем шапку чуть компактнее */
+    .mangalib-header {
+        padding: 10px 15px;
     }
 }

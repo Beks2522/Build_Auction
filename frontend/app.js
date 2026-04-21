@@ -923,3 +923,17 @@ window.addEventListener('load', async () => {
         }
     }
 });
+// Функции для управления боковым меню
+function openSidebar() {
+    document.getElementById('mobile-sidebar').classList.add('open');
+    document.getElementById('sidebar-overlay').classList.add('show');
+    // Блокируем прокрутку основного сайта, когда меню открыто
+    document.body.style.overflow = 'hidden'; 
+}
+
+function closeSidebar() {
+    document.getElementById('mobile-sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('show');
+    // Возвращаем прокрутку
+    document.body.style.overflow = ''; 
+}
