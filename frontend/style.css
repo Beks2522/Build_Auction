@@ -1001,37 +1001,39 @@ main {
     padding-top: 10px !important;
 }
 /* =======================================================
-   ЧАТ В СТИЛЕ MANGALIB
+   ЧАТ В СТИЛЕ MANGALIB (УМНЫЙ АДАПТИВНЫЙ)
    ======================================================= */
 
 .mangalib-chat-container {
     display: flex;
     height: 100%;
-    background: #141414; /* Очень глубокий темный цвет, как на скрине */
+    /* Умный фон: белый днем, темное стекло ночью */
+    background: var(--card-bg); 
     border-radius: 12px;
-    border: 1px solid #2a2a2a;
+    border: 1px solid var(--border-color);
     overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    /* Делаем тень мягче, чтобы днем не было грязного пятна */
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1); 
 }
 
 /* --- ЛЕВАЯ ПАНЕЛЬ (СПИСОК ЧАТОВ) --- */
 .chat-sidebar {
     width: 320px;
-    background: #141414;
-    border-right: 1px solid #2a2a2a;
+    background: transparent; /* Берет фон от контейнера */
+    border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
 }
 
 .chat-sidebar-header {
     padding: 20px;
-    border-bottom: 1px solid #2a2a2a;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .chat-sidebar-header h2 {
     margin: 0;
     font-size: 18px;
-    color: #ffffff;
+    color: var(--text-heading);
 }
 
 .chat-contacts-list {
@@ -1046,17 +1048,17 @@ main {
     gap: 15px;
     padding: 15px 20px;
     cursor: pointer;
-    border-bottom: 1px solid #1f1f1f;
+    border-bottom: 1px solid var(--border-color);
     transition: background 0.2s;
 }
 
 .chat-contact:hover {
-    background: #1f1f1f; /* Легкая подсветка при наведении */
+    background: var(--border-color); /* Легкая подсветка при наведении */
 }
 
 .chat-contact.active {
-    background: #1a1a1a;
-    border-left: 3px solid #8b5cf6; /* Фиолетовая полоска слева */
+    background: var(--border-color);
+    border-left: 3px solid var(--ebay-blue); /* Умная акцентная полоска слева */
 }
 
 .contact-avatar {
@@ -1073,14 +1075,14 @@ main {
 }
 
 .contact-name {
-    color: #e0e0e0;
+    color: var(--text-heading);
     font-weight: 600;
     font-size: 15px;
     margin-bottom: 3px;
 }
 
 .contact-last-msg {
-    color: #888888;
+    color: var(--text-muted);
     font-size: 13px;
     white-space: nowrap;
     overflow: hidden;
@@ -1092,14 +1094,14 @@ main {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    background: #0f0f0f; /* Чуть темнее, чем боковая панель */
+    background: transparent;
     position: relative;
 }
 
 .chat-header {
     padding: 15px 20px;
-    border-bottom: 1px solid #2a2a2a;
-    background: #141414;
+    border-bottom: 1px solid var(--border-color);
+    background: transparent;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1115,7 +1117,7 @@ main {
 
 .chat-header h3 {
     margin: 0;
-    color: #e0e0e0;
+    color: var(--text-heading);
     font-size: 16px;
 }
 
@@ -1131,14 +1133,14 @@ main {
 .empty-chat-placeholder {
     margin: auto;
     text-align: center;
-    color: #666;
+    color: var(--text-muted);
 }
 
 /* --- ПОЛЕ ВВОДА --- */
 .chat-input-area {
     padding: 15px 20px;
-    background: #141414; /* Темный фон */
-    border-top: 1px solid #2a2a2a;
+    background: transparent; 
+    border-top: 1px solid var(--border-color);
     display: flex;
     align-items: center;
     gap: 15px;
@@ -1148,7 +1150,7 @@ main {
     flex-grow: 1;
     background: transparent !important;
     border: none !important;
-    color: #e0e0e0 !important;
+    color: var(--text-color) !important;
     font-size: 15px;
     padding: 10px 0 !important;
     box-shadow: none !important;
@@ -1157,13 +1159,13 @@ main {
 }
 
 #chat-input::placeholder {
-    color: #666666; /* Темный цвет плейсхолдера */
+    color: var(--text-muted); 
 }
 
 .emoji-btn {
     background: transparent !important;
     border: none !important;
-    color: #888888 !important;
+    color: var(--text-muted) !important;
     font-size: 22px;
     cursor: pointer;
     padding: 0;
@@ -1176,7 +1178,7 @@ main {
 }
 
 .chat-send-btn {
-    background: #8b5cf6 !important;
+    background: var(--ebay-blue) !important;
     border: none !important;
     width: 44px;
     height: 44px;
@@ -1187,11 +1189,11 @@ main {
     cursor: pointer;
     transition: 0.2s;
     box-shadow: none !important;
-    flex-shrink: 0; /* Чтобы кнопка не сжималась */
+    flex-shrink: 0; 
 }
 
 .chat-send-btn:hover {
-    background: #7c3aed !important;
+    background: var(--ebay-blue-hover) !important;
     transform: scale(1.05);
 }
 /* =======================================================
