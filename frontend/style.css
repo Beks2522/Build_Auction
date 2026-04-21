@@ -901,8 +901,8 @@ body.dark-mode .section-title {
     border: 1px solid var(--border-color);
     
     /* 2. Магия матового стекла (преломление лучей) */
-    backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
     
     border-radius: 16px;
     padding: 25px;
@@ -1212,14 +1212,7 @@ main {
     transform: translate(-50%, -50%);
 
     border-radius: 50%;
-
-    background: radial-gradient(
-        circle,
-        rgba(255, 0, 128, 0.7) 0%,
-        rgba(255, 0, 128, 0.4) 35%,
-        rgba(255, 0, 128, 0.15) 60%,
-        transparent 80%
-    );
+    background: conic-gradient(from 0deg, rgba(40, 255, 40, 0.8), rgba(0, 64, 255, 0.8), rgba(32, 255, 181, 0.8), rgba(255, 217, 2, 0.8)); border-radius: 50%;
 
     filter: blur(120px);
 
