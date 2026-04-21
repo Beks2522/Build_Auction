@@ -889,29 +889,31 @@ body.dark-mode .section-title {
 /* --- ОКНО ПОИСКА ПО ЦЕНТРУ --- */
 .search-popover-centered {
     display: none; 
-    position: fixed; /* Отвязываем от шапки, привязываем к экрану */
-    top: 1vh; /* Отступ сверху (15% от высоты экрана) */
-    left: 50%; /* Сдвигаем на середину экрана... */
-    transform: translateX(-50%); /* ...и центрируем точно по оси X */
+    position: fixed; 
+    top: 1vh; 
+    left: 50%; 
+    transform: translateX(-50%); 
     width: 90%; 
-    max-width: 550px; /* Делаем чуть шире для удобства */
+    max-width: 550px; 
+    
+    /* 1. Умный полупрозрачный фон из темы */
     background: var(--card-bg);
     border: 1px solid var(--border-color);
+    
+    /* 2. Магия матового стекла (преломление лучей) */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    
     border-radius: 16px;
     padding: 25px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.5); /* Глубокая тень */
-    z-index: 9999; /* Окно всегда поверх затемнения */
+    
+    /* Сделали тень чуть мягче, чтобы она хорошо смотрелась в обеих темах */
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2); 
+    z-index: 9999; 
 }
 
-body.dark-mode .search-popover-centered {
-    background: #1e1e1e;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-}
-
-body.dark-mode .search-popover {
-    background: #1e1e1e;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-}
+/* ВАЖНО: Никаких отдельных настроек для body.dark-mode здесь больше не нужно! 
+   Окно само поймет, когда стать светлым стеклом, а когда темным. */
 
 .search-input-wrapper {
     display: flex;
@@ -1224,7 +1226,7 @@ main {
     will-change: transform, filter;
 }
 
-/* ИСПРАВЛЕННАЯ Анимация */
+/*Анимация */
 @keyframes spinGlow {
     0% { 
         transform: translate3d(-50%, -50%, 0) rotate(0deg); 
@@ -1233,11 +1235,9 @@ main {
         transform: translate3d(-50%, -50%, 0) rotate(45deg); 
     }
     70% { 
-        /* Было 900, но чтобы плавно дойти до конца, делаем 315 */
-        transform: translate3d(-50%, -50%, 0) rotate(315deg); 
+        transform: translate3d(-50%, -50%, 0) rotate(945deg); 
     }
     100% { 
-        /* Логичное завершение полного круга */
         transform: translate3d(-50%, -50%, 0) rotate(360deg); 
     }
 }
