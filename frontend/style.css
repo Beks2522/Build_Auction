@@ -901,8 +901,8 @@ body.dark-mode .section-title {
     border: 1px solid var(--border-color);
     
     /* 2. Магия матового стекла (преломление лучей) */
-    -webkit-backdrop-filter: blur(16px);
     backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     
     border-radius: 16px;
     padding: 25px;
@@ -1205,25 +1205,36 @@ main {
     position: fixed;
     top: 50%;
     left: 50%;
-
-    width: 500px;
-    height: 500px;
-
-    transform: translate(-50%, -50%);
-
+    width: 60vw;
+    height: 60vw;
+    max-width: 600px;
+    max-height: 600px;
+    
+    background: conic-gradient(from 0deg, rgba(40, 255, 40, 0.8), rgba(0, 64, 255, 0.8), rgba(32, 255, 181, 0.8), rgba(255, 217, 2, 0.8));
     border-radius: 50%;
-    background: conic-gradient(from 0deg, rgba(40, 255, 40, 0.8), rgba(0, 64, 255, 0.8), rgba(32, 255, 181, 0.8), rgba(255, 217, 2, 0.8)); border-radius: 50%;
-
-    filter: blur(120px);
-
-    opacity: 0.6;
-
+    
+    /* 1. Немного уменьшили blur, чтобы видеокарте было легче */
+    filter: blur(90px); 
+    opacity: 0.35;
+    
+    /* 2. Убрали дублирующуюся строчку animation, оставили только 20s */
+    animation: spinGlow 20s linear infinite;
+    
     pointer-events: none;
     z-index: -1;
+    transform: translate3d(-50%, -50%, 0); 
+    will-change: transform, filter;
+}
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
 
-    animation: glowMove 14s ease-in-out infinite alternate;
+    background-image: url("noise.png");
+    opacity: 0.03;
 
-    will-change: transform;
+    pointer-events: none;
+    z-index: 9999;
 }
 
 /*Анимация */
