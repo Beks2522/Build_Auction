@@ -1358,7 +1358,38 @@ body::after {
    ПРАВИЛА ДЛЯ ТЕЛЕФОНОВ (Экраны меньше 768px)
    ======================================================= */
 @media (max-width: 768px) {
-    /* Прячем обычное меню "Главная | Создать лот | Чат" */
+    /* 1. Делаем шапку единой горизонтальной строкой */
+    .mangalib-header {
+        display: flex !important;
+        flex-direction: row !important; /* Принудительно в строку */
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 15px;
+        height: 60px;
+    }
+
+    /* 2. Левая часть (Гамбургер + Название) выстраиваем в ряд */
+    .header-left {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center;
+        gap: 15px; /* Расстояние между кнопкой ☰ и текстом */
+    }
+
+    /* Уменьшаем шрифт заголовка, чтобы иконкам справа хватило места */
+    .header-left h1 {
+        font-size: 20px !important;
+    }
+
+    /* 3. Правая часть (Поиск + Тема + Профиль) выстраиваем в ряд */
+    .header-right {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center;
+        gap: 12px;
+    }
+
+    /* Прячем обычное десктопное меню */
     .desktop-nav {
         display: none !important;
     }
@@ -1366,10 +1397,5 @@ body::after {
     /* Показываем кнопку-гамбургер */
     .mobile-menu-btn {
         display: block;
-    }
-    
-    /* Делаем шапку чуть компактнее */
-    .mangalib-header {
-        padding: 10px 15px;
     }
 }
