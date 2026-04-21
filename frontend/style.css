@@ -1,11 +1,15 @@
 /* --- МАГИЯ ТЕМНОЙ ТЕМЫ (EBAY STYLE) --- */
+/* --- СВЕТЛАЯ ТЕМА (По умолчанию) --- */
 :root {
-    --bg-color: #f7f7f9; /* Светлый фон как у eBay */
+    --bg-color: #f7f7f9; 
     --text-color: #191414;
     --text-muted: #707070;
     --text-heading: #111820;
-    --card-bg: #ffffff;
-    --border-color: #e5e5e5;
+    
+    /* 1. Делаем светлую карточку полупрозрачной (белое стекло) */
+    --card-bg: rgba(255, 255, 255, 0.7);
+    --border-color: rgba(0, 0, 0, 0.08);
+    
     --input-bg: #ffffff;
     --modal-bg: #ffffff;
     --ebay-blue: #3665f3;
@@ -15,13 +19,17 @@
     --auth-btn-text: #ffffff; 
 }
 
+/* --- ТЕМНАЯ ТЕМА --- */
 body.dark-mode {
-    --bg-color: #121212; /* Глубокий черный */
+    --bg-color: #121212; 
     --text-color: #e0e0e0;
     --text-muted: #999999;
     --text-heading: #ffffff;
-    --card-bg: #1e1e1e; /* Темные карточки */
-    --border-color: #333333;
+    
+    /* 2. Делаем темную карточку полупрозрачной (темное стекло) */
+    --card-bg: rgba(30, 30, 30, 0.5); 
+    --border-color: rgba(255, 255, 255, 0.08);
+    
     --input-bg: #2c2c2c; 
     --modal-bg: #1e1e1e;
     --ebay-blue: #4a75ff;
@@ -183,22 +191,21 @@ body.dark-mode #main-nav button:hover, body.dark-mode #guest-info button:hover {
 
 /* --- ОСНОВНАЯ КАРТОЧКА (ЭФФЕКТ СТЕКЛА) --- */
 .lot-card {
-    /* Полупрозрачный темный фон */
-    background: rgba(30, 30, 30, 0.5); 
+    /* Главная магия: фон и рамка теперь автоматически подстраиваются под тему! */
+    background: var(--card-bg); 
+    border: 1px solid var(--border-color); 
     
     /* Магия размытия (преломление лучей) */
     -webkit-backdrop-filter: blur(16px);
-    backdrop-filter: blur(16px); /* Для старых браузеров Apple */
+    backdrop-filter: blur(16px); 
     
-    /* Тонкий блик по краям стекла */
-    border: 1px solid rgba(255, 255, 255, 0.08); 
     border-radius: 12px;
     padding: 15px;
     display: flex;
     flex-direction: column;
     
-    /* Легкая тень, чтобы оторвать карточку от фона */
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    /* Сделали тень чуть мягче, чтобы в светлой теме она смотрелась нежнее */
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
     transition: transform 0.2s, box-shadow 0.2s, background 0.2s, border 0.2s;
 }
 

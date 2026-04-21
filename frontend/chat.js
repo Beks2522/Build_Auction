@@ -110,19 +110,22 @@ function appendMessageToChat(msg) {
     time.style.textAlign = 'right';
     time.style.marginTop = '6px';
 
-    // 3. ПРИМЕНЯЕМ ЦВЕТА (Фиолетовый для тебя, Серый для собеседника)
+// 3. ПРИМЕНЯЕМ ЦВЕТА (Умные цвета из тем)
     if (isMine) {
+        // МОИ СООБЩЕНИЯ (Всегда яркие, под фирменный цвет)
         bubble.style.alignSelf = 'flex-end';
-        bubble.style.background = '#8b5cf6'; 
+        bubble.style.background = 'var(--ebay-blue)'; // Берем фирменный синий/фиолетовый из CSS
         bubble.style.borderBottomRightRadius = '2px'; // Острый уголок
-        text.style.color = '#ffffff';
+        text.style.color = '#ffffff'; // На ярком фоне текст всегда белый
         time.style.color = 'rgba(255, 255, 255, 0.7)';
     } else {
+        // СООБЩЕНИЯ СОБЕСЕДНИКА (Подстраиваются под тему)
         bubble.style.alignSelf = 'flex-start';
-        bubble.style.background = '#2a2a2a'; 
+        bubble.style.background = 'var(--input-bg)'; // В светлой теме будет белым, в темной - темно-серым
+        bubble.style.border = '1px solid var(--border-color)'; // Добавим тонкую рамку, чтобы пузырек не сливался с фоном
         bubble.style.borderBottomLeftRadius = '2px'; // Острый уголок
-        text.style.color = '#e0e0e0';
-        time.style.color = '#888888';
+        text.style.color = 'var(--text-color)'; // Текст сам станет черным днем и белым ночью
+        time.style.color = 'var(--text-muted)'; // Серое время
     }
 
     time.innerText = new Date(msg.created_at).toLocaleTimeString([], {
