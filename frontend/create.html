@@ -9,16 +9,6 @@
 <body>
 
 <header class="mangalib-header">
-        <div class="header-left">
-            <button class="mobile-menu-btn" onclick="openSidebar()">☰</button>
-            <h1 style="cursor: pointer; margin: 0; font-size: 24px; color: var(--text-heading);" onclick="window.location.href='index.html'">Build Auction</h1>
-            
-            <nav id="main-nav" class="desktop-nav" style="display: none;">
-                <a href="index.html" class="active">Главная</a>
-                <a href="create.html" onclick="requireAuth(event, 'create.html')">Создать лот</a>
-                <a href="messages.html" id="nav-messages-btn" style="display: none;" onclick="requireAuth(event, 'messages.html')">Чат</a>
-            </nav>
-        </div>
 
     <div class="header-right">
         <button class="icon-btn" onclick="toggleSearchModal()">🔎</button>
@@ -33,7 +23,25 @@
         </div>
     </div>
 </header>
+<div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
 
+    <div id="mobile-sidebar" class="mobile-sidebar">
+        <div class="sidebar-header">
+            <span style="font-size: 20px; font-weight: bold; color: var(--text-heading);">Build Auction</span>
+            <button class="close-sidebar-btn" onclick="closeSidebar()">✕</button>
+        </div>
+        
+        <div class="sidebar-content">
+            <a href="index.html" class="sidebar-link">Главная</a>
+            <a href="create.html" class="sidebar-link active" onclick="requireAuth(event, 'create.html')">Создать лот</a>
+            <a href="messages.html" class="sidebar-link" onclick="requireAuth(event, 'messages.html')">Чат</a>
+            
+            <div class="sidebar-divider"></div>
+            
+            <a href="#" onclick="showAuthModal(); closeSidebar();" class="sidebar-link">🔑 Войти / Регистрация</a>
+            <a href="#" onclick="toggleTheme(); closeSidebar();" class="sidebar-link">🌗 Сменить тему</a>
+        </div>
+    </div>
 <div id="search-overlay" class="search-overlay" onclick="toggleSearchModal()"></div>
 <div id="mangalib-search-modal" class="search-popover-centered">
     <div class="search-input-wrapper">
