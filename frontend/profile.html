@@ -45,8 +45,7 @@
         <div class="sidebar-content">
             <a href="index.html" class="sidebar-link">Главная</a>
             <a href="create.html" class="sidebar-link" onclick="requireAuth(event, 'create.html')">Создать лот</a>
-            <a href="messages.html" class="sidebar-link" onclick="requireAuth(event, 'messages.html')">Чат</a>
-            <a href="profile.html" class="sidebar-link active">Мой профиль</a> <div class="sidebar-divider"></div>  
+            <a href="messages.html" class="sidebar-link" onclick="requireAuth(event, 'messages.html')">Чат</a> 
             
             <a href="#" onclick="logout(); closeSidebar();" class="sidebar-link" id="mobile-logout-btn" style="display: none; color: #e74c3c;">🚪 Выйти</a>
         </div>
@@ -102,7 +101,7 @@
             </div>
         </div>
     </div>
-
+    <div class="ambient-glow"></div>
     <main class="protected-content" style="display: none; max-width: 1200px; margin: 0 auto;">
         
         <div class="profile-header-container">
