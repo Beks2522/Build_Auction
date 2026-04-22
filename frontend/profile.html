@@ -8,22 +8,33 @@
 </head>
 <body class="dark-theme">
 
-<header class="mangalib-header">
+    <header class="mangalib-header">
+        <div class="header-left">
+            <button class="mobile-menu-btn" onclick="openSidebar()">☰</button>
+            <h1 style="cursor: pointer; margin: 0; font-size: 24px; color: var(--text-heading);" onclick="window.location.href='index.html'">Build Auction</h1>
+            
+            <nav id="main-nav" class="desktop-nav" style="display: none;">
+                <a href="index.html">Главная</a>
+                <a href="create.html" onclick="requireAuth(event, 'create.html')">Создать лот</a>
+                <a href="messages.html" id="nav-messages-btn" style="display: none;" onclick="requireAuth(event, 'messages.html')">Чат</a>
+            </nav>
+        </div>
 
-    <div class="header-right">
-        <button class="icon-btn" onclick="toggleSearchModal()">🔎</button>
-        <button class="icon-btn" onclick="toggleTheme()" id="theme-btn">🌙</button>
-        
-        <div id="guest-info">
-            <button onclick="showAuthModal()" class="auth-btn-small">Войти</button>
+        <div class="header-right">
+            <button class="icon-btn" onclick="toggleSearchModal()">🔎</button>
+            <button class="icon-btn" onclick="toggleTheme()" id="theme-btn">🌙</button>
+            
+            <div id="guest-info">
+                <button onclick="showAuthModal()" class="auth-btn-small">Войти</button>
+            </div>
+            
+            <div id="user-info" style="display: none; cursor: pointer;" onclick="window.location.href='profile.html'">
+                 <img id="user-avatar" src="https://placehold.co/40x40?text=👤" class="header-avatar">
+            </div>
         </div>
-        
-        <div id="user-info" style="display: none; cursor: pointer;" onclick="window.location.href='profile.html'">
-             <img id="user-avatar" src="https://placehold.co/40x40?text=👤" class="header-avatar">
-        </div>
-    </div>
-</header>
-<div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+    </header>
+
+    <div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
 
     <div id="mobile-sidebar" class="mobile-sidebar">
         <div class="sidebar-header">
@@ -33,94 +44,108 @@
         
         <div class="sidebar-content">
             <a href="index.html" class="sidebar-link">Главная</a>
-            <a href="create.html" class="sidebar-link active" onclick="requireAuth(event, 'create.html')">Создать лот</a>
+            <a href="create.html" class="sidebar-link" onclick="requireAuth(event, 'create.html')">Создать лот</a>
             <a href="messages.html" class="sidebar-link" onclick="requireAuth(event, 'messages.html')">Чат</a>
-            
-            <div class="sidebar-divider"></div>
-            
-            <a href="#" onclick="showAuthModal(); closeSidebar();" class="sidebar-link">🔑 Войти / Регистрация</a>
-            <a href="#" onclick="toggleTheme(); closeSidebar();" class="sidebar-link">🌗 Сменить тему</a>
+            <a href="profile.html" class="sidebar-link active">Мой профиль</a> <div class="sidebar-divider"></div>  
+            <a href="#" onclick="logout(); closeSidebar();" class="sidebar-link" id="mobile-logout-btn" style="display: none; color: #e74c3c;">🚪 Выйти</a>
         </div>
     </div>
-<div id="search-overlay" class="search-overlay" onclick="toggleSearchModal()"></div>
-<div id="mangalib-search-modal" class="search-popover-centered">
-    <div class="search-input-wrapper">
-        <span style="color: var(--text-muted);">🔍</span>
-        <input type="text" id="search-input" placeholder="Что ищем?">
-        <button onclick="toggleSearchModal()" class="close-search-btn">✖</button>
-    </div>
-    
-    <select id="category-filter" style="display: none;">
-        <option value="all">Все</option>
-        <option value="electronics">Электроника</option>
-        <option value="auto">Авто</option>
-        <option value="home">Для дома</option>
-        <option value="clothing">Одежда</option>
-        <option value="other">Разное</option>
-    </select>
-    <select id="sort-filter" style="display: none;"><option value="newest"></option></select>
-    
-    <div class="search-filters">
-        <button class="filter-pill active" onclick="setCategory('all', this)">Все категории</button>
-        <button class="filter-pill" onclick="setCategory('electronics', this)">Электроника</button>
-        <button class="filter-pill" onclick="setCategory('auto', this)">Авто</button>
-    </div>
 
-    <div class="search-popular">
-        <h4 style="margin: 0 0 10px 0; color: var(--text-muted); font-size: 13px;">Что ищут</h4>
-        <div class="popular-tags">
-            <span onclick="document.getElementById('search-input').value='Porsche 718';">Porsche 718</span>
-            <span onclick="document.getElementById('search-input').value='Изумрудный Тарик';">Изумрудный Тарик</span>
+    <div id="search-overlay" class="search-overlay" onclick="toggleSearchModal()"></div>
+    
+    <div id="mangalib-search-modal" class="search-popover-centered">
+        <div class="search-input-wrapper">
+            <span style="color: var(--text-muted);">🔍</span>
+            <input type="text" id="search-input" placeholder="Что ищем?">
+            <button onclick="toggleSearchModal()" class="close-search-btn">✖</button>
         </div>
-    </div>
-    
-    <button id="search-btn" class="auth-btn-small" style="width: 100%; margin-top: 20px; padding: 12px; font-size: 16px;">Найти</button>
-</div>
-
-<main class="protected-content" style="display: none; max-width: 1200px; margin: 0 auto;">
-    
-    <div class="profile-header-container">
         
-        <div class="profile-info-group">
-            <div id="avatar-container" style="position: relative; cursor: pointer;" onclick="document.getElementById('avatar-input').click()">
-                <img id="user-avatar" src="https://placehold.co/100x100?text=👤" 
-                     style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--ebay-blue);">
-                <div style="position: absolute; bottom: 0; right: 0; background: var(--ebay-blue); color: white; border-radius: 50%; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; font-size: 14px;">
-                    
+        <select id="category-filter" style="display: none;">
+            <option value="all">Все</option>
+            <option value="electronics">Электроника</option>
+            <option value="auto">Авто</option>
+            <option value="home">Для дома</option>
+            <option value="clothing">Одежда</option>
+            <option value="other">Разное</option>
+        </select>
+        <select id="sort-filter" style="display: none;"><option value="newest"></option></select>
+        
+        <div class="search-filters">
+            <button class="filter-pill active" onclick="setCategory('all', this)">Все категории</button>
+            <button class="filter-pill" onclick="setCategory('electronics', this)">Электроника</button>
+            <button class="filter-pill" onclick="setCategory('auto', this)">Авто</button>
+        </div>
+
+        <div class="search-popular">
+            <h4 style="margin: 0 0 10px 0; color: var(--text-muted); font-size: 13px;">Что ищут</h4>
+            <div class="popular-tags">
+                <span onclick="document.getElementById('search-input').value='Porsche 718';">Porsche 718</span>
+                <span onclick="document.getElementById('search-input').value='Изумрудный Тарик';">Изумрудный Тарик</span>
+            </div>
+        </div>
+        
+        <button id="search-btn" class="auth-btn-small" style="width: 100%; margin-top: 20px; padding: 12px; font-size: 16px;">Найти</button>
+    </div>
+
+    <div id="auth-modal" style="display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(10, 10, 20, 0.85); backdrop-filter: blur(8px);">
+        <div style="background: linear-gradient(145deg, #1e1e30, #141420); color: white; margin: 10% auto; padding: 40px; border-radius: 12px; width: 90%; max-width: 450px; position: relative; box-shadow: 0 15px 40px rgba(0,0,0,0.6); border: 1px solid #2a2a40;">
+            <span onclick="closeAuthModal()" style="color: #666; position: absolute; top: 15px; right: 20px; font-size: 28px; font-weight: bold; cursor: pointer; transition: 0.3s;">&times;</span>
+            <h2 style="text-align: center; margin-top: 0; color: #fff; font-size: 24px;">ВХОД В СИСТЕМУ</h2>
+            <p style="text-align: center; font-size: 14px; color: #888; margin-bottom: 30px;">Пожалуйста, создайте аккаунт или войдите.</p>
+            <input type="text" id="username" placeholder="Имя (только для регистрации)" style="background: #11111a; color: white; border: 1px solid #2a2a40; padding: 15px; width: 100%; box-sizing: border-box; margin-bottom: 10px;">
+            <input type="email" id="email" placeholder="Email" required style="background: #11111a; color: white; border: 1px solid #2a2a40; padding: 15px; width: 100%; box-sizing: border-box; margin-bottom: 10px;">
+            <input type="password" id="password" placeholder="Пароль" required style="background: #11111a; color: white; border: 1px solid #2a2a40; padding: 15px; width: 100%; box-sizing: border-box;">
+            <div style="display: flex; gap: 15px; margin-top: 25px;">
+                <button onclick="login()" style="flex: 1; background: #4a4e69; padding: 15px; border-radius: 8px; color: white; border: none; cursor: pointer;">ВОЙТИ</button>
+                <button onclick="register()" style="flex: 1; background: #5c3c92; padding: 15px; border-radius: 8px; color: white; border: none; cursor: pointer;">СОЗДАТЬ</button>
+            </div>
+        </div>
+    </div>
+
+    <main class="protected-content" style="display: none; max-width: 1200px; margin: 0 auto;">
+        
+        <div class="profile-header-container">
+            
+            <div class="profile-info-group">
+                <div id="avatar-container" style="position: relative; cursor: pointer;" onclick="document.getElementById('avatar-input').click()">
+                    <img id="user-avatar" src="https://placehold.co/100x100?text=👤" 
+                         style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--ebay-blue);">
+                    <div style="position: absolute; bottom: 0; right: 0; background: var(--ebay-blue); color: white; border-radius: 50%; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; font-size: 14px;">
+                        📷
+                    </div>
+                </div>
+                <input type="file" id="avatar-input" accept="image/*" style="display: none;" onchange="uploadAvatar(this)">
+                
+                <div>
+                    <h2 id="current-username" style="margin: 0; color: var(--text-heading); font-size: 24px;">Загрузка...</h2>
+                    <p style="margin: 0; color: var(--text-muted); margin-top: 5px;">Нажмите на фото, чтобы изменить аватар</p>
                 </div>
             </div>
-            <input type="file" id="avatar-input" accept="image/*" style="display: none;" onchange="uploadAvatar(this)">
             
-            <div>
-                <h2 id="current-username" style="margin: 0; color: var(--text-heading); font-size: 24px;">Загрузка...</h2>
-                <p style="margin: 0; color: var(--text-muted); margin-top: 5px;">Нажмите на фото, чтобы изменить аватар</p>
-            </div>
+            <button class="btn-logout" onclick="logout()">Выйти из аккаунта</button>
+            
         </div>
-        
-        <button class="btn-logout" onclick="logout()">Выйти из аккаунта</button>
-        
-    </div>
 
-    <h2 class="section-title">Мои выставленные лоты</h2>
-    <section class="lots-section" style="margin-bottom: 50px;">
-        <div id="my-lots-container" class="lots-grid"></div>
-    </section>
+        <h2 class="section-title">Мои выставленные лоты</h2>
+        <section class="lots-section" style="margin-bottom: 50px;">
+            <div id="my-lots-container" class="lots-grid"></div>
+        </section>
 
-    <h2 class="section-title">Мои ставки (Аукционы)</h2>
-    <section class="lots-section" style="margin-bottom: 50px;">
-        <div id="my-bids-container" class="lots-grid"></div>
-    </section>
+        <h2 class="section-title">Мои ставки (Аукционы)</h2>
+        <section class="lots-section" style="margin-bottom: 50px;">
+            <div id="my-bids-container" class="lots-grid"></div>
+        </section>
 
-    <h2 class="section-title">Мое избранное</h2>
-    <section class="lots-section" style="margin-bottom: 50px;">
-        <div id="my-favorites-container" class="lots-grid"></div>
-    </section>
+        <h2 class="section-title">Мое избранное</h2>
+        <section class="lots-section" style="margin-bottom: 50px;">
+            <div id="my-favorites-container" class="lots-grid"></div>
+        </section>
 
-</main>
+    </main>
 
-<div id="toast-container"></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app.js"></script>
-<script src="chat.js"></script>
+    <div id="toast-container"></div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js"></script>
+    <script src="chat.js"></script>
 </body>
 </html>

@@ -7,116 +7,148 @@
 </head>
 <body class="dark-theme">
 
-<header class="mangalib-header">
+    <header class="mangalib-header">
         <div class="header-left">
             <button class="mobile-menu-btn" onclick="openSidebar()">☰</button>
             <h1 style="cursor: pointer; margin: 0; font-size: 24px; color: var(--text-heading);" onclick="window.location.href='index.html'">Build Auction</h1>
             
             <nav id="main-nav" class="desktop-nav" style="display: none;">
-                <a href="index.html" class="active">Главная</a>
+                <a href="index.html">Главная</a>
                 <a href="create.html" onclick="requireAuth(event, 'create.html')">Создать лот</a>
-                <a href="messages.html" id="nav-messages-btn" style="display: none;" onclick="requireAuth(event, 'messages.html')">Чат</a>
+                <a href="messages.html" id="nav-messages-btn" class="active" style="display: none;" onclick="requireAuth(event, 'messages.html')">Чат</a>
             </nav>
         </div>
 
-    <div class="header-right">
-        <button class="icon-btn" onclick="toggleSearchModal()">🔎</button>
-        <button class="icon-btn" onclick="toggleTheme()" id="theme-btn">🌙</button>
-        <div id="guest-info">
-            <button onclick="showAuthModal()" class="auth-btn-small">Войти</button>
+        <div class="header-right">
+            <button class="icon-btn" onclick="toggleSearchModal()">🔎</button>
+            <button class="icon-btn" onclick="toggleTheme()" id="theme-btn">🌙</button>
+            <div id="guest-info">
+                <button onclick="showAuthModal()" class="auth-btn-small">Войти</button>
+            </div>
+            <div id="user-info" style="display: none; cursor: pointer;" onclick="window.location.href='profile.html'">
+                 <img id="user-avatar" src="https://placehold.co/40x40?text=👤" class="header-avatar">
+            </div>
         </div>
-        <div id="user-info" style="display: none; cursor: pointer;" onclick="window.location.href='profile.html'">
-             <img id="user-avatar" src="https://placehold.co/40x40?text=👤" class="header-avatar">
+    </header>
+
+    <div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+    <div id="mobile-sidebar" class="mobile-sidebar">
+        <div class="sidebar-header">
+            <span style="font-size: 20px; font-weight: bold; color: var(--text-heading);">Build Auction</span>
+            <button class="close-sidebar-btn" onclick="closeSidebar()">✕</button>
         </div>
-    </div>
-</header>
-
-<div id="search-overlay" class="search-overlay" onclick="toggleSearchModal()"></div>
-<div id="mangalib-search-modal" class="search-popover-centered">
-    <div class="search-input-wrapper">
-        <span style="color: var(--text-muted);">🔍</span>
-        <input type="text" id="search-input" placeholder="Что ищем?">
-        <button onclick="toggleSearchModal()" class="close-search-btn">✖</button>
-    </div>
-    
-    <select id="category-filter" style="display: none;">
-        <option value="all">Все</option>
-        <option value="electronics">Электроника</option>
-        <option value="auto">Авто</option>
-        <option value="home">Для дома</option>
-        <option value="clothing">Одежда</option>
-        <option value="other">Разное</option>
-    </select>
-    <select id="sort-filter" style="display: none;"><option value="newest"></option></select>
-    
-    <div class="search-filters">
-        <button class="filter-pill active" onclick="setCategory('all', this)">Все категории</button>
-        <button class="filter-pill" onclick="setCategory('electronics', this)">Электроника</button>
-        <button class="filter-pill" onclick="setCategory('auto', this)">Авто</button>
-    </div>
-
-    <div class="search-popular">
-        <h4 style="margin: 0 0 10px 0; color: var(--text-muted); font-size: 13px;">Что ищут</h4>
-        <div class="popular-tags">
-            <span onclick="document.getElementById('search-input').value='Porsche 718';">Porsche 718</span>
-            <span onclick="document.getElementById('search-input').value='Изумрудный Тарик';">Изумрудный Тарик</span>
-        </div>
-    </div>
-    <button id="search-btn" class="auth-btn-small" style="width: 100%; margin-top: 20px; padding: 12px; font-size: 16px;">Найти</button>
-</div>
-
-<main style="max-width: 1400px; margin: 0 auto; height: calc(100vh - 120px); padding: 0 20px;">
-    
-    <div class="mangalib-chat-container">
         
-        <div class="chat-sidebar">
-            <div class="chat-sidebar-header">
-                <h2>Чаты</h2>
-            </div>
+        <div class="sidebar-content">
+            <a href="index.html" class="sidebar-link">Главная</a>
+            <a href="create.html" class="sidebar-link" onclick="requireAuth(event, 'create.html')">Создать лот</a>
+            <a href="messages.html" class="sidebar-link active" onclick="requireAuth(event, 'messages.html')">Чат</a> <a href="profile.html" class="sidebar-link" onclick="requireAuth(event, 'profile.html')">Мой профиль</a>
             
-            <div id="conversations-container" class="chat-contacts-list">
-                <p style="padding: 20px; color: #888888;">Загрузка диалогов...</p>
-            </div>
+            <div class="sidebar-divider"></div>
+        </div>
+    </div>
+
+    <div id="search-overlay" class="search-overlay" onclick="toggleSearchModal()"></div>
+    <div id="mangalib-search-modal" class="search-popover-centered">
+        <div class="search-input-wrapper">
+            <span style="color: var(--text-muted);">🔍</span>
+            <input type="text" id="search-input" placeholder="Что ищем?">
+            <button onclick="toggleSearchModal()" class="close-search-btn">✖</button>
+        </div>
+        
+        <select id="category-filter" style="display: none;">
+            <option value="all">Все</option>
+            <option value="electronics">Электроника</option>
+            <option value="auto">Авто</option>
+            <option value="home">Для дома</option>
+            <option value="clothing">Одежда</option>
+            <option value="other">Разное</option>
+        </select>
+        <select id="sort-filter" style="display: none;"><option value="newest"></option></select>
+        
+        <div class="search-filters">
+            <button class="filter-pill active" onclick="setCategory('all', this)">Все категории</button>
+            <button class="filter-pill" onclick="setCategory('electronics', this)">Электроника</button>
+            <button class="filter-pill" onclick="setCategory('auto', this)">Авто</button>
         </div>
 
-        <div class="chat-main">
-            
-            <div id="chat-not-selected" style="margin: auto; text-align: center; color: #666;">
-                <span style="font-size: 50px;"></span>
-                <p>Выберите чат, чтобы начать общение</p>
+        <div class="search-popular">
+            <h4 style="margin: 0 0 10px 0; color: var(--text-muted); font-size: 13px;">Что ищут</h4>
+            <div class="popular-tags">
+                <span onclick="document.getElementById('search-input').value='Porsche 718';">Porsche 718</span>
+                <span onclick="document.getElementById('search-input').value='Изумрудный Тарик';">Изумрудный Тарик</span>
             </div>
+        </div>
+        <button id="search-btn" class="auth-btn-small" style="width: 100%; margin-top: 20px; padding: 12px; font-size: 16px;">Найти</button>
+    </div>
+
+    <main style="max-width: 1400px; margin: 0 auto; height: calc(100vh - 120px); padding: 0 20px;">
+        
+        <div class="mangalib-chat-container">
             
-            <div id="chat-content" style="display: none; flex-direction: column; height: 100%;">
+            <div class="chat-sidebar">
+                <div class="chat-sidebar-header">
+                    <h2>Чаты</h2>
+                </div>
                 
-<div class="chat-header" id="active-chat-header">
-    <div class="chat-header-info">
-        <div style="text-align: center; width: 100%;">
-            <h3 id="active-partner-name">Имя продавца</h3>
-            <span style="color: #888888; font-size: 13px;">В сети</span>
+                <div id="conversations-container" class="chat-contacts-list">
+                    <p style="padding: 20px; color: #888888;">Загрузка диалогов...</p>
+                </div>
+            </div>
+
+            <div class="chat-main">
+                
+                <div id="chat-not-selected" style="margin: auto; text-align: center; color: #666;">
+                    <span style="font-size: 50px;"></span>
+                    <p>Выберите чат, чтобы начать общение</p>
+                </div>
+                
+                <div id="chat-content" style="display: none; flex-direction: column; height: 100%;">
+                    
+                    <div class="chat-header" id="active-chat-header">
+                        <div class="chat-header-info">
+                            <div style="text-align: center; width: 100%;">
+                                <h3 id="active-partner-name">Имя продавца</h3>
+                                <span style="color: #888888; font-size: 13px;">В сети</span>
+                            </div>
+                            <img id="active-chat-avatar" src="https://ui-avatars.com/api/?name=User&background=2a2a2a&color=fff&rounded=true" class="contact-avatar" style="position: absolute; right: 0; width: 36px; height: 36px;">
+                        </div>
+                    </div>
+
+                    <div id="chat-messages" class="chat-messages"></div>
+
+                    <div class="chat-input-area">
+                        <input type="text" id="chat-input" placeholder="Ваше сообщение">
+                        <button class="chat-send-btn" onclick="sendMessage()">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
         </div>
-        <img id="active-chat-avatar" src="https://ui-avatars.com/api/?name=User&background=2a2a2a&color=fff&rounded=true" class="contact-avatar" style="position: absolute; right: 0; width: 36px; height: 36px;">
-    </div>
-</div>
+    </main>
 
-<div id="chat-messages" class="chat-messages"></div>
-
-<div class="chat-input-area">
-    <input type="text" id="chat-input" placeholder="Ваше сообщение">
-    <button class="chat-send-btn" onclick="sendMessage()">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
-    </button>
-</div>
-
+    <div id="auth-modal" style="display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(10, 10, 20, 0.85); backdrop-filter: blur(8px);">
+        <div style="background: linear-gradient(145deg, #1e1e30, #141420); color: white; margin: 10% auto; padding: 40px; border-radius: 12px; width: 90%; max-width: 450px; position: relative; box-shadow: 0 15px 40px rgba(0,0,0,0.6); border: 1px solid #2a2a40;">
+            <span onclick="closeAuthModal()" style="color: #666; position: absolute; top: 15px; right: 20px; font-size: 28px; font-weight: bold; cursor: pointer; transition: 0.3s;">&times;</span>
+            <h2 style="text-align: center; margin-top: 0; color: #fff; font-size: 24px;">ВХОД В СИСТЕМУ</h2>
+            <p style="text-align: center; font-size: 14px; color: #888; margin-bottom: 30px;">Пожалуйста, создайте аккаунт или войдите.</p>
+            <input type="text" id="username" placeholder="Имя (только для регистрации)" style="background: #11111a; color: white; border: 1px solid #2a2a40; padding: 15px; width: 100%; box-sizing: border-box; margin-bottom: 10px;">
+            <input type="email" id="email" placeholder="Email" required style="background: #11111a; color: white; border: 1px solid #2a2a40; padding: 15px; width: 100%; box-sizing: border-box; margin-bottom: 10px;">
+            <input type="password" id="password" placeholder="Пароль" required style="background: #11111a; color: white; border: 1px solid #2a2a40; padding: 15px; width: 100%; box-sizing: border-box;">
+            <div style="display: flex; gap: 15px; margin-top: 25px;">
+                <button onclick="login()" style="flex: 1; background: #4a4e69; padding: 15px; border-radius: 8px; color: white; border: none; cursor: pointer;">ВОЙТИ</button>
+                <button onclick="register()" style="flex: 1; background: #5c3c92; padding: 15px; border-radius: 8px; color: white; border: none; cursor: pointer;">СОЗДАТЬ</button>
             </div>
         </div>
     </div>
-</main>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app.js"></script>
-<script src="chat.js"></script>
-<script>
-window.addEventListener('load', () => {
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js"></script>
+    <script src="chat.js"></script>
+    <script>
+    window.addEventListener('load', () => {
         let attempts = 0;
         // Проверяем наличие сессии каждые 100мс
         const checkSession = setInterval(() => {
@@ -164,12 +196,10 @@ window.addEventListener('load', () => {
             }
 
             // 3. ОПТИМИЗАЦИЯ ОТРИСОВКИ (DocumentFragment)
-            // Собираем все элементы в "виртуальный" контейнер, чтобы добавить их на страницу за 1 раз
             const fragment = document.createDocumentFragment();
 
             convs.forEach(c => {
                 const title = c.lotTitle || 'Чат без названия';
-                // Добавил параметр &bold=true, чтобы буква на аватарке смотрелась жирнее и красивее
                 const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(title)}&background=2a2a2a&color=fff&rounded=true&bold=true`;
                 
                 const item = document.createElement('div');
@@ -182,7 +212,6 @@ window.addEventListener('load', () => {
                     </div>`;
                 
                 item.onclick = function() {
-                    // Убираем класс active у всех, вешаем на текущий
                     document.querySelectorAll('.chat-contact').forEach(el => el.classList.remove('active'));
                     this.classList.add('active');
                     selectChat(c.lotId, c.partnerId, title, avatarUrl);
@@ -191,7 +220,7 @@ window.addEventListener('load', () => {
                 fragment.appendChild(item);
             });
 
-            // Выгружаем все чаты на страницу одним махом (очень быстро!)
+            // Выгружаем все чаты на страницу одним махом
             container.appendChild(fragment);
 
         } catch (e) { 
@@ -216,13 +245,13 @@ window.addEventListener('load', () => {
         if (partnerNameEl) partnerNameEl.innerText = title;
         if (chatAvatarEl && avatarUrl) chatAvatarEl.src = avatarUrl;
         
-        // Вызываем функцию из chat.js, только если она там реально есть
+        // Вызываем функцию из chat.js
         if (typeof openChat === 'function') {
             openChat(lotId, partnerId, title);
         } else {
             console.error("Функция openChat не найдена! Проверьте файл chat.js");
         }
     }
-</script>
+    </script>
 </body>
 </html>

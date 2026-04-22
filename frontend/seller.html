@@ -3,25 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Профиль продавца | Build_Auction</title>
+    <title>Профиль продавца</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="mangalib-header">
-    <div class="header-right">
-        <button class="icon-btn" onclick="toggleSearchModal()">🔎</button>
-        <button class="icon-btn" onclick="toggleTheme()" id="theme-btn">🌙</button>
-        
-        <div id="guest-info">
-            <button onclick="showAuthModal()" class="auth-btn-small">Войти</button>
+    <header class="mangalib-header">
+        <div class="header-left">
+            <button class="mobile-menu-btn" onclick="openSidebar()">☰</button>
+            <h1 style="cursor: pointer; margin: 0; font-size: 24px; color: var(--text-heading);" onclick="window.location.href='index.html'">Build Auction</h1>
+            
+            <nav id="main-nav" class="desktop-nav" style="display: none;">
+                <a href="index.html" class="active">Главная</a>
+                <a href="create.html" onclick="requireAuth(event, 'create.html')">Создать лот</a>
+                <a href="messages.html" id="nav-messages-btn" style="display: none;" onclick="requireAuth(event, 'messages.html')">Чат</a>
+            </nav>
         </div>
-        
-        <div id="user-info" style="display: none; cursor: pointer;" onclick="window.location.href='profile.html'">
-             <img id="user-avatar" src="https://placehold.co/40x40?text=👤" class="header-avatar">
+
+        <div class="header-right">
+            <button class="icon-btn" onclick="toggleSearchModal()">🔎</button>
+            <button class="icon-btn" onclick="toggleTheme()" id="theme-btn">🌙</button>
+            
+            <div id="guest-info">
+                <button onclick="showAuthModal()" class="auth-btn-small">Войти</button>
+            </div>
+            
+            <div id="user-info" style="display: none; cursor: pointer;" onclick="window.location.href='profile.html'">
+                 <img id="user-avatar" src="https://placehold.co/40x40?text=👤" class="header-avatar">
+            </div>
         </div>
-    </div>
-</header>
-<div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+    </header>
+
+    <div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
 
     <div id="mobile-sidebar" class="mobile-sidebar">
         <div class="sidebar-header">
@@ -31,92 +43,91 @@
         
         <div class="sidebar-content">
             <a href="index.html" class="sidebar-link">Главная</a>
-            <a href="create.html" class="sidebar-link active" onclick="requireAuth(event, 'create.html')">Создать лот</a>
+            <a href="create.html" class="sidebar-link" onclick="requireAuth(event, 'create.html')">Создать лот</a>
             <a href="messages.html" class="sidebar-link" onclick="requireAuth(event, 'messages.html')">Чат</a>
             
             <div class="sidebar-divider"></div>
             
-            <a href="#" onclick="showAuthModal(); closeSidebar();" class="sidebar-link">🔑 Войти / Регистрация</a>
-            <a href="#" onclick="toggleTheme(); closeSidebar();" class="sidebar-link">🌗 Сменить тему</a>
         </div>
     </div>
 
-<div id="search-overlay" class="search-overlay" onclick="toggleSearchModal()"></div>
+    <div id="search-overlay" class="search-overlay" onclick="toggleSearchModal()"></div>
 
-<div id="mangalib-search-modal" class="search-popover-centered">
-    <div class="search-input-wrapper">
-        <span style="color: var(--text-muted);">🔍</span>
-        <input type="text" id="search-input" placeholder="Что ищем?">
-        <button onclick="toggleSearchModal()" class="close-search-btn">✖</button>
-    </div>
-    
-    <select id="category-filter" style="display: none;">
-        <option value="all">Все</option>
-        <option value="electronics">Электроника</option>
-        <option value="auto">Авто</option>
-        <option value="home">Для дома</option>
-        <option value="clothing">Одежда</option>
-        <option value="other">Разное</option>
-    </select>
-    <select id="sort-filter" style="display: none;"><option value="newest"></option></select>
-    
-    <div class="search-filters">
-        <button class="filter-pill active" onclick="setCategory('all', this)">Все категории</button>
-        <button class="filter-pill" onclick="setCategory('electronics', this)">Электроника</button>
-        <button class="filter-pill" onclick="setCategory('auto', this)">Авто</button>
-    </div>
-
-    <div class="search-popular">
-        <h4 style="margin: 0 0 10px 0; color: var(--text-muted); font-size: 13px;">Что ищут</h4>
-        <div class="popular-tags">
-            <span onclick="document.getElementById('search-input').value='Porsche 718';">Porsche 718</span>
-            <span onclick="document.getElementById('search-input').value='Изумрудный Тарик';">Изумрудный Тарик</span>
+    <div id="mangalib-search-modal" class="search-popover-centered">
+        <div class="search-input-wrapper">
+            <span style="color: var(--text-muted);">🔍</span>
+            <input type="text" id="search-input" placeholder="Что ищем?">
+            <button onclick="toggleSearchModal()" class="close-search-btn">✖</button>
         </div>
-    </div>
-    
-    <button id="search-btn" class="auth-btn-small" style="width: 100%; margin-top: 20px; padding: 12px; font-size: 16px;">Найти</button>
-</div>
-
-<main style="max-width: 1000px; margin: 0 auto;">
-<div style="display: flex; align-items: center; gap: 20px; margin-bottom: 30px; padding: 20px; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color);">
-    
-    <img id="seller-avatar" src="https://placehold.co/100x100?text=👤" 
-         style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--ebay-blue); box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-    
-    <div>
-        <h2 id="seller-name" style="margin: 0; color: var(--text-heading); font-size: 28px;">Загрузка...</h2>
-        <p style="margin: 0; color: var(--text-muted); margin-top: 5px;">Продавец на Build_Auction</p>
-    </div>
-</div>
-
-    <h2 style="font-size: 20px; margin-bottom: 20px;">Все лоты этого продавца:</h2>
-    <div id="seller-lots-container" class="lots-grid"></div>
-    <div style="margin-top: 50px; max-width: 800px;">
-        <h2 style="color: var(--text-heading); border-bottom: 2px solid var(--border-color); padding-bottom: 10px;">
-            Отзывы о продавце (<span id="average-rating">0</span> ✦)
-        </h2>
-
-        <div id="add-review-section" style="display: none; background: var(--card-bg); padding: 20px; border-radius: 12px; margin-bottom: 30px; border: 1px solid var(--border-color);">
-            <h3 style="margin-top: 0; color: var(--text-heading);">Оценить продавца</h3>
-            <select id="review-rating" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color);">
-                <option value="5">✦✦✦✦✦ (Отлично)</option>
-                <option value="4">✦✦✦✦ (Хорошо)</option>
-                <option value="3">✦✦✦ (Нормально)</option>
-                <option value="2">✦✦ (Плохо)</option>
-                <option value="1">✦ (Ужасно)</option>
-            </select>
-            <textarea id="review-comment" placeholder="Что вам понравилось или не понравилось?" rows="3" style="width: 100%; box-sizing: border-box; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color); font-family: inherit;"></textarea>
-            <button onclick="submitReview()" style="width: 100%; padding: 12px; background: #27ae60; font-size: 16px;">Опубликовать отзыв</button>
+        
+        <select id="category-filter" style="display: none;">
+            <option value="all">Все</option>
+            <option value="electronics">Электроника</option>
+            <option value="auto">Авто</option>
+            <option value="home">Для дома</option>
+            <option value="clothing">Одежда</option>
+            <option value="other">Разное</option>
+        </select>
+        <select id="sort-filter" style="display: none;"><option value="newest"></option></select>
+        
+        <div class="search-filters">
+            <button class="filter-pill active" onclick="setCategory('all', this)">Все категории</button>
+            <button class="filter-pill" onclick="setCategory('electronics', this)">Электроника</button>
+            <button class="filter-pill" onclick="setCategory('auto', this)">Авто</button>
         </div>
 
-        <div id="reviews-list">
-            <p style="color: var(--text-muted);">Загрузка отзывов...</p>
+        <div class="search-popular">
+            <h4 style="margin: 0 0 10px 0; color: var(--text-muted); font-size: 13px;">Что ищут</h4>
+            <div class="popular-tags">
+                <span onclick="document.getElementById('search-input').value='Porsche 718';">Porsche 718</span>
+                <span onclick="document.getElementById('search-input').value='Изумрудный Тарик';">Изумрудный Тарик</span>
+            </div>
         </div>
+        
+        <button id="search-btn" class="auth-btn-small" style="width: 100%; margin-top: 20px; padding: 12px; font-size: 16px;">Найти</button>
     </div>
-</main>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app.js"></script>
-<script src="chat.js"></script>
+    <main style="max-width: 1000px; margin: 0 auto;">
+        <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 30px; padding: 20px; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color);">
+            
+            <img id="seller-avatar" src="https://placehold.co/100x100?text=👤" 
+                 style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--ebay-blue); box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+            
+            <div>
+                <h2 id="seller-name" style="margin: 0; color: var(--text-heading); font-size: 28px;">Загрузка...</h2>
+                <p style="margin: 0; color: var(--text-muted); margin-top: 5px;">Продавец на Build_Auction</p>
+            </div>
+        </div>
+
+        <h2 style="font-size: 20px; margin-bottom: 20px;">Все лоты этого продавца:</h2>
+        <div id="seller-lots-container" class="lots-grid"></div>
+        
+        <div style="margin-top: 50px; max-width: 800px;">
+            <h2 style="color: var(--text-heading); border-bottom: 2px solid var(--border-color); padding-bottom: 10px;">
+                Отзывы о продавце (<span id="average-rating">0</span> ✦)
+            </h2>
+
+            <div id="add-review-section" style="display: none; background: var(--card-bg); padding: 20px; border-radius: 12px; margin-bottom: 30px; border: 1px solid var(--border-color);">
+                <h3 style="margin-top: 0; color: var(--text-heading);">Оценить продавца</h3>
+                <select id="review-rating" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color);">
+                    <option value="5">✦✦✦✦✦ (Отлично)</option>
+                    <option value="4">✦✦✦✦ (Хорошо)</option>
+                    <option value="3">✦✦✦ (Нормально)</option>
+                    <option value="2">✦✦ (Плохо)</option>
+                    <option value="1">✦ (Ужасно)</option>
+                </select>
+                <textarea id="review-comment" placeholder="Что вам понравилось или не понравилось?" rows="3" style="width: 100%; box-sizing: border-box; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color); font-family: inherit;"></textarea>
+                <button onclick="submitReview()" style="width: 100%; padding: 12px; background: #27ae60; font-size: 16px;">Опубликовать отзыв</button>
+            </div>
+
+            <div id="reviews-list">
+                <p style="color: var(--text-muted);">Загрузка отзывов...</p>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js"></script>
+    <script src="chat.js"></script>
 </body>
 </html>
