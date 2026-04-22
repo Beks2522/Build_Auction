@@ -42,9 +42,14 @@
         <div class="sidebar-content">
             <a href="index.html" class="sidebar-link">Главная</a>
             <a href="create.html" class="sidebar-link" onclick="requireAuth(event, 'create.html')">Создать лот</a>
-            <a href="messages.html" class="sidebar-link active" onclick="requireAuth(event, 'messages.html')">Чат</a> <a href="profile.html" class="sidebar-link" onclick="requireAuth(event, 'profile.html')">Мой профиль</a>
+            <a href="messages.html" class="sidebar-link active" onclick="requireAuth(event, 'messages.html')">Чат</a> 
+            <a href="profile.html" class="sidebar-link" onclick="requireAuth(event, 'profile.html')">Мой профиль</a>
             
             <div class="sidebar-divider"></div>
+            
+            <a href="#" onclick="showAuthModal(); closeSidebar();" class="sidebar-link" id="mobile-login-btn">🔑 Войти / Регистрация</a>
+            <a href="#" onclick="logout(); closeSidebar();" class="sidebar-link" id="mobile-logout-btn" style="display: none; color: #e74c3c;">🚪 Выйти</a>
+            <a href="#" onclick="toggleTheme(); closeSidebar();" class="sidebar-link">🌗 Сменить тему</a>
         </div>
     </div>
 
@@ -106,9 +111,12 @@
                 <div id="chat-content" style="display: none; flex-direction: column; height: 100%;">
                     
                     <div class="chat-header" id="active-chat-header">
-                        <div class="chat-header-info">
-                            <div style="text-align: center; width: 100%;">
-                                <h3 id="active-partner-name">Имя продавца</h3>
+                        <div class="chat-header-info" style="position: relative; display: flex; align-items: center; justify-content: center; width: 100%;">
+                            <button class="mobile-chat-back-btn" onclick="closeChatMobile()" style="display: none; position: absolute; left: 0; background: none; border: none; color: var(--ebay-blue); font-size: 16px; cursor: pointer; font-weight: bold;">
+                                ⬅ Назад
+                            </button>
+                            <div style="text-align: center;">
+                                <h3 id="active-partner-name" style="margin: 0; font-size: 16px; color: var(--text-heading);">Имя продавца</h3>
                                 <span style="color: #888888; font-size: 13px;">В сети</span>
                             </div>
                             <img id="active-chat-avatar" src="https://ui-avatars.com/api/?name=User&background=2a2a2a&color=fff&rounded=true" class="contact-avatar" style="position: absolute; right: 0; width: 36px; height: 36px;">
@@ -150,13 +158,11 @@
     <script>
     window.addEventListener('load', () => {
         let attempts = 0;
-        // Проверяем наличие сессии каждые 100мс
         const checkSession = setInterval(() => {
             if (typeof currentSession !== 'undefined' && currentSession) {
                 clearInterval(checkSession);
-                loadInbox(); // Сессия есть - грузим чаты!
+                loadInbox(); 
             } else if (attempts > 50) { 
-                // Если прошло 5 секунд, а сессии нет - останавливаемся
                 clearInterval(checkSession);
                 const container = document.getElementById('conversations-container');
                 if (container) {
@@ -167,13 +173,11 @@
         }, 100);
     });
 
-    // 2. ЗАГРУЗКА ЧАТОВ
     async function loadInbox() {
         const container = document.getElementById('conversations-container');
-        if (!container) return; // Защита, если элемента нет на странице
+        if (!container) return; 
 
         try {
-            // Показываем понятный индикатор загрузки
             container.innerHTML = '<p style="padding: 20px; color: #888888;">⏳ Загрузка диалогов...</p>';
 
             const res = await fetch(`${API_URL}/my/conversations`, {
@@ -183,7 +187,7 @@
             if (!res.ok) throw new Error('Не удалось получить ответ от сервера');
 
             const convs = await res.json();
-            container.innerHTML = ''; // Очищаем контейнер
+            container.innerHTML = ''; 
 
             if (convs.error) {
                 container.innerHTML = `<p style="padding: 20px; color: #e74c3c;">Ошибка: ${convs.error}</p>`;
@@ -195,7 +199,6 @@
                 return;
             }
 
-            // 3. ОПТИМИЗАЦИЯ ОТРИСОВКИ (DocumentFragment)
             const fragment = document.createDocumentFragment();
 
             convs.forEach(c => {
@@ -220,37 +223,43 @@
                 fragment.appendChild(item);
             });
 
-            // Выгружаем все чаты на страницу одним махом
             container.appendChild(fragment);
 
         } catch (e) { 
             console.error("Сбой в loadInbox:", e); 
-            // 4. ПОНЯТНАЯ ОШИБКА ДЛЯ ПОЛЬЗОВАТЕЛЯ
             container.innerHTML = `<p style="padding: 20px; color: #e74c3c;">Произошла ошибка при загрузке. Проверьте интернет или обновите страницу.</p>`;
         }
     } 
 
-    // 5. ВЫБОР ЧАТА С ПРОВЕРКАМИ
+    // ОБНОВЛЕНО: Функция selectChat теперь адаптирована под мобильные телефоны
     function selectChat(lotId, partnerId, title, avatarUrl) {
         const notSelectedEl = document.getElementById('chat-not-selected');
         const contentEl = document.getElementById('chat-content');
         const partnerNameEl = document.getElementById('active-partner-name');
         const chatAvatarEl = document.getElementById('active-chat-avatar');
 
-        // Безопасно меняем видимость
         if (notSelectedEl) notSelectedEl.style.display = 'none';
         if (contentEl) contentEl.style.display = 'flex';
         
-        // Обновляем данные в шапке
         if (partnerNameEl) partnerNameEl.innerText = title;
         if (chatAvatarEl && avatarUrl) chatAvatarEl.src = avatarUrl;
         
-        // Вызываем функцию из chat.js
+        // --- МАГИЯ ДЛЯ ТЕЛЕФОНОВ ---
+        if (window.innerWidth <= 768) {
+            document.querySelector('.mangalib-chat-container').classList.add('mobile-chat-active');
+        }
+
         if (typeof openChat === 'function') {
             openChat(lotId, partnerId, title);
         } else {
             console.error("Функция openChat не найдена! Проверьте файл chat.js");
         }
+    }
+
+    // ДОБАВЛЕНО: Новая функция для кнопки "Назад" на телефоне
+    function closeChatMobile() {
+        document.querySelector('.mangalib-chat-container').classList.remove('mobile-chat-active');
+        document.querySelectorAll('.chat-contact').forEach(el => el.classList.remove('active'));
     }
     </script>
 </body>

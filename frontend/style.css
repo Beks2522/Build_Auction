@@ -1398,4 +1398,39 @@ body::after {
     .mobile-menu-btn {
         display: block;
     }
+    /* Убираем рамки и делаем контейнер на весь экран */
+    .mangalib-chat-container {
+        border: none;
+        border-radius: 0;
+        height: calc(100vh - 60px); /* Высота экрана минус шапка сайта */
+        margin: -20px; /* Убираем отступы main */
+        width: 100vw;
+    }
+
+    /* По умолчанию показываем ТОЛЬКО список чатов на всю ширину */
+    .chat-sidebar {
+        width: 100% !important;
+        border-right: none;
+        display: flex; 
+    }
+
+    /* По умолчанию ПРЯЧЕМ окно переписки */
+    .chat-main {
+        display: none !important; 
+        width: 100%;
+    }
+
+    /* КОГДА ЧАТ ОТКРЫТ (добавляется класс через JS) */
+    .mangalib-chat-container.mobile-chat-active .chat-sidebar {
+        display: none !important; /* Прячем список */
+    }
+
+    .mangalib-chat-container.mobile-chat-active .chat-main {
+        display: flex !important; /* Показываем переписку */
+    }
+
+    /* Показываем кнопку "Назад" */
+    .mobile-chat-back-btn {
+        display: block !important;
+    }
 }
