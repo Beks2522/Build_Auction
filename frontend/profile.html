@@ -9,15 +9,16 @@
 <body class="dark-theme">
 
 <header class="mangalib-header">
-    <div class="header-left">
-        <h1 style="cursor: pointer; margin: 0; font-size: 24px; color: var(--text-heading);" onclick="window.location.href='index.html'">Build Auction</h1>
-        
-        <nav id="main-nav" class="desktop-nav" style="display: none;">
-            <a href="index.html">Главная</a>
-            <a href="create.html">Создать лот</a>
-            <a href="messages.html" id="nav-messages-btn" style="display: none;">Чат</a>
-        </nav>
-    </div>
+        <div class="header-left">
+            <button class="mobile-menu-btn" onclick="openSidebar()">☰</button>
+            <h1 style="cursor: pointer; margin: 0; font-size: 24px; color: var(--text-heading);" onclick="window.location.href='index.html'">Build Auction</h1>
+            
+            <nav id="main-nav" class="desktop-nav" style="display: none;">
+                <a href="index.html" class="active">Главная</a>
+                <a href="create.html" onclick="requireAuth(event, 'create.html')">Создать лот</a>
+                <a href="messages.html" id="nav-messages-btn" style="display: none;" onclick="requireAuth(event, 'messages.html')">Чат</a>
+            </nav>
+        </div>
 
     <div class="header-right">
         <button class="icon-btn" onclick="toggleSearchModal()">🔎</button>
