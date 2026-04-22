@@ -937,3 +937,25 @@ function closeSidebar() {
     // Возвращаем прокрутку
     document.body.style.overflow = ''; 
 }
+// Функция-стражник: проверяет авторизацию перед переходом по ссылке
+function requireAuth(event, url) {
+    event.preventDefault(); // Останавливаем обычный (мгновенный) переход по ссылке
+    
+    // Проверяем, существует ли сессия пользователя
+    if (typeof currentSession !== 'undefined' && currentSession) {
+        // Пользователь авторизован -> пускаем его на страницу
+        window.location.href = url; 
+    } else {
+        // Пользователь НЕ авторизован -> защищаем страницу
+        
+        // 1. Закрываем боковое меню, если оно было открыто на телефоне
+        if (typeof closeSidebar === 'function') {
+            closeSidebar();
+        }
+        
+        // 2. Открываем окно входа/регистрации
+        if (typeof showAuthModal === 'function') {
+            showAuthModal();
+        }
+    }
+}
