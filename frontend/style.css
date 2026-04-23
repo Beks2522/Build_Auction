@@ -1355,6 +1355,14 @@ body::after {
 }
 
 /* =======================================================
+   ГЛОБАЛЬНЫЕ СТИЛИ (Сработают на компьютере)
+   ======================================================= */
+main {
+    max-width: 1400px !important;
+    margin: 0 auto !important; /* Именно это вернет "Активные лоты" строго в центр на ПК! */
+}
+
+/* =======================================================
    ПРАВИЛА ДЛЯ ТЕЛЕФОНОВ (Экраны меньше 768px)
    ======================================================= */
 @media (max-width: 768px) {
@@ -1394,39 +1402,47 @@ body::after {
         display: block;
     }
 
-    /* --- ИСПРАВЛЕНИЕ НАЛОЖЕНИЯ И ВЫСОТЫ ЧАТА --- */
+/* --- ИСПРАВЛЕНИЕ НАЛОЖЕНИЯ И ВЫСОТЫ ЧАТА --- */
 
-/* 1. Стандартное поведение для обычных страниц (Создать лот, Профиль и т.д.) */
+    /* 1. Стандартное поведение для ВСЕХ страниц (Создать лот, Профиль и т.д.) */
     main {
-        height: auto !important; /* Позволяем странице нормально скроллиться вниз */
+        height: auto !important;
         display: block !important;
-        padding: 20px 15px !important; /* Возвращаем отступы, чтобы заголовок появился */
-        margin: 0 !important;
+        padding: 60px 15px !important; 
+        margin: 0 !important; 
     }
 
-    /* 2. Жесткие стили на весь экран применяем ТОЛЬКО к странице Чата */
-    main:has(.mangalib-chat-container) {
-        height: calc(100vh - 60px) !important; 
-        padding: 0 !important;
-        display: flex !important;
-        flex-direction: column !important;
-        overflow: hidden !important; /* Блокируем лишний скролл страницы под чатом */
-    }
-
-    /* Контейнер чата занимает всю доступную высоту main */
+    /* 2. БЕТОННОЕ РЕШЕНИЕ ДЛЯ ЧАТА: 
+       Отрываем его от main и фиксируем на весь экран */
     .mangalib-chat-container {
+        position: fixed !important;
+        top: 60px !important; /* Начинается ровно под шапкой */
+        bottom: 0 !important; /* Тянется до самого низа экрана */
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        height: auto !important;
         margin: 0 !important;
-        height: 100% !important;
-        width: 100vw !important; /* На всю ширину экрана */
+        padding: 0 !important;
         border: none !important;
         border-radius: 0 !important;
+        z-index: 5; /* Поверх всех отступов */
+        
     }
 
-    /* Боковая панель (список чатов) */
+    /* Боковая панель (чтобы тоже тянулась до самого низа) */
     .chat-sidebar {
-        width: 100% !important;
-        border-right: none;
-        display: block; 
+        width: 100% !important; 
+        height: 100% !important; /* Важно! */
+        border-right: none !important;
+        display: flex !important; 
+        flex-direction: column !important;
+    }
+
+    /* Список диалогов забирает всё свободное место и скроллится */
+    .chat-contacts-list {
+        flex-grow: 1 !important;
+        overflow-y: auto !important;
     }
 
     /* Окно переписки (скрыто по умолчанию) */
@@ -1444,10 +1460,6 @@ body::after {
 
     .mangalib-chat-container.mobile-chat-active .chat-main {
         display: flex !important;
-    }
-
-    .mangalib-chat-container.mobile-chat-active .mobile-chat-back-btn {
-        display: inline-block !important;
     }
 
     /* Защищаем внутреннюю шапку чата от сжатия и наложения */
