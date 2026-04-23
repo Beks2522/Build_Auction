@@ -1396,13 +1396,21 @@ body::after {
 
     /* --- ИСПРАВЛЕНИЕ НАЛОЖЕНИЯ И ВЫСОТЫ ЧАТА --- */
 
-    /* Перебиваем тег main, чтобы он шел строго под шапкой */
+/* 1. Стандартное поведение для обычных страниц (Создать лот, Профиль и т.д.) */
     main {
-        height: calc(100vh - 60px) !important; /* 60px - это высота шапки */
-        padding: 0 !important;
+        height: auto !important; /* Позволяем странице нормально скроллиться вниз */
+        display: block !important;
+        padding: 20px 15px !important; /* Возвращаем отступы, чтобы заголовок появился */
         margin: 0 !important;
+    }
+
+    /* 2. Жесткие стили на весь экран применяем ТОЛЬКО к странице Чата */
+    main:has(.mangalib-chat-container) {
+        height: calc(100vh - 60px) !important; 
+        padding: 0 !important;
         display: flex !important;
         flex-direction: column !important;
+        overflow: hidden !important; /* Блокируем лишний скролл страницы под чатом */
     }
 
     /* Контейнер чата занимает всю доступную высоту main */
