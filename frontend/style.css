@@ -1358,30 +1358,27 @@ body::after {
    ПРАВИЛА ДЛЯ ТЕЛЕФОНОВ (Экраны меньше 768px)
    ======================================================= */
 @media (max-width: 768px) {
-    /* 1. Делаем шапку единой горизонтальной строкой */
+    /* --- ШАПКА САЙТА --- */
     .mangalib-header {
         display: flex !important;
-        flex-direction: row !important; /* Принудительно в строку */
+        flex-direction: row !important;
         justify-content: space-between;
         align-items: center;
         padding: 10px 15px;
         height: 60px;
     }
 
-    /* 2. Левая часть (Гамбургер + Название) выстраиваем в ряд */
     .header-left {
         display: flex !important;
         flex-direction: row !important;
         align-items: center;
-        gap: 15px; /* Расстояние между кнопкой ☰ и текстом */
+        gap: 15px;
     }
 
-    /* Уменьшаем шрифт заголовка, чтобы иконкам справа хватило места */
     .header-left h1 {
         font-size: 20px !important;
     }
 
-    /* 3. Правая часть (Поиск + Тема + Профиль) выстраиваем в ряд */
     .header-right {
         display: flex !important;
         flex-direction: row !important;
@@ -1389,48 +1386,82 @@ body::after {
         gap: 12px;
     }
 
-    /* Прячем обычное десктопное меню */
     .desktop-nav {
         display: none !important;
     }
     
-    /* Показываем кнопку-гамбургер */
     .mobile-menu-btn {
         display: block;
     }
-    /* Убираем рамки и делаем контейнер на весь экран */
-    .mangalib-chat-container {
-        border: none;
-        border-radius: 0;
-        height: calc(100vh - 60px); /* Высота экрана минус шапка сайта */
-        margin: -20px; /* Убираем отступы main */
-        width: 100vw;
+
+    /* --- ИСПРАВЛЕНИЕ НАЛОЖЕНИЯ И ВЫСОТЫ ЧАТА --- */
+
+    /* Перебиваем тег main, чтобы он шел строго под шапкой */
+    main {
+        height: calc(100vh - 60px) !important; /* 60px - это высота шапки */
+        padding: 0 !important;
+        margin: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
     }
 
-    /* По умолчанию показываем ТОЛЬКО список чатов на всю ширину */
+    /* Контейнер чата занимает всю доступную высоту main */
+    .mangalib-chat-container {
+        margin: 0 !important;
+        height: 100% !important;
+        width: 100vw !important; /* На всю ширину экрана */
+        border: none !important;
+        border-radius: 0 !important;
+    }
+
+    /* Боковая панель (список чатов) */
     .chat-sidebar {
         width: 100% !important;
         border-right: none;
-        display: flex; 
+        display: block; 
     }
 
-    /* По умолчанию ПРЯЧЕМ окно переписки */
+    /* Окно переписки (скрыто по умолчанию) */
     .chat-main {
+        height: 100% !important;
         display: none !important; 
         width: 100%;
+        flex-direction: column !important;
     }
 
-    /* КОГДА ЧАТ ОТКРЫТ (добавляется класс через JS) */
+    /* КОГДА ЧАТ ОТКРЫТ */
     .mangalib-chat-container.mobile-chat-active .chat-sidebar {
-        display: none !important; /* Прячем список */
+        display: none !important;
     }
 
     .mangalib-chat-container.mobile-chat-active .chat-main {
-        display: flex !important; /* Показываем переписку */
+        display: flex !important;
     }
 
-    /* Показываем кнопку "Назад" */
-    .mobile-chat-back-btn {
-        display: block !important;
+    .mangalib-chat-container.mobile-chat-active .mobile-chat-back-btn {
+        display: inline-block !important;
+    }
+
+    /* Защищаем внутреннюю шапку чата от сжатия и наложения */
+    #active-chat-header {
+        flex-shrink: 0 !important;
+        padding: 10px 15px !important;
+        background: var(--bg-secondary, #1a1a1a);
+        z-index: 10;
+    }
+
+    /* Зона сообщений занимает всё свободное место и скроллится */
+    .chat-messages {
+        flex-grow: 1 !important;
+        overflow-y: auto !important;
+        padding: 15px !important;
+    }
+
+    /* Блок ввода прибит к низу */
+    .chat-input-area {
+        flex-shrink: 0 !important;
+        padding: 10px !important;
+        margin-bottom: constant(safe-area-inset-bottom);
+        margin-bottom: env(safe-area-inset-bottom);
     }
 }
