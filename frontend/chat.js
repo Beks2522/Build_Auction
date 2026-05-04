@@ -3,10 +3,6 @@ let currentChatLotId = null;
 let currentChatReceiverId = null;
 let chatChannel = null;
 
-// ==========================================
-// Открытие чата
-// ==========================================
-
 async function openChat(lotId, sellerId, sellerName) {
     if (!currentSession) {
         showToast('Сначала войдите в систему', 'error');
@@ -63,10 +59,6 @@ async function openChat(lotId, sellerId, sellerName) {
     }
 }
 
-// ==========================================
-// Закрытие чата
-// ==========================================
-
 function closeChat() {
     const modal = document.getElementById('chat-modal');
 
@@ -77,13 +69,10 @@ function closeChat() {
     currentChatLotId = null;
     currentChatReceiverId = null;
 }
-// Добавление сообщения
+
 function appendMessageToChat(msg) {
     const container = document.getElementById('chat-messages');
     if (!container) return;
-
-    // 1. БЕЗОПАСНАЯ ОЧИСТКА ЗАГЛУШЕК
-    // Ищем только параграфы с текстом "Загрузка" или "Напишите первое..." и удаляем ТОЛЬКО ИХ
     const placeholders = container.querySelectorAll('p');
     placeholders.forEach(p => {
         if (p.innerText.includes('Напишите') || p.innerText.includes('Загрузка')) {
@@ -99,33 +88,29 @@ function appendMessageToChat(msg) {
     bubble.style.padding = '10px 15px';
     bubble.style.borderRadius = '12px';
     bubble.style.margin = '5px 0';
-    bubble.style.width = 'fit-content'; // Чтобы короткие сообщения не растягивались на весь экран
+    bubble.style.width = 'fit-content';
 
     const text = document.createElement('div');
     text.style.fontSize = '15px';
-    text.innerText = msg.content; // Защита от XSS
+    text.innerText = msg.content;
 
     const time = document.createElement('div');
     time.style.fontSize = '11px';
     time.style.textAlign = 'right';
     time.style.marginTop = '6px';
-
-// 3. ПРИМЕНЯЕМ ЦВЕТА (Умные цвета из тем)
     if (isMine) {
-        // МОИ СООБЩЕНИЯ (Всегда яркие, под фирменный цвет)
         bubble.style.alignSelf = 'flex-end';
-        bubble.style.background = 'var(--ebay-blue)'; // Берем фирменный синий/фиолетовый из CSS
-        bubble.style.borderBottomRightRadius = '2px'; // Острый уголок
-        text.style.color = '#ffffff'; // На ярком фоне текст всегда белый
+        bubble.style.background = 'var(--ebay-blue)';
+        bubble.style.borderBottomRightRadius = '2px';
+        text.style.color = '#ffffff';
         time.style.color = 'rgba(255, 255, 255, 0.7)';
     } else {
-        // СООБЩЕНИЯ СОБЕСЕДНИКА (Подстраиваются под тему)
         bubble.style.alignSelf = 'flex-start';
-        bubble.style.background = 'var(--input-bg)'; // В светлой теме будет белым, в темной - темно-серым
-        bubble.style.border = '1px solid var(--border-color)'; // Добавим тонкую рамку, чтобы пузырек не сливался с фоном
-        bubble.style.borderBottomLeftRadius = '2px'; // Острый уголок
-        text.style.color = 'var(--text-color)'; // Текст сам станет черным днем и белым ночью
-        time.style.color = 'var(--text-muted)'; // Серое время
+        bubble.style.background = 'var(--input-bg)';
+        bubble.style.border = '1px solid var(--border-color)';
+        bubble.style.borderBottomLeftRadius = '2px';
+        text.style.color = 'var(--text-color)';
+        time.style.color = 'var(--text-muted)';
     }
 
     time.innerText = new Date(msg.created_at).toLocaleTimeString([], {
@@ -136,16 +121,10 @@ function appendMessageToChat(msg) {
     bubble.appendChild(text);
     bubble.appendChild(time);
 
-    // 4. ДОБАВЛЯЕМ В КОНЕЦ СПИСКА (appendChild никогда не стирает старое!)
     container.appendChild(bubble);
 
-    // 5. ПРОКРУТКА В САМЫЙ НИЗ
     container.scrollTop = container.scrollHeight;
 }
-
-// ==========================================
-// Отправка сообщения
-// ==========================================
 
 async function sendMessage() {
     const input =
