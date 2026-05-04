@@ -1394,7 +1394,7 @@ main {
         flex-direction: row !important;
         align-items: center;
         gap: 12px;
-        margin-left: auto  /* Магия: принудительно отталкиваем этот блок в самый правый край! */
+        margin-left: auto !important; /* МАГИЯ FLEXBOX: толкает весь блок с иконками максимально вправо */
     }
 
     .desktop-nav {
