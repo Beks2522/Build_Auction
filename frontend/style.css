@@ -1533,4 +1533,54 @@ main {
         display: block !important;
         text-align: center !important;
     }
+    /* 3. АДАПТАЦИЯ КАРТОЧЕК ЛОТОВ ДЛЯ ТЕЛЕФОНОВ (2 В РЯД) */
+    
+    /* Делаем сетку из двух колонок */
+    .lots-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important; /* 2 карточки в один ряд */
+        gap: 10px !important; /* Уменьшаем расстояние между карточками */
+    }
+
+    /* Делаем саму карточку компактнее (обращаемся к блокам внутри сетки) */
+    .lots-grid > div {
+        padding: 10px !important; 
+        border-radius: 8px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+    }
+
+    /* Уменьшаем картинку лота */
+    .lots-grid > div img {
+        height: 120px !important; /* Фиксируем небольшую высоту картинки */
+        width: 100% !important;
+        object-fit: cover !important; /* Чтобы картинка не сплющивалась, а аккуратно обрезалась */
+        border-radius: 6px !important;
+        margin-bottom: 10px !important;
+    }
+
+    /* Уменьшаем шрифты внутри карточки (название, цена) */
+    .lots-grid > div h3 {
+        font-size: 14px !important;
+        margin: 0 0 5px 0 !important;
+        /* Обрезаем слишком длинные названия многоточием */
+        white-space: nowrap !important; 
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    .lots-grid > div span,
+    .lots-grid > div p {
+        font-size: 14px !important;
+        margin: 2px 0 !important;
+    }
+
+    /* Уменьшаем кнопку ("Удалить" или "Ставка") */
+    .lots-grid > div button {
+        width: 100% !important;
+        padding: 8px !important;
+        font-size: 12px !important;
+        margin-top: 10px !important;
+    }
 }
