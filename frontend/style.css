@@ -1370,12 +1370,12 @@ main {
 .mangalib-header {
         display: flex !important;
         flex-direction: row !important;
-        justify-content: space-between !important; 
+        justify-content: space-between !important;
         align-items: center;
-        padding: 10px 15px !important;
-        height: 60px !important;
-        width: 100% !important; /* Заставляем шапку занять всю ширину экрана */
-        box-sizing: border-box !important; /* Учитываем отступы внутри ширины */
+        padding: 10px 15px;
+        height: 60px;
+        width: 100% !important; /* Гарантируем, что шапка растянута на весь экран */
+        box-sizing: border-box !important; /* Чтобы padding не ломал ширину */
     }
 
     .header-left {

@@ -6,8 +6,6 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const app = express();
 const port = process.env.PORT || 3000;
-
-// Проверка env
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_ANON_KEY;
 
@@ -17,37 +15,23 @@ if (!supabaseUrl || !supabaseKey) {
 }
 
 const supabase = createClient(supabaseUrl, supabaseKey);
-
-// Middleware
 app.use(cors());
 app.use(express.json());
-
-// --- ФУНКЦИЯ ПРОВЕРКИ АВТОРИЗАЦИИ (ОХРАННИК) ---
 const authenticateToken = async (req, res, next) => {
-    // Ищем токен (билет) в заголовках запроса
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
     
     if (!token) return res.status(401).json({ error: 'Доступ запрещен. Вы не авторизованы.' });
-
-    // Проверяем билет через Supabase
-    const { data: { user }, error } = await supabase.auth.getUser(token);
+const { data: { user }, error } = await supabase.auth.getUser(token);
     
     if (error || !user) return res.status(403).json({ error: 'Неверный или просроченный токен.' });
-
-    // Если всё ок, пропускаем пользователя дальше
-    req.user = user;
+req.user = user;
     next();
 };
-
-// ---------------- ROUTES ---------------- //
-
-// Проверка сервера
 app.get('/', (req, res) => {
   res.send('Сервер аукциона работает! 🚀');
 });
 
-// 1. Получить все активные лоты (Публично) + СОРТИРОВКА + ИМЯ ПРОДАВЦА
 app.get('/api/lots', async (req, res) => {
   const { category, search, sort } = req.query; 
 

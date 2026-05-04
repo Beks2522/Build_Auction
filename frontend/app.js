@@ -210,7 +210,6 @@ supabaseClient.channel('public:messages')
   .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, (payload) => {
       const newMsg = payload.new;
       
-      // Если мы сейчас прямо сидим в чате этого лота — рисуем пузырек
       if (currentChatLotId === newMsg.lot_id) {
           appendMessageToChat(newMsg);
       } 
@@ -435,12 +434,9 @@ async function loadMyProfile() {
             if (!bid.lots) return;
             let img = bid.lots.lot_images?.length > 0 ? `<img src="${bid.lots.lot_images[0].image_url}" alt="Лот">` : '';
             
-            // Оставили переменные только один раз!
             let isWinning = bid.amount >= bid.lots.current_price;
             let isEnded = new Date() > new Date(bid.lots.end_time);
-            let statusColor = isWinning ? '#008a00' : '#e53238'; 
-
-            // Рисуем кнопку оплаты, если победили и аукцион завершен
+            let statusColor = isWinning ? '#008a00' : '#e53238';
 let payButtonHtml = '';
             if (isEnded && isWinning) {
                 if (!bid.lots.is_paid) {
@@ -728,7 +724,6 @@ async function loadReviews(sellerId) {
     const addSection = document.getElementById('add-review-section');
     if (!list) return;
 
-    // Показываем форму отзыва только авторизованным (и не самому себе)
     if (currentSession && currentSession.user.id !== sellerId) {
             addSection.style.display = 'block';
     }
@@ -742,7 +737,6 @@ async function loadReviews(sellerId) {
             return;
         }
 
-        // Высчитываем среднюю оценку
         const sum = reviews.reduce((acc, rev) => acc + rev.rating, 0);
         const avg = (sum / reviews.length).toFixed(1); // Округляем до 1 знака (например, 4.8)
         avgEl.innerText = avg;
@@ -820,7 +814,6 @@ async function createCheckout(lotId) {
                 'Content-Type': 'application/json', // <--- КРИТИЧЕСКИ ВАЖНОЕ ДОБАВЛЕНИЕ
                 'Authorization': `Bearer ${currentSession.access_token}` 
             },
-            // Отправляем пустое тело, чтобы бэкенд понял запрос и не искал флаг "Купить сейчас"
             body: JSON.stringify({}) 
         });
         const data = await res.json();
@@ -855,17 +848,14 @@ function setCategory(value, buttonElement) {
 }
 
 window.addEventListener('load', async () => {
-    // Читаем параметры из адресной строки
     const urlParams = new URLSearchParams(window.location.search);
     const isSuccess = urlParams.get('payment_success');
     const paidLotId = urlParams.get('lot_id');
 
     if (isSuccess === 'true' && paidLotId && currentSession) {
-        // Очищаем адресную строку, чтобы при обновлении страницы код не сработал дважды
         window.history.replaceState({}, document.title, "/");
 
         try {
-            // Дергаем твой роут mark-paid
             const res = await fetch(`${API_URL}/lots/${paidLotId}/mark-paid`, {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
@@ -873,7 +863,6 @@ window.addEventListener('load', async () => {
             
             if (res.ok) {
                 showToast('🎉 Оплата прошла успешно! Лот ваш.', 'success');
-                // Можно добавить эффект конфетти или перезагрузить лоты
                 setTimeout(() => loadLots(), 1000); 
             }
         } catch (e) {
