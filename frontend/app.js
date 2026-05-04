@@ -210,6 +210,7 @@ supabaseClient.channel('public:messages')
   .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, (payload) => {
       const newMsg = payload.new;
       
+      // Если мы сейчас прямо сидим в чате этого лота — рисуем пузырек
       if (currentChatLotId === newMsg.lot_id) {
           appendMessageToChat(newMsg);
       } 
@@ -434,11 +435,13 @@ async function loadMyProfile() {
             if (!bid.lots) return;
             let img = bid.lots.lot_images?.length > 0 ? `<img src="${bid.lots.lot_images[0].image_url}" alt="Лот">` : '';
             
+            // Оставили переменные только один раз!
             let isWinning = bid.amount >= bid.lots.current_price;
             let isEnded = new Date() > new Date(bid.lots.end_time);
             let statusColor = isWinning ? '#008a00' : '#e53238'; 
 
-            let payButtonHtml = '';
+            // Рисуем кнопку оплаты, если победили и аукцион завершен
+let payButtonHtml = '';
             if (isEnded && isWinning) {
                 if (!bid.lots.is_paid) {
                     payButtonHtml = `<button class="btn-pay-lot" onclick="payForLot('${bid.lots.id}')">Оплатить лот</button>`;
@@ -806,8 +809,8 @@ async function submitReview() {
         btn.disabled = false;
     }
 }   
-/
-lotId) {
+
+async function createCheckout(lotId) {
     if (!currentSession) return;
     try {
         showToast('Создаем безопасный платеж...', 'info');
