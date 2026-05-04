@@ -1366,35 +1366,36 @@ main {
    ПРАВИЛА ДЛЯ ТЕЛЕФОНОВ (Экраны меньше 768px)
    ======================================================= */
 @media (max-width: 768px) {
-    /* --- ШАПКА САЙТА --- */
-.mangalib-header {
+/* --- ШАПКА САЙТА (БРОНЕБОЙНЫЙ ВАРИАНТ) --- */
+    .mangalib-header {
         display: flex !important;
         flex-direction: row !important;
-        justify-content: space-between !important;
-        align-items: center;
-        padding: 10px 15px;
-        height: 60px;
-        width: 100% !important; /* Гарантируем, что шапка растянута на весь экран */
-        box-sizing: border-box !important; /* Чтобы padding не ломал ширину */
+        align-items: center !important;
+        padding: 10px 15px !important;
+        height: 60px !important;
+        width: 100vw !important; /* Жестко растягиваем шапку от края до края */
+        box-sizing: border-box !important;
     }
 
     .header-left {
         display: flex !important;
         flex-direction: row !important;
-        align-items: center;
-        gap: 15px;
+        align-items: center !important;
+        gap: 15px !important;
+        flex-grow: 1 !important; /* МАГИЯ: Забирает всё пустое место посередине */
     }
 
     .header-left h1 {
         font-size: 20px !important;
+        white-space: nowrap !important; /* Запрещаем тексту переноситься на новую строку */
     }
 
-.header-right {
+    .header-right {
         display: flex !important;
         flex-direction: row !important;
-        align-items: center;
-        gap: 12px;
-        margin-left: auto !important; /* МАГИЯ FLEXBOX: толкает весь блок с иконками максимально вправо */
+        align-items: center !important;
+        gap: 12px !important;
+        justify-content: flex-end !important; /* Принудительно жмем иконки вправо */
     }
 
     .desktop-nav {
@@ -1402,9 +1403,8 @@ main {
     }
     
     .mobile-menu-btn {
-        display: block;
+        display: block !important;
     }
-
 /* --- ИСПРАВЛЕНИЕ НАЛОЖЕНИЯ И ВЫСОТЫ ЧАТА --- */
 
     /* 1. Стандартное поведение для ВСЕХ страниц (Создать лот, Профиль и т.д.) */
