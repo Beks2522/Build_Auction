@@ -1373,7 +1373,7 @@ main {
         align-items: center !important;
         padding: 10px 15px !important;
         height: 60px !important;
-        width: 100vw !important; /* Жестко растягиваем шапку от края до края */
+        width: 100% !important; 
         box-sizing: border-box !important;
     }
 
@@ -1486,5 +1486,51 @@ main {
         padding: 10px !important;
         margin-bottom: constant(safe-area-inset-bottom);
         margin-bottom: env(safe-area-inset-bottom);
+    }
+ /* 2. НОВЫЙ ДИЗАЙН КАРТОЧКИ ПРОФИЛЯ (Адаптировано под HTML) */
+    
+    /* Главный контейнер (карточка) */
+    .profile-header-container {
+        display: flex !important;
+        flex-direction: column !important; /* Ставим элементы в колонку */
+        align-items: center !important;    /* Центрируем всё */
+        text-align: center !important;     
+        padding: 25px 20px !important;     /* Даем больше воздуха внутри */
+        gap: 20px !important;              /* Отступ между блоком информации и кнопкой */
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Блок с аватаркой и текстом */
+    .profile-info-group {
+        display: flex !important;
+        flex-direction: column !important; /* Аватарка сверху, текст под ней */
+        align-items: center !important;
+        gap: 15px !important;              /* Отступ между аватаркой и именем */
+        width: 100% !important;
+    }
+
+    /* Аватарка (увеличим немного для телефона) */
+    #avatar-container img {
+        width: 100px !important;
+        height: 100px !important;
+    }
+
+    /* Текст профиля */
+    #current-username {
+        font-size: 22px !important;
+        margin-bottom: 5px !important;
+    }
+    
+    /* Делаем кнопку "Выйти" на всю ширину и более высокой (удобной для пальца) */
+    .btn-logout {
+        width: 100% !important; 
+        margin: 0 !important;
+        padding: 16px !important;
+        font-size: 16px !important;
+        border-radius: 8px !important;
+        justify-content: center !important; /* Если внутри flex */
+        display: block !important;
+        text-align: center !important;
     }
 }
